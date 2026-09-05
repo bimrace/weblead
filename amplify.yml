@@ -2,7 +2,8 @@ version: 1
 frontend:
   phases:
     build:
-      commands: []
+      commands:
+        - node _source/build-amplify-config.js
   artifacts:
     baseDirectory: site
     files:
