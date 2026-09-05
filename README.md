@@ -111,13 +111,18 @@ The repository includes `amplify.yml` for the `main` branch. In the Amplify app,
 add these environment variables before enabling auto-builds:
 
 ```text
-SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+SUPABASE_URL=https://gtsrvvwcsdsfajwkdzun.supabase.co
 SUPABASE_ANON_KEY=YOUR_ANON_PUBLISHABLE_KEY
 ```
 
 Each build generates the ignored `site/config.js` from those values. The anon key
 is safe for browser use; never add the Supabase service role key to Amplify
 environment variables used by this frontend.
+
+In Amplify, open **App settings → Environment variables → Manage variables**, add
+both names for the `main` branch, save, then choose **Redeploy this version** for
+the failed deployment. The build log should show the config-generation command
+completing before the artifact upload begins.
 
 ---
 
