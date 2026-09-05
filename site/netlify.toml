@@ -1,0 +1,87 @@
+# Netlify configuration — static site, no build step required.
+# The deployable site sits at the ROOT of this folder. Drag this whole folder
+# onto Netlify, or point a Git deploy at it with an empty build command.
+[build]
+  publish = "."
+
+# Keep the generator source out of the public site.
+[[redirects]]
+  from = "/_source/*"
+  to = "/404.html"
+  status = 404
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Pretty URLs: /capabilities -> /capabilities.html
+[[redirects]]
+  from = "/capabilities"
+  to = "/capabilities.html"
+  status = 200
+[[redirects]]
+  from = "/industries"
+  to = "/industries.html"
+  status = 200
+[[redirects]]
+  from = "/projects"
+  to = "/projects.html"
+  status = 200
+[[redirects]]
+  from = "/technology"
+  to = "/technology.html"
+  status = 200
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 200
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 200
+[[redirects]]
+  from = "/cookies"
+  to = "/cookies.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404

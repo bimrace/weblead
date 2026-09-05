@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /project-template.html
+Disallow: /thank-you.html
+
+Sitemap: https://bimrace.com/sitemap.xml

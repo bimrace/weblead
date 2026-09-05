@@ -1,0 +1,18 @@
+project_id = "gtsrvvwcsdsfajwkdzun"
+
+[api]
+enabled = true
+schemas = ["public", "crm"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 16
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[functions.lead-intake]
+verify_jwt = false
