@@ -25,7 +25,7 @@ EMAIL  = "info@bimrace.com"
 PHONE  = "+91 75079 58364"
 TEL    = "+917507958364"
 ENTITY = "BIMRACE PVT LTD"
-THEME  = "#07080B"
+THEME  = "#F2F5F8"
 
 WORD_D = re.search(r'<path d="(.*?)"', (ROOT / "logo.svg").read_text(), re.S).group(1)
 WORD_TF = "scale(0.3333333) translate(0,306) scale(0.25,-0.25)"
@@ -81,7 +81,7 @@ def head(title, desc, slug, extra=""):
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta name="theme-color" content="{THEME}">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="light">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="{canon}">
 
@@ -2561,7 +2561,7 @@ for f in ["style.css", "script.js", "lead-capture.js", "config.js", "logo.svg", 
     "name": "BIMRACE", "short_name": "BIMRACE",
     "description": "Engineering intelligence built around BIM",
     "start_url": "/", "display": "standalone",
-    "background_color": THEME, "theme_color": THEME,
+    "background_color": "#FFFFFF", "theme_color": THEME,
     "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
               {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
               {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
