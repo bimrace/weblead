@@ -1,11 +1,11 @@
 {
   "name": "BIMRACE",
   "short_name": "BIMRACE",
-  "description": "BIM, MEP and digital engineering delivery",
+  "description": "Engineering intelligence built around BIM",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#07080B",
+  "theme_color": "#07080B",
   "icons": [
     {
       "src": "icon-192.png",

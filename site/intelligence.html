@@ -3,24 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Standards &amp; QA | ISO 19650 Information Management | BIMRACE</title>
-<meta name="description" content="ISO 19650 information management, the artefacts that govern an appointment, and the six quality checks applied before anything is issued — the discipline the intelligence layer is built on.">
+<title>BIM Intelligence | Your Model as an Engineering Database | BIMRACE</title>
+<meta name="description" content="How BIM becomes a queryable engineering data layer: what a model actually holds, the information-first authoring discipline that makes it usable, and how model data is governed.">
 <meta name="theme-color" content="#07080B">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://bimrace.com/technology.html">
+<link rel="canonical" href="https://bimrace.com/intelligence.html">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BIMRACE">
-<meta property="og:title" content="Standards &amp; QA | ISO 19650 Information Management | BIMRACE">
-<meta property="og:description" content="ISO 19650 information management, the artefacts that govern an appointment, and the six quality checks applied before anything is issued — the discipline the intelligence layer is built on.">
+<meta property="og:title" content="BIM Intelligence | Your Model as an Engineering Database | BIMRACE">
+<meta property="og:description" content="How BIM becomes a queryable engineering data layer: what a model actually holds, the information-first authoring discipline that makes it usable, and how model data is governed.">
 <meta property="og:image" content="https://bimrace.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" content="https://bimrace.com/technology.html">
+<meta property="og:url" content="https://bimrace.com/intelligence.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Standards &amp; QA | ISO 19650 Information Management | BIMRACE">
-<meta name="twitter:description" content="ISO 19650 information management, the artefacts that govern an appointment, and the six quality checks applied before anything is issued — the discipline the intelligence layer is built on.">
+<meta name="twitter:title" content="BIM Intelligence | Your Model as an Engineering Database | BIMRACE">
+<meta name="twitter:description" content="How BIM becomes a queryable engineering data layer: what a model actually holds, the information-first authoring discipline that makes it usable, and how model data is governed.">
 
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -44,8 +44,14 @@
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Standards",
-      "item": "https://bimrace.com/technology.html"
+      "name": "Platform",
+      "item": "https://bimrace.com/platform.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "BIM Intelligence",
+      "item": "https://bimrace.com/intelligence.html"
     }
   ]
 }</script>
@@ -78,7 +84,7 @@
       <li><a href="engineering.html">Engineering</a></li>
       <li><a href="industries.html">Industries</a></li>
       <li><a href="projects.html">Projects</a></li>
-      <li><a href="technology.html" aria-current="page">Standards</a></li>
+      <li><a href="technology.html">Standards</a></li>
       <li><a href="about.html">About</a></li>
         <li class="nav__cta"><a href="contact.html">Talk to engineering</a></li>
       </ul>
@@ -96,138 +102,150 @@
     <div>
       <nav class="crumb" aria-label="Breadcrumb">
         <a href="index.html">Home</a><span aria-hidden="true">/</span>
-        <span aria-current="page">Standards</span>
+        <a href="platform.html">Platform</a><span aria-hidden="true">/</span>
+        <span aria-current="page">BIM Intelligence</span>
       </nav>
-      <h1>Standards, information management and QA</h1>
-      <p class="phero__lede">ISO 19650 information management, the artefacts that govern an appointment, and the checks applied before anything is issued. This is the discipline the intelligence layer is built on top of.</p>
+      <h1>Your BIM model is an engineering database</h1>
+      <p class="phero__lede">Turning BIM from a project deliverable into an intelligent engineering data layer — and the modelling discipline that has to happen first for any of it to be possible.</p>
     </div>
-    <div><dl class="phero__meta"><dt>Framework</dt><dd>ISO 19650 series</dd><dt>Artefacts</dt><dd>EIR · BEP · MIDP · CDE · LOIN</dd><dt>Certification</dt><dd>None claimed</dd><dt>QA checks</dt><dd>Six categories</dd></dl></div>
+    <div><dl class="phero__meta"><dt>Layer</dt><dd>01 — BIM data</dd><dt>Status</dt><dd>Live</dd><dt>Depends on</dt><dd>Information-first authoring</dd><dt>Enables</dt><dd>Automated checking · Analytics</dd></dl></div>
   </div>
 </section>
 
-<section class="section section--flush" id="standards">
+<section class="section section--flush">
+  <div class="shell split split--mid">
+    <div>
+      <p class="eyebrow">BIM as data</p>
+      <h2 class="sec-title">Information is not the same as intelligence</h2>
+      <p class="sec-lede">A model already holds nearly everything a project team needs to know. The
+      difficulty is that it holds it passively — stored, opened and interpreted by hand, one view at
+      a time.</p>
+      <p class="lede" style="margin-top:22px">Move from model coordination to model intelligence and
+      the model stops being a thing you look at and becomes a thing you can ask. Element counts by
+      system, parameter completeness, clearance failures, quantities with traceable lines — all of
+      it is already in there.</p>
+      <p class="lede" style="margin-top:16px">BIM is structured engineering context. AI is the
+      reasoning layer over it. Automation is the execution layer. None of the second two work if the
+      first one is not disciplined.</p>
+    </div>
+    <div>
+      <svg class="dia" id="data-svg" viewBox="0 0 900 610" role="img"
+        aria-label="Network diagram: a central BIM model containing structured data, linked to geometry,
+        parameters, systems, equipment, relationships, quantities, specifications and spatial data."></svg>
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Information standards</p>
-      <h2 class="sec-title">Structured to ISO 19650</h2>
-      <p class="sec-lede">ISO 19650 is the international standard series for managing information
-      using BIM across the life cycle of built assets. BIMRACE structures delivery around its
-      principles by default, on every appointment.</p>
+      <p class="eyebrow">What a model holds</p>
+      <h2 class="sec-title">Ten kinds of information, only one of which is geometry</h2>
+      <p class="sec-lede">The 3D view is the least interesting thing in a well-authored model. Each
+      of these is queryable if it was populated during authoring, and effectively lost if it
+      was not.</p>
     </header>
-    <div class="g3">
-      <article class="card"><p class="card__k">Part 1</p><h3>Concepts and principles</h3>
-        <p>Defines the core terms, roles and the information delivery cycle, including expectations
-        for a common data environment, status codes and approval.</p></article>
-      <article class="card"><p class="card__k">Part 2</p><h3>Delivery phase</h3>
-        <p>The part most referenced in day-to-day practice. Covers information management during
-        design and construction, and the artefacts that govern it.</p></article>
-      <article class="card"><p class="card__k">Part 3</p><h3>Operational phase</h3>
-        <p>Information management during operation and maintenance, and the transition from a
-        project information model to an asset information model.</p></article>
-      <article class="card"><p class="card__k">Part 4</p><h3>Information exchange</h3>
-        <p>Process and decision criteria for individual information exchanges, including quality
-        criteria for what is handed over.</p></article>
-      <article class="card"><p class="card__k">Part 5</p><h3>Security-minded management</h3>
-        <p>Applies where the sensitivity of the information requires protection — relevant to
-        government, defence and critical infrastructure assets.</p></article>
-      <article class="card"><p class="card__k">Part 6</p><h3>Health and safety information</h3>
-        <p>The most recent addition to the series, covering the structuring of health and safety
-        information.</p></article>
-    </div>
-    <div class="note" style="max-width:none">
-      <p><strong>On certification.</strong> BIMRACE structures its delivery to align with ISO 19650
-      principles. This is a statement of working method, not a claim of third-party certification to
-      the standard. Where a project requires certified parties, we will say so at enquiry stage
-      rather than after appointment.</p>
+    <div class="g4">
+      <article class="card"><p class="card__k">01</p><h3>Geometry</h3>
+        <p>Shape, position and extent. The part everyone sees, and the part automated checking uses
+        least.</p></article>
+      <article class="card"><p class="card__k">02</p><h3>Parameters</h3>
+        <p>Sizes, ratings, flows, loads, materials and classification codes carried on the element
+        itself rather than in a document beside it.</p></article>
+      <article class="card"><p class="card__k">03</p><h3>Systems</h3>
+        <p>Which elements belong to which network, and how the network is bounded. This is what makes
+        "check the chilled water system" a resolvable instruction.</p></article>
+      <article class="card"><p class="card__k">04</p><h3>Equipment</h3>
+        <p>Plant, terminals and devices with their performance data attached, so a schedule and a
+        model cannot disagree.</p></article>
+      <article class="card"><p class="card__k">05</p><h3>Relationships</h3>
+        <p>Connectivity, hosting and containment. The structure that lets an analysis follow a run
+        from source to terminal rather than treating it as loose pipes.</p></article>
+      <article class="card"><p class="card__k">06</p><h3>Quantities</h3>
+        <p>Measurable from geometry and parameters, with the measurement rule visible for each
+        line.</p></article>
+      <article class="card"><p class="card__k">07</p><h3>Specifications</h3>
+        <p>What the element must be, alongside what it currently is. The gap between the two is
+        exactly what a compliance check reads.</p></article>
+      <article class="card"><p class="card__k">08</p><h3>Spatial information</h3>
+        <p>Rooms, zones, voids and clearances. Most coordination failures are spatial rather than
+        geometric — the parts do not collide, they just cannot be installed or maintained.</p></article>
+      <article class="card"><p class="card__k">09</p><h3>Design intent</h3>
+        <p>The criteria the design was meant to satisfy, held against the model so drift is
+        detectable rather than discovered on site.</p></article>
+      <article class="card"><p class="card__k">10</p><h3>Status and provenance</h3>
+        <p>Revision, suitability code, author and issue state. Without this the other nine cannot be
+        trusted at any particular moment.</p></article>
     </div>
   </div>
 </section>
 
-<section class="section section--raise" id="methodology">
+<section class="section">
   <div class="shell">
-    <header class="sec-head">
-      <p class="eyebrow">Working artefacts</p>
-      <h2 class="sec-title">The documents that govern an appointment</h2>
-      <p class="sec-lede">These are the instruments that make information delivery auditable. They
-      are agreed before authoring begins — and they are also what an automated check is checking
-      against.</p>
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">The precondition</p>
+      <h2 class="sec-title">Information-first modelling, and why it cannot be added later</h2>
+      <p class="sec-lede">Two models can look identical in a viewer and be completely different
+      assets. This is the least marketable thing BIMRACE does and the reason the rest works.</p>
     </header>
     <div class="spec">
-      <div class="spec__row"><div class="spec__k">EIR<b>Exchange Information Requirements</b></div>
-        <div class="spec__v">What the appointing party needs, when, in what format and to what level
-        of information need. Everything downstream is measured against this.</div></div>
-      <div class="spec__row"><div class="spec__k">BEP<b>BIM Execution Plan</b></div>
-        <div class="spec__v">How the delivery team will meet those requirements — model structure,
-        federation strategy, naming, coordinates, software and responsibilities.</div></div>
-      <div class="spec__row"><div class="spec__k">MIDP / TIDP<b>Information delivery plans</b></div>
-        <div class="spec__v">The master and task-level schedules that say who issues which
-        container, at which milestone, in which state.</div></div>
-      <div class="spec__row"><div class="spec__k">CDE<b>Common Data Environment</b></div>
-        <div class="spec__v">The single source for project information, with status codes controlling
-        whether a container is work in progress, shared, published or archived.</div></div>
-      <div class="spec__row"><div class="spec__k">LOIN<b>Level of Information Need</b></div>
-        <div class="spec__v">Defines what "complete" means for an object at a given milestone —
-        geometry, alphanumeric data and documentation. It is the successor to inconsistent LOD usage
-        and removes most of the ambiguity that caused. It is also what turns a completeness check
-        into a factual test rather than an opinion.</div></div>
+      <div class="spec__row"><div class="spec__k">Practice<b>Parameters populated during authoring</b><span class="b b--live">Live</span></div>
+        <div class="spec__v">Data is entered as the element is placed, not swept up in a
+        pre-handover exercise where 4,000 elements get a plausible value in an afternoon. Retro-fitted
+        data is unreliable data, and automated checking over unreliable data is worse than no
+        checking because it is confident.</div></div>
+      <div class="spec__row"><div class="spec__k">Practice<b>Naming and classification as a rule set</b><span class="b b--live">Live</span></div>
+        <div class="spec__v">Conventions defined before authoring starts and enforced by routine
+        rather than by review. A machine can only group and query what is named consistently.</div></div>
+      <div class="spec__row"><div class="spec__k">Practice<b>Systems modelled as systems</b><span class="b b--live">Live</span></div>
+        <div class="spec__v">Connected networks with real system assignment, not disconnected
+        geometry that happens to line up. Without this, no analysis can follow an index run or size
+        a branch against its upstream.</div></div>
+      <div class="spec__row"><div class="spec__k">Practice<b>Model health maintained continuously</b><span class="b b--live">Live</span></div>
+        <div class="spec__v">Warnings, unplaced and duplicated elements, worksets, links and shared
+        coordinates checked as an ongoing routine. A model that has degraded quietly for six months
+        cannot be analysed reliably.</div></div>
+      <div class="spec__row"><div class="spec__k">Practice<b>Level of information need agreed first</b><span class="b b--live">Live</span></div>
+        <div class="spec__v">What "complete" means for an object at a given milestone, defined
+        before authoring. This is what makes a completeness check a factual test rather than an
+        opinion.</div></div>
+    </div>
+    <div class="note" style="max-width:none">
+      <p><strong>The uncomfortable version.</strong> If a model was not authored this way, no
+      intelligence layer will rescue it. The honest options are to remodel, to accept a narrower set
+      of checks that geometry alone supports, or to fix the data as a defined piece of work with its
+      own scope. We will tell you which of those applies at enquiry stage rather than after
+      appointment.</p>
     </div>
   </div>
 </section>
 
-<section class="section" id="quality">
+<section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Quality assurance</p>
-      <h2 class="sec-title">What gets checked before anything is issued</h2>
-      <p class="sec-lede">Six categories, run as rule sets rather than as a person opening views one
-      at a time. The routines are live; the reasoning layer that clusters failures by root cause is
-      in development.</p>
+      <p class="eyebrow">Data governance</p>
+      <h2 class="sec-title">Model integrity, and what happens to your data</h2>
     </header>
     <div class="g3">
-      <article class="card"><p class="card__k">01</p><h3>Model health <span class="b b--live">Live</span></h3>
-        <p>File size and performance, warnings, unplaced and duplicated elements, worksets, links and
-        shared coordinate integrity.</p></article>
-      <article class="card"><p class="card__k">02</p><h3>Standards compliance <span class="b b--live">Live</span></h3>
-        <p>Naming, classification, view and sheet organisation, parameter completeness against the
-        agreed level of information need.</p></article>
-      <article class="card"><p class="card__k">03</p><h3>Geometric accuracy <span class="b b--live">Live</span></h3>
-        <p>Origin and orientation, level and grid alignment, discipline model alignment, tolerance
-        against the coordination datum.</p></article>
-      <article class="card"><p class="card__k">04</p><h3>Data completeness <span class="b b--live">Live</span></h3>
-        <p>Required parameters populated, schedules reconciling, exported data validating against the
-        exchange requirement.</p></article>
-      <article class="card"><p class="card__k">05</p><h3>Coordination status <span class="b b--live">Live</span></h3>
-        <p>Open clashes reviewed, resolutions re-tested, decisions recorded against a tracked issue
-        list with an owner.</p></article>
-      <article class="card"><p class="card__k">06</p><h3>Issue readiness <span class="b b--live">Live</span></h3>
-        <p>Correct status code and revision, correct formats, deliverable list reconciled against the
-        delivery plan before upload.</p></article>
-    </div>
-  </div>
-</section>
-
-<section class="section section--raise" id="methodology-flow">
-  <div class="shell">
-    <header class="sec-head">
-      <p class="eyebrow">Delivery methodology</p>
-      <h2 class="sec-title">A defined route from requirement to deliverable</h2>
-      <p class="sec-lede">Requirements are agreed before modelling starts, and every deliverable is
-      checked against them before it is issued.</p>
-    </header>
-    <div class="pipe">
-      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 01</p><h4>Define</h4>
-        <p>Confirm information requirements, scope, disciplines and level of information need.</p></div>
-      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 02</p><h4>Plan</h4>
-        <p>Execution plan, model structure, naming, shared coordinates and delivery programme.</p></div>
-      <div class="pipe__s"><p class="pipe__n">STAGE 03</p><h4>Model</h4>
-        <p>Discipline authoring to the agreed standard, with data populated as the model is built.</p></div>
-      <div class="pipe__s"><p class="pipe__n">STAGE 04</p><h4>Coordinate</h4>
-        <p>Federate, resolve clashes and record decisions against a tracked issue list.</p></div>
-      <div class="pipe__s pipe__s--ai"><p class="pipe__n">STAGE 05</p><h4>Validate</h4>
-        <p>Automated rule sets plus engineering review, against the plan, before anything is
-        issued.</p></div>
-      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 06</p><h4>Deliver</h4>
-        <p>Issue through the common data environment with the agreed formats and status codes.</p></div>
+      <article class="card"><p class="card__k">01</p><h3>Your model stays yours</h3>
+        <p>Client models are worked on inside the appointing party's environment where one exists.
+        We do not train anything on client model data, and we do not retain it beyond the
+        appointment without a written instruction.</p></article>
+      <article class="card"><p class="card__k">02</p><h3>Checks are traceable</h3>
+        <p>Every automated finding carries the element ID it came from and the rule that produced
+        it. A finding you cannot trace is a finding you cannot act on or dispute.</p></article>
+      <article class="card"><p class="card__k">03</p><h3>Rules are visible</h3>
+        <p>The rule sets applied to your project are stated, not hidden inside a tool. If a check
+        fires, you can see the definition that fired it and argue with it.</p></article>
+      <article class="card"><p class="card__k">04</p><h3>No silent writes</h3>
+        <p>No routine modifies a live model without an engineer accepting the change. Drafts are
+        produced in a reviewable state.</p></article>
+      <article class="card"><p class="card__k">05</p><h3>Status codes respected</h3>
+        <p>Suitability and revision state govern what may be used for what. Automation reads status;
+        it does not change it.</p></article>
+      <article class="card"><p class="card__k">06</p><h3>Confidentiality by default</h3>
+        <p>NDAs signed before drawings are shared, as a matter of course rather than on request.
+        Nothing is published as a case study without written release.</p></article>
     </div>
   </div>
 </section>

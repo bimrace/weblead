@@ -4,22 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Case study template | BIMRACE</title>
-<meta name="description" content="Internal case study template for publishing BIMRACE project evidence.">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="description" content="Internal template for BIMRACE case studies.">
+<meta name="theme-color" content="#07080B">
+<meta name="color-scheme" content="dark">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://bimrace.com/project-template.html">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BIMRACE">
 <meta property="og:title" content="Case study template | BIMRACE">
-<meta property="og:description" content="Internal case study template for publishing BIMRACE project evidence.">
+<meta property="og:description" content="Internal template for BIMRACE case studies.">
 <meta property="og:image" content="https://bimrace.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://bimrace.com/project-template.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Case study template | BIMRACE">
-<meta name="twitter:description" content="Internal case study template for publishing BIMRACE project evidence.">
+<meta name="twitter:description" content="Internal template for BIMRACE case studies.">
 
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -28,7 +29,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -43,26 +44,26 @@
   <div class="shell nav__in">
     <a class="brand" href="index.html" aria-label="BIMRACE — home">
       <svg class="brand__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
-      <span class="brand__sub">Engineering</span>
+      <span class="brand__sub">Engineering<br>Intelligence</span>
     </a>
     <nav aria-label="Primary">
       <ul class="nav__links" id="nav-links">
       <li class="has-menu" data-open="false">
-        <button type="button" aria-expanded="false" aria-controls="menu-cap">Capabilities<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-        <ul class="submenu" id="menu-cap">
-          <li><a href="capabilities.html"><span class="t">All capabilities</span><span class="d">Full service architecture and scope.</span></a></li>
-          <li><a href="capabilities.html#bim-modelling"><span class="t">BIM Modelling &amp; Documentation</span><span class="d">Architectural, structural and MEP models with drawing production.</span></a></li>
-          <li><a href="capabilities.html#mep-engineering"><span class="t">MEP Engineering</span><span class="d">Mechanical, electrical, plumbing and fire protection services.</span></a></li>
-          <li><a href="capabilities.html#coordination"><span class="t">BIM Coordination</span><span class="d">Federated models, clash resolution and coordination reporting.</span></a></li>
-          <li><a href="capabilities.html#digital"><span class="t">Digital Engineering</span><span class="d">Automation, parametric workflows and model data management.</span></a></li>
-          <li><a href="capabilities.html#construction"><span class="t">Construction Support</span><span class="d">Shop drawings, as-builts and quantity take-off.</span></a></li>
+        <button type="button" aria-expanded="false" aria-controls="menu-plat">Platform<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <ul class="submenu" id="menu-plat">
+          <li><a href="platform.html"><span class="t">Intelligence stack <span class="b b--live">Live</span></span><span class="d">The five layers, and what is running at each one.</span></a></li>
+          <li><a href="intelligence.html"><span class="t">BIM Intelligence <span class="b b--live">Live</span></span><span class="d">Treating the model as an engineering database, not a drawing.</span></a></li>
+          <li><a href="automation.html"><span class="t">AI &amp; Automation <span class="b b--dev">In development</span></span><span class="d">Agents, automated workflows and where the engineer signs.</span></a></li>
+          <li><a href="digital-twin.html"><span class="t">Digital Twin <span class="b b--road">Roadmap</span></span><span class="d">What a twin actually requires, and what we have not built.</span></a></li>
+          <li><a href="platform.html#status"><span class="t">Capability status</span><span class="d">Our four-state legend, published so you can audit it.</span></a></li>
         </ul>
       </li>
+      <li><a href="engineering.html">Engineering</a></li>
       <li><a href="industries.html">Industries</a></li>
       <li><a href="projects.html" aria-current="page">Projects</a></li>
-      <li><a href="technology.html">Technology</a></li>
+      <li><a href="technology.html">Standards</a></li>
       <li><a href="about.html">About</a></li>
-        <li class="nav__cta"><a href="contact.html">Start an enquiry</a></li>
+        <li class="nav__cta"><a href="contact.html">Talk to engineering</a></li>
       </ul>
     </nav>
     <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
@@ -72,95 +73,68 @@
 </header>
 
 <main id="main">
-<section class="phero">
-  <div class="shell phero__in">
-    <div>
-      <nav class="crumb" aria-label="Breadcrumb">
-        <a href="index.html">Home</a><span aria-hidden="true">/</span>
-        <a href="projects.html">Projects</a><span aria-hidden="true">/</span>
-        <span aria-current="page">Case study template</span>
-      </nav>
-      <h1>Case study template</h1>
-      <p class="phero__lede">Duplicate this page for each published project. Every section below must be completed or removed before publication.</p>
-    </div>
-    <div><dl class="phero__meta"><dt>Status</dt><dd>Template — not published work</dd></dl></div>
-  </div>
-</section>
+
 <section class="section section--flush">
   <div class="shell">
+    <h1 class="sec-title" style="margin-bottom:24px">Case study template</h1>
     <div class="note" style="max-width:none;margin-bottom:48px">
       <p><strong>This is the case study template.</strong> Duplicate this file, rename it
       (for example <code>project-riverside-hospital.html</code>), replace every highlighted
       placeholder, update the title and meta description in the <code>&lt;head&gt;</code>, link it
       from <code>projects.html</code>, and add the URL to <code>sitemap.xml</code>. Delete this
       note before publishing.</p>
+      <p><strong>Do not publish a number you cannot evidence.</strong> If a figure has no measured
+      baseline, delete the line rather than estimating. The measurement rules are published on the
+      projects page and this template exists to enforce them.</p>
     </div>
 
-    <div class="spec">
-      <div class="spec__row"><div class="spec__k">Section 01<b>Project overview</b></div>
-        <div class="spec__v">
-          <ul class="spec__list">
-            <li>Client type: <span class="fill">[client type]</span></li>
-            <li>Sector: <span class="fill">[sector]</span></li>
-            <li>Location: <span class="fill">[city, country]</span></li>
-            <li>Scale: <span class="fill">[GIA / storeys / value band]</span></li>
-            <li>Stage at appointment: <span class="fill">[stage]</span></li>
-            <li>Appointment type: <span class="fill">[package / team extension]</span></li>
-          </ul></div></div>
-      <div class="spec__row"><div class="spec__k">Section 02<b>Scope and disciplines</b></div>
-        <div class="spec__v"><span class="fill">[BIM scope, disciplines modelled, level of information
-        need, specific deliverables issued]</span></div></div>
-      <div class="spec__row"><div class="spec__k">Section 03<b>Challenge</b></div>
-        <div class="spec__v"><span class="fill">[the engineering or information problem this appointment
-        existed to solve — concrete, not generic]</span></div></div>
-      <div class="spec__row"><div class="spec__k">Section 04<b>Engineering approach</b></div>
-        <div class="spec__v"><span class="fill">[model structure, federation strategy, coordination
-        method, automation applied, and the reasoning behind each]</span></div></div>
-      <div class="spec__row"><div class="spec__k">Section 05<b>Coordination record</b></div>
-        <div class="spec__v"><span class="fill">[how clashes were tracked and closed, how decisions were
-        recorded, how the model was validated before issue]</span></div></div>
-      <div class="spec__row"><div class="spec__k">Section 06<b>Deliverables issued</b></div>
-        <div class="spec__v"><span class="fill">[models, drawings, schedules and data actually issued,
-        with formats and status codes]</span></div></div>
-      <div class="spec__row"><div class="spec__k">Section 07<b>Outcome</b></div>
-        <div class="spec__v"><span class="fill">[what changed as a result — quantify only where the
-        figure is measured and the client has approved publication]</span></div></div>
-      <div class="spec__row"><div class="spec__k">Section 08<b>Visual evidence</b></div>
-        <div class="spec__v"><span class="fill">[model views, coordination screenshots or drawing
-        extracts, redacted where commercially necessary]</span></div></div>
-    </div>
+    <article class="case">
+      <div class="case__h">
+        <div>
+          <p class="case__k"><span class="fill">Sector</span> · <span class="fill">Scale</span> ·
+          <span class="fill">Stage</span></p>
+          <h3><span class="fill">One sentence stating the engineering problem, not the building name</span></h3>
+        </div>
+        <span class="b b--live">Client released</span>
+      </div>
+      <div class="case__b">
+        <div class="case__c"><h4>01 Problem</h4>
+          <p><span class="fill">What was slow, repetitive, unreliable or unresolvable at this
+          project's scale. In the client's terms.</span></p></div>
+        <div class="case__c"><h4>02 BIM data</h4>
+          <ul><li><span class="fill">Element count</span></li>
+          <li><span class="fill">Disciplines and systems</span></li>
+          <li><span class="fill">Level of information need</span></li>
+          <li><span class="fill">Exchange formats</span></li></ul></div>
+        <div class="case__c"><h4>03 Intelligence</h4>
+          <ul><li><span class="fill">What was read from the model</span></li>
+          <li><span class="fill">Which rules were applied</span></li>
+          <li><span class="fill">What the analysis found</span></li>
+          <li><span class="fill">What it could not determine</span></li></ul></div>
+        <div class="case__c"><h4>04 Automation</h4>
+          <ul><li><span class="fill">Steps automated</span></li>
+          <li><span class="fill">Steps kept manual, and why</span></li>
+          <li><span class="fill">Engineer review point</span></li>
+          <li><span class="fill">False-positive rate</span></li></ul></div>
+        <div class="case__c case__c--impact"><h4>05 Impact</h4>
+          <p><span class="fill">Measured against a stated baseline, with the method named. Delete
+          this block entirely if no figure can be evidenced.</span></p></div>
+      </div>
+      <div class="case__f"><span class="fill">What did not work, what was abandoned, what had to be
+      rewritten.</span></div>
+    </article>
   </div>
 </section>
 
 </main>
-
-<section class="cta">
-  <div class="shell cta__in">
-    <div>
-      <p class="eyebrow">Project enquiry</p>
-      <h2>Send us the drawings. We will tell you what it takes.</h2>
-      <p>Share a scope, a drawing set or an information requirement. You will get a
-      considered response on approach, disciplines, deliverables and timeline — not a
-      generic brochure.</p>
-      <div class="cta__actions">
-        <a class="btn btn--invert" href="contact.html">Start an enquiry</a>
-        <a class="btn btn--invert-ghost" href="capabilities.html">Review capabilities</a>
-      </div>
-    </div>
-    <dl class="cta__side">
-      <dt>Email</dt><dd><a href="mailto:info@bimrace.com">info@bimrace.com</a></dd>
-      <dt>Telephone</dt><dd><a href="tel:+917507958364">+91 75079 58364</a></dd>
-      <dt>Enquiry response</dt><dd style="font-family:var(--sans);font-size:14.5px">Within two working days</dd>
-    </dl>
-  </div>
-</section>
 
 <footer class="foot">
   <div class="shell">
     <div class="foot__top">
       <div class="foot__brand">
         <svg class="foot__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
-        <p class="foot__tagline">BIM, MEP and digital engineering delivery for complex building projects.</p>
+        <p class="foot__tagline">Engineering intelligence built around BIM — MEP engineering, model
+        data and automation for complex building projects.</p>
         <p class="foot__entity">BIMRACE PVT LTD</p>
         <p class="foot__contact">
           Somnath Baste, Founder<br>
@@ -169,37 +143,38 @@
         </p>
       </div>
       <div class="foot__cols">
-        <nav class="foot__col" aria-labelledby="f-cap"><h2 id="f-cap">Capabilities</h2><ul>
-          <li><a href="capabilities.html#bim-modelling">BIM Modelling</a></li>
-          <li><a href="capabilities.html#mep-engineering">MEP Engineering</a></li>
-          <li><a href="capabilities.html#coordination">BIM Coordination</a></li>
-          <li><a href="capabilities.html#digital">Digital Engineering</a></li>
-          <li><a href="capabilities.html#construction">Construction Support</a></li>
+        <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">Platform</h2><ul>
+          <li><a href="platform.html">Intelligence stack</a></li>
+          <li><a href="intelligence.html">BIM Intelligence</a></li>
+          <li><a href="automation.html">AI &amp; Automation</a></li>
+          <li><a href="digital-twin.html">Digital Twin</a></li>
+          <li><a href="platform.html#status">Capability status</a></li>
+        </ul></nav>
+        <nav class="foot__col" aria-labelledby="f-eng"><h2 id="f-eng">Engineering</h2><ul>
+          <li><a href="engineering.html#mep">MEP Engineering</a></li>
+          <li><a href="engineering.html#modelling">BIM Modelling</a></li>
+          <li><a href="engineering.html#coordination">Coordination</a></li>
+          <li><a href="engineering.html#automation">Design Automation</a></li>
+          <li><a href="engineering.html#construction">Construction Support</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-co"><h2 id="f-co">Company</h2><ul>
           <li><a href="about.html">About</a></li>
           <li><a href="industries.html">Industries</a></li>
           <li><a href="projects.html">Projects</a></li>
-          <li><a href="technology.html">Technology</a></li>
-        </ul></nav>
-        <nav class="foot__col" aria-labelledby="f-del"><h2 id="f-del">Delivery</h2><ul>
-          <li><a href="technology.html#standards">Standards</a></li>
-          <li><a href="technology.html#methodology">Methodology</a></li>
-          <li><a href="technology.html#quality">Quality assurance</a></li>
-          <li><a href="about.html#global">Global delivery</a></li>
+          <li><a href="technology.html">Standards &amp; QA</a></li>
+          <li><a href="contact.html">Contact</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-leg"><h2 id="f-leg">Legal</h2><ul>
           <li><a href="privacy.html">Privacy Policy</a></li>
           <li><a href="terms.html">Terms of Use</a></li>
           <li><a href="cookies.html">Cookie Policy</a></li>
-          <li><a href="contact.html">Contact</a></li>
         </ul></nav>
       </div>
     </div>
     <div class="foot__rule" aria-hidden="true"></div>
     <div class="foot__bottom">
       <p>© 2026 Bimrace Pvt Ltd. All rights reserved.</p>
-      <p class="foot__meta">Review · Automate · Coordinate · Engineer</p>
+      <p class="foot__meta">BIM data · AI intelligence · Automation · Engineering validation</p>
     </div>
   </div>
 </footer>

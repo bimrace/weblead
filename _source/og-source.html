@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BIMRACE OG card source</title>
+<!--
+  Source for og-image.png. Rendered headless at 1200x630 so the share card uses
+  the real design tokens and typeface rather than a hand-drawn approximation:
+    bash _source/make-og.sh
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  html,body{margin:0;padding:0;background:var(--void)}
+  .card{
+    position:relative;width:1200px;height:630px;overflow:hidden;
+    background:var(--void);display:flex;flex-direction:column;justify-content:space-between;
+    padding:64px 68px;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;
+    background-image:var(--grid-fine);background-size:60px 60px;
+    mask-image:radial-gradient(105% 85% at 22% 12%,#000 0%,transparent 72%);
+    -webkit-mask-image:radial-gradient(105% 85% at 22% 12%,#000 0%,transparent 72%);
+  }
+  .card::after{
+    content:"";position:absolute;top:-38%;right:-16%;width:74%;height:132%;
+    background:radial-gradient(closest-side,rgba(61,220,196,.16),transparent 70%);
+  }
+  .row{position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .mark{display:flex;align-items:center;gap:14px}
+  .mark svg{width:172px;height:auto;color:var(--text)}
+  .mark span{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--sig);padding-left:14px;border-left:1px solid var(--line-2);line-height:1.4}
+  h1{position:relative;font-size:74px;line-height:1.02;letter-spacing:-.038em;max-width:19ch}
+  h1 em{font-style:normal;color:var(--sig)}
+  .lede{position:relative;margin-top:22px;font-size:21px;color:var(--text-2);max-width:56ch;line-height:1.5}
+  .layers{position:relative;display:flex;gap:0;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+  .layers div{flex:1;background:var(--surface-1);padding:14px 18px;border-left:1px solid var(--line)}
+  .layers div:first-child{border-left:0}
+  .layers b{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--text-4);font-weight:400}
+  .layers span{display:block;margin-top:6px;font-size:15px;color:var(--text);font-weight:600}
+  .badges{display:flex;gap:10px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="row">
+    <div class="mark">
+      <svg viewBox="0 0 876 102" role="img" aria-label="BIMRACE">
+        <g fill="currentColor" transform="scale(0.3333333) translate(0,306) scale(0.25,-0.25)">
+          <path id="wmpath"/>
+        </g>
+      </svg>
+      <span>Engineering<br>Intelligence</span>
+    </div>
+    <div class="badges">
+      <span class="b b--live">Live</span>
+      <span class="b b--dev">In development</span>
+      <span class="b b--road">Roadmap</span>
+    </div>
+  </div>
+
+  <div>
+    <h1>Engineering Intelligence.<br>Built Around <em>BIM</em>.</h1>
+    <p class="lede">MEP engineering, model data, AI-assisted analysis and engineering
+    automation — with a named engineer accountable at the end of every workflow.</p>
+  </div>
+
+  <div class="layers">
+    <div><b>Layer 01</b><span>BIM data</span></div>
+    <div><b>Layer 02</b><span>Engineering rules</span></div>
+    <div><b>Layer 03</b><span>AI analysis</span></div>
+    <div><b>Layer 04</b><span>Automation</span></div>
+    <div><b>Layer 05</b><span>Engineering output</span></div>
+  </div>
+</div>
+<script>
+/* Pull the wordmark path out of logo.svg so the card cannot drift from the brand. */
+fetch('logo.svg').then(function (r) { return r.text(); }).then(function (t) {
+  var d = /<path d="(.*?)"/s.exec(t);
+  if (d) document.getElementById('wmpath').setAttribute('d', d[1]);
+  document.documentElement.setAttribute('data-ready', '1');
+});
+</script>
+</body>
+</html>

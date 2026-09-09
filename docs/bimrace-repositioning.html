@@ -1,0 +1,893 @@
+<title>BIMRACE Repositioning Dossier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ---------------------------------------------------------------------------
+   Laid out as a drawing sheet: a title block at the head, a numbered margin
+   rail down the left, and a single measured text column. Light is the printed
+   sheet; dark is the console the product actually runs in.
+   ------------------------------------------------------------------------- */
+:root{
+  --paper:#F6F7F9;
+  --sheet:#FFFFFF;
+  --sheet-2:#EEF1F5;
+  --ink:#0C1119;
+  --ink-2:#41505F;
+  --ink-3:#6B7A8A;
+  --ink-4:#93A0AE;
+  --rule:rgba(20,36,56,.13);
+  --rule-2:rgba(20,36,56,.24);
+  --sig:#0D8477;
+  --sig-soft:rgba(13,132,119,.10);
+  --elec:#8F6206;
+  --elec-soft:rgba(143,98,6,.10);
+  --plumb:#3450C4;
+  --plumb-soft:rgba(52,80,196,.10);
+  --risk:#B3261E;
+  --risk-soft:rgba(179,38,30,.09);
+  --shadow:0 1px 2px rgba(20,36,56,.05), 0 12px 32px -22px rgba(20,36,56,.35);
+
+  --sans:"IBM Plex Sans",ui-sans-serif,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --rail:118px;
+  --col:70ch;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#07080B;
+    --sheet:#0E1117;
+    --sheet-2:#151A23;
+    --ink:#E9EEF6;
+    --ink-2:#A2AEC1;
+    --ink-3:#7B8798;
+    --ink-4:#5A6577;
+    --rule:rgba(150,168,192,.14);
+    --rule-2:rgba(150,168,192,.26);
+    --sig:#3DDCC4;
+    --sig-soft:rgba(61,220,196,.12);
+    --elec:#F0B341;
+    --elec-soft:rgba(240,179,65,.11);
+    --plumb:#7B95FF;
+    --plumb-soft:rgba(123,149,255,.12);
+    --risk:#FF6259;
+    --risk-soft:rgba(255,98,89,.12);
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 40px -26px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#07080B;
+  --sheet:#0E1117;
+  --sheet-2:#151A23;
+  --ink:#E9EEF6;
+  --ink-2:#A2AEC1;
+  --ink-3:#7B8798;
+  --ink-4:#5A6577;
+  --rule:rgba(150,168,192,.14);
+  --rule-2:rgba(150,168,192,.26);
+  --sig:#3DDCC4;
+  --sig-soft:rgba(61,220,196,.12);
+  --elec:#F0B341;
+  --elec-soft:rgba(240,179,65,.11);
+  --plumb:#7B95FF;
+  --plumb-soft:rgba(123,149,255,.12);
+  --risk:#FF6259;
+  --risk-soft:rgba(255,98,89,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 40px -26px rgba(0,0,0,.9);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;line-height:1.16;text-wrap:balance;font-weight:600;letter-spacing:-.02em}
+p{margin:0}
+ul,ol{margin:0;padding:0}
+li{list-style:none}
+a{color:var(--sig);text-underline-offset:3px}
+strong{font-weight:600;color:var(--ink)}
+:focus-visible{outline:2px solid var(--sig);outline-offset:3px;border-radius:2px}
+
+.wrap{max-width:1140px;margin-inline:auto;padding:0 28px 96px}
+
+/* ---- title block ------------------------------------------------------- */
+.sheet-head{
+  margin-top:40px;border:1px solid var(--rule-2);background:var(--sheet);
+  box-shadow:var(--shadow);
+}
+.sheet-head__top{padding:34px 32px 30px;border-bottom:1px solid var(--rule)}
+.kicker{
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--sig);margin-bottom:16px;
+}
+.sheet-head h1{font-size:clamp(29px,4.2vw,46px);letter-spacing:-.032em;max-width:20ch}
+.sheet-head__lede{
+  margin-top:18px;max-width:66ch;color:var(--ink-2);font-size:17px;line-height:1.66;
+}
+.titleblock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule)}
+.titleblock > div{background:var(--sheet);padding:14px 18px 16px}
+.titleblock dt{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-4);
+}
+.titleblock dd{margin:5px 0 0;font-family:var(--mono);font-size:13px;color:var(--ink)}
+
+/* ---- sheet sections ---------------------------------------------------- */
+.sec{
+  display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:36px;
+  padding-top:56px;margin-top:56px;border-top:1px solid var(--rule);
+}
+.sec__rail{position:sticky;top:24px;align-self:start}
+.sec__no{
+  font-family:var(--serif);font-size:38px;font-weight:600;line-height:1;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.sec__tag{
+  margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-4);line-height:1.5;
+}
+.sec__body{min-width:0}
+.sec__body > * + *{margin-top:20px}
+.sec h2{font-size:clamp(22px,2.6vw,30px);max-width:24ch}
+.lede{color:var(--ink-2);font-size:17px;max-width:var(--col)}
+.sec__body p{max-width:var(--col);color:var(--ink-2)}
+.sec__body p.tight{max-width:var(--col)}
+h3{font-size:17px;margin-top:34px}
+h3 + p{margin-top:10px}
+h4{font-size:15px}
+
+/* ---- status + priority chips ------------------------------------------- */
+.chip{
+  display:inline-flex;align-items:center;gap:6px;vertical-align:middle;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;white-space:nowrap;line-height:1.6;
+}
+.chip::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.chip--live{color:var(--sig);background:var(--sig-soft);border:1px solid var(--sig)}
+.chip--dev{color:var(--elec);background:var(--elec-soft);border:1px dashed var(--elec)}
+.chip--road{color:var(--ink-3);border:1px solid var(--rule-2)}
+.chip--demo{color:var(--plumb);background:var(--plumb-soft);border:1px solid var(--plumb)}
+.p0{color:var(--risk);background:var(--risk-soft);border:1px solid var(--risk)}
+.p1{color:var(--elec);background:var(--elec-soft);border:1px solid var(--elec)}
+.p2{color:var(--plumb);background:var(--plumb-soft);border:1px solid var(--plumb)}
+.p3{color:var(--ink-3);border:1px solid var(--rule-2)}
+
+/* ---- score table ------------------------------------------------------- */
+.scores{border:1px solid var(--rule);background:var(--sheet);box-shadow:var(--shadow)}
+.scores__r{
+  display:grid;grid-template-columns:minmax(0,1.15fr) 54px minmax(120px,1.5fr) 54px 62px;
+  gap:16px;align-items:center;padding:11px 20px;border-top:1px solid var(--rule);
+}
+.scores__r:first-child{border-top:0}
+.scores__r--h{
+  border-top:0;background:var(--sheet-2);padding-block:10px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-4);
+}
+.scores__n{font-family:var(--sans);font-size:15px;color:var(--ink);font-weight:500}
+.scores__v{
+  font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink-3);
+}
+.scores__v--new{color:var(--ink);font-weight:500}
+.bar{position:relative;height:7px;background:var(--sheet-2);border-radius:1px;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;display:block;border-radius:1px}
+.bar .was{background:var(--rule-2)}
+.bar .now{background:var(--sig);opacity:.9}
+.bar .now--flat{background:var(--elec)}
+.delta{
+  font-family:var(--mono);font-size:12px;text-align:right;color:var(--sig);font-variant-numeric:tabular-nums;
+}
+.delta--flat{color:var(--elec)}
+
+/* ---- generic blocks ---------------------------------------------------- */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{
+  border:1px solid var(--rule);background:var(--sheet);padding:20px 22px 22px;
+}
+.card h4{margin-bottom:8px}
+.card p{font-size:14.5px;color:var(--ink-2);max-width:none}
+.card__k{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-4);margin-bottom:10px;
+}
+
+.rows{border-top:1px solid var(--rule)}
+.row{
+  display:grid;grid-template-columns:210px minmax(0,1fr);gap:26px;
+  padding:16px 0;border-bottom:1px solid var(--rule);align-items:start;
+}
+.row__k{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink)}
+.row__k small{
+  display:block;margin-top:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-4);
+}
+.row__v{font-size:14.6px;color:var(--ink-2)}
+.row__v em{font-style:normal;color:var(--ink);font-weight:500}
+
+.bullets li{
+  position:relative;padding-left:22px;font-size:15px;color:var(--ink-2);
+  max-width:var(--col);margin-top:9px;
+}
+.bullets li::before{
+  content:"";position:absolute;left:0;top:11px;width:9px;height:1px;background:var(--sig);
+}
+.bullets li:first-child{margin-top:0}
+.bullets strong{color:var(--ink)}
+
+.tree{
+  font-family:var(--mono);font-size:13px;line-height:1.95;color:var(--ink-2);
+  border:1px solid var(--rule);background:var(--sheet);padding:20px 22px;
+  overflow-x:auto;white-space:pre;
+}
+.tree b{color:var(--ink);font-weight:500}
+.tree .new{color:var(--sig)}
+.tree .gone{color:var(--risk)}
+.tree .same{color:var(--ink-4)}
+
+.callout{
+  border:1px solid var(--rule);border-left:3px solid var(--sig);background:var(--sheet);
+  padding:18px 22px;
+}
+.callout--warn{border-left-color:var(--elec)}
+.callout--risk{border-left-color:var(--risk)}
+.callout p{font-size:14.8px;max-width:none}
+.callout p + p{margin-top:11px}
+
+.steps{counter-reset:s}
+.steps li{
+  display:grid;grid-template-columns:30px minmax(0,1fr);gap:16px;
+  padding:14px 0;border-bottom:1px solid var(--rule);
+}
+.steps li::before{
+  counter-increment:s;content:counter(s,decimal-leading-zero);
+  font-family:var(--mono);font-size:11px;color:var(--ink-4);padding-top:3px;
+}
+.steps h4{font-size:15px}
+.steps p{margin-top:5px;font-size:14.4px;color:var(--ink-2);max-width:none}
+
+.tblwrap{overflow-x:auto;border:1px solid var(--rule);background:var(--sheet)}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{
+  text-align:left;padding:11px 18px;border-bottom:1px solid var(--rule);
+  font-size:14.2px;color:var(--ink-2);vertical-align:top;
+}
+th{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-4);background:var(--sheet-2);font-weight:400;white-space:nowrap;
+}
+td:first-child{color:var(--ink);font-weight:500}
+tr:last-child td{border-bottom:0}
+
+.foot{
+  margin-top:64px;padding-top:22px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
+  font-family:var(--mono);font-size:11px;color:var(--ink-4);
+}
+
+@media (max-width:900px){
+  .sec{grid-template-columns:1fr;gap:18px;padding-top:40px;margin-top:40px}
+  .sec__rail{position:static;display:flex;align-items:baseline;gap:14px}
+  .sec__no{font-size:26px}
+  .sec__tag{margin-top:0}
+  .grid2{grid-template-columns:1fr}
+  .titleblock{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .row{grid-template-columns:1fr;gap:8px}
+  .scores__r{grid-template-columns:minmax(0,1fr) 42px 46px;gap:10px}
+  .scores__r .bar{display:none}
+  .scores__r--h span:nth-child(3){display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="sheet-head">
+  <div class="sheet-head__top">
+    <p class="kicker">Repositioning dossier · Audit + rebuild</p>
+    <h1>From BIM consultancy to engineering intelligence</h1>
+    <p class="sheet-head__lede">The existing bimrace.com was an unusually honest, well-built
+    consultancy site whose single strategic weakness was that it buried its most differentiating
+    asset in a footnote. This dossier records what was audited, what was rebuilt, what was
+    deliberately <em>not</em> claimed, and what remains to be done.</p>
+  </div>
+  <dl class="titleblock">
+    <div><dt>Subject</dt><dd>bimrace.com</dd></div>
+    <div><dt>Positioning</dt><dd>Engineering Intelligence</dd></div>
+    <div><dt>Pages</dt><dd>11 public · 18 built</dd></div>
+    <div><dt>Status</dt><dd>Built, unpublished</dd></div>
+  </dl>
+</header>
+
+<!-- 01 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">01</p><p class="sec__tag">Scorecard</p></div>
+  <div class="sec__body">
+    <h2>Before and after, scored</h2>
+    <p class="lede">Self-assessment, so read it with the appropriate scepticism. The two scores that
+    barely moved are the honest ones: conversion and mobile were already competent, and neither can
+    be fixed by design.</p>
+
+    <div class="scores">
+      <div class="scores__r scores__r--h"><span>Dimension</span><span style="text-align:right">Was</span><span></span><span style="text-align:right">Now</span><span style="text-align:right">Shift</span></div>
+
+      <div class="scores__r"><span class="scores__n">Brand differentiation</span><span class="scores__v">4</span>
+        <span class="bar"><i class="was" style="width:40%"></i><i class="now" style="width:90%;left:40%"></i></span>
+        <span class="scores__v scores__v--new">9</span><span class="delta">+5</span></div>
+
+      <div class="scores__r"><span class="scores__n">Product thinking</span><span class="scores__v">2</span>
+        <span class="bar"><i class="was" style="width:20%"></i><i class="now" style="width:80%;left:20%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta">+6</span></div>
+
+      <div class="scores__r"><span class="scores__n">AI positioning</span><span class="scores__v">3</span>
+        <span class="bar"><i class="was" style="width:30%"></i><i class="now" style="width:80%;left:30%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta">+5</span></div>
+
+      <div class="scores__r"><span class="scores__n">Automation credibility</span><span class="scores__v">4</span>
+        <span class="bar"><i class="was" style="width:40%"></i><i class="now" style="width:80%;left:40%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta">+4</span></div>
+
+      <div class="scores__r"><span class="scores__n">Future readiness</span><span class="scores__v">3</span>
+        <span class="bar"><i class="was" style="width:30%"></i><i class="now" style="width:80%;left:30%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta">+5</span></div>
+
+      <div class="scores__r"><span class="scores__n">SEO</span><span class="scores__v">5</span>
+        <span class="bar"><i class="was" style="width:50%"></i><i class="now" style="width:80%;left:50%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta">+3</span></div>
+
+      <div class="scores__r"><span class="scores__n">Visual quality</span><span class="scores__v">6</span>
+        <span class="bar"><i class="was" style="width:60%"></i><i class="now" style="width:90%;left:60%"></i></span>
+        <span class="scores__v scores__v--new">9</span><span class="delta">+3</span></div>
+
+      <div class="scores__r"><span class="scores__n">Engineering credibility</span><span class="scores__v">8</span>
+        <span class="bar"><i class="was" style="width:80%"></i><i class="now" style="width:90%;left:80%"></i></span>
+        <span class="scores__v scores__v--new">9</span><span class="delta">+1</span></div>
+
+      <div class="scores__r"><span class="scores__n">BIM credibility</span><span class="scores__v">8</span>
+        <span class="bar"><i class="was" style="width:80%"></i><i class="now" style="width:90%;left:80%"></i></span>
+        <span class="scores__v scores__v--new">9</span><span class="delta">+1</span></div>
+
+      <div class="scores__r"><span class="scores__n">Technical quality</span><span class="scores__v">8</span>
+        <span class="bar"><i class="was" style="width:80%"></i><i class="now" style="width:90%;left:80%"></i></span>
+        <span class="scores__v scores__v--new">9</span><span class="delta">+1</span></div>
+
+      <div class="scores__r"><span class="scores__n">UX</span><span class="scores__v">7</span>
+        <span class="bar"><i class="was" style="width:70%"></i><i class="now" style="width:80%;left:70%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta">+1</span></div>
+
+      <div class="scores__r"><span class="scores__n">Mobile experience</span><span class="scores__v">7</span>
+        <span class="bar"><i class="was" style="width:70%"></i><i class="now now--flat" style="width:80%;left:70%"></i></span>
+        <span class="scores__v scores__v--new">8</span><span class="delta delta--flat">+1</span></div>
+
+      <div class="scores__r"><span class="scores__n">Conversion</span><span class="scores__v">5</span>
+        <span class="bar"><i class="was" style="width:50%"></i><i class="now now--flat" style="width:70%;left:50%"></i></span>
+        <span class="scores__v scores__v--new">7</span><span class="delta delta--flat">+2</span></div>
+    </div>
+
+    <div class="callout callout--warn">
+      <p><strong>Why conversion stops at 7.</strong> The site now converts a curious visitor into a
+      technical conversation far better than it did — the CTA is "Talk to engineering", the contact
+      page offers a screen-share of real tooling instead of a proposal, and the enquiry form still
+      feeds the Supabase CRM with routing and scoring intact. What it still cannot do is answer
+      "who else have you done this for?" No design solves that. One released case study will move
+      this number more than another redesign would.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">02</p><p class="sec__tag">Audit</p></div>
+  <div class="sec__body">
+    <h2>What the old site got right, and its one structural flaw</h2>
+    <p class="lede">The starting point was not a bad website. It was a good consultancy website
+    describing a company that had quietly stopped being a consultancy.</p>
+
+    <h3>What worked and was kept</h3>
+    <ul class="bullets">
+      <li><strong>Radical honesty.</strong> An explicit "What we will not claim" section — no client
+      logos, no project counts, no invented certifications. This is rarer than it should be and it
+      became the spine of the whole rebuild rather than a section on the About page.</li>
+      <li><strong>Genuine engineering specificity.</strong> Copy that named EIR, BEP, MIDP, LOIN and
+      suitability codes. Buyers in this sector read that as competence within seconds.</li>
+      <li><strong>The technical build.</strong> A Python generator with one source of truth for
+      chrome, zero framework, zero runtime dependencies, hand-drawn isometric SVG, working
+      reduced-motion and focus states. The rebuild extended this rather than replacing it.</li>
+      <li><strong>The lead engine behind it.</strong> Supabase with RLS, trigger-driven scoring and
+      routing as data rather than code, and a 33-assertion security test suite. Untouched.</li>
+    </ul>
+
+    <h3>What was wrong</h3>
+    <div class="grid2">
+      <div class="card"><p class="card__k">Structural</p>
+        <h4>The differentiator was pillar 06</h4>
+        <p>"Engineering Intelligence" appeared as the sixth of six capability cards, below
+        "Construction Support". The single thing separating BIMRACE from a thousand MEP BIM bureaus
+        was positioned as an afterthought.</p></div>
+      <div class="card"><p class="card__k">Category</p>
+        <h4>Competing in a commodity race</h4>
+        <p>"Digital engineering for complex building projects" places the firm in a category priced
+        per hour against offshore drafting. Nothing in the headline suggested a different kind of
+        company.</p></div>
+      <div class="card"><p class="card__k">Evidence</p>
+        <h4>Automation asserted, never shown</h4>
+        <p>"Automation applied where it pays" was a claim with no demonstration anywhere on the
+        site. A visitor had no way to distinguish it from every competitor's identical sentence.</p></div>
+      <div class="card"><p class="card__k">Visual</p>
+        <h4>A light corporate surface</h4>
+        <p>White ground, blue-grey palette, ISO-19650 language. Correct for a consultancy, wrong for
+        a company claiming to build engineering software. The medium contradicted the message.</p></div>
+      <div class="card"><p class="card__k">Information</p>
+        <h4>Binary honesty</h4>
+        <p>Capabilities were either stated flatly or hedged in a paragraph of prose. There was no
+        mechanism letting a reader see, line by line, what is real today versus what is being
+        built.</p></div>
+      <div class="card"><p class="card__k">Conversion</p>
+        <h4>One generic path</h4>
+        <p>"Start an enquiry" served every visitor identically, whether they wanted a drafting quote
+        or wanted to know whether the AI claims were real.</p></div>
+    </div>
+
+    <h3>Removed, rewritten, redesigned</h3>
+    <div class="rows">
+      <div class="row"><div class="row__k">Removed<small>Cut entirely</small></div>
+        <div class="row__v">The generic "Five delivery capabilities" pillar grid, the abstract
+        "Information is not the same as intelligence" hub-and-spoke section on the homepage, and the
+        standalone light-theme design system.</div></div>
+      <div class="row"><div class="row__k">Rewritten<small>Same page, new argument</small></div>
+        <div class="row__v">Every page. <em>capabilities.html</em> became <em>engineering.html</em>
+        with a three-category service matrix. <em>technology.html</em> became Standards &amp; QA and
+        is now framed as the discipline the intelligence layer sits on. <em>projects.html</em> gained
+        published measurement rules it commits to in advance.</div></div>
+      <div class="row"><div class="row__k">Redesigned<small>New structure</small></div>
+        <div class="row__v">The homepage, from six sections to thirteen. The hero, from a static
+        model to an analysis pass with a flagged clearance failure. The whole surface, from light
+        corporate to a dark instrument panel.</div></div>
+      <div class="row"><div class="row__k">Added<small>New pages</small></div>
+        <div class="row__v"><em>platform.html</em>, <em>intelligence.html</em>,
+        <em>automation.html</em>, <em>digital-twin.html</em>.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">03</p><p class="sec__tag">Positioning</p></div>
+  <div class="sec__body">
+    <h2>Engineering Intelligence. Built Around BIM.</h2>
+    <p class="lede">The category is <strong>AI Engineering Intelligence</strong>. The proof that it
+    is not a rebranding exercise is the four-layer thesis, which the site repeats in the hero, the
+    footer and the structure of every page.</p>
+
+    <div class="rows">
+      <div class="row"><div class="row__k">Layer 01<small>Data</small></div>
+        <div class="row__v"><em>BIM is the engineering data layer.</em> Structured engineering
+        context a machine can read — not a 3D picture with data attached.</div></div>
+      <div class="row"><div class="row__k">Layer 02<small>Intelligence</small></div>
+        <div class="row__v"><em>AI is the intelligence layer.</em> Reasoning over that context
+        against engineering rules written by people who have sized the systems they govern.</div></div>
+      <div class="row"><div class="row__k">Layer 03<small>Execution</small></div>
+        <div class="row__v"><em>Automation is the execution layer.</em> Running what has been
+        validated — drafting, never committing.</div></div>
+      <div class="row"><div class="row__k">Layer 04<small>Validation</small></div>
+        <div class="row__v"><em>Engineering expertise is the validation layer.</em> A named person
+        who is accountable, which is the component we have no intention of automating.</div></div>
+    </div>
+
+    <h3>The counter-positioning that makes it defensible</h3>
+    <p>Two competitor archetypes are named directly in the homepage copy: the BIM bureau that sells
+    layer one, and the AI vendor that sells layers two and three "and has never sized a duct". The
+    claim is not that BIMRACE is better at either. It is that only an engineering practice can be
+    accountable for all four — which is a claim a bureau and a software vendor structurally cannot
+    make.</p>
+
+    <div class="callout">
+      <p><strong>The honesty system is the differentiator, not a disclaimer.</strong> Four states —
+      <span class="chip chip--live">Live</span> <span class="chip chip--dev">In development</span>
+      <span class="chip chip--road">Roadmap</span> <span class="chip chip--demo">Demo data</span> —
+      appear beside individual line items, not sections, because a section-level badge is how vague
+      claims hide. The legend is published at <em>platform.html#status</em> with an explicit
+      invitation to audit the site against it.</p>
+      <p>This costs some early enthusiasm and buys the technical conversation, which is where this
+      business is actually won. It also inoculates against the obvious objection to any AEC company
+      using the word AI in 2026.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">04</p><p class="sec__tag">Sitemap</p></div>
+  <div class="sec__body">
+    <h2>New information architecture</h2>
+    <p class="lede">Six top-level items plus a conversion CTA. The brief's nine-item navigation was
+    consolidated: "Solutions" is served by Industries, and "Insights" was deliberately not built —
+    an empty blog is worse than no blog.</p>
+
+<div class="tree">/                        <b>index</b>            <span class="same">Engineering Intelligence. Built Around BIM.</span>
+│
+├── <b>Platform</b>  ▾
+│   ├── platform.html    <span class="new">NEW</span>   The five-layer stack, architecture, maturity model
+│   ├── intelligence.html<span class="new">NEW</span>   BIM Intelligence — the model as a database
+│   ├── automation.html  <span class="new">NEW</span>   AI &amp; Automation — agents, workflows, limits
+│   ├── digital-twin.html<span class="new">NEW</span>   What a twin actually requires
+│   └── platform.html#status   Capability status legend
+│
+├── <b>Engineering</b>       engineering.html   <span class="same">(was capabilities.html · 301)</span>
+├── <b>Industries</b>        industries.html    <span class="same">restyled, automation note per sector</span>
+├── <b>Projects</b>          projects.html      <span class="same">rewritten around measurement rules</span>
+├── <b>Standards</b>         technology.html    <span class="same">retitled Standards &amp; QA</span>
+├── <b>About</b>             about.html         <span class="same">rewritten</span>
+└── <b>Talk to engineering</b>  contact.html    <span class="same">CTA — CRM contract preserved</span>
+
+    <span class="same">unlisted:</span> thank-you · 404 · project-template · privacy · terms · cookies
+    <span class="gone">retired:</span>  capabilities.html → redirect stub + netlify 301</div>
+
+    <p>Primary CTA is <em>Explore BIM Intelligence</em> (hero, → platform). Secondary and persistent
+    nav CTA is <em>Talk to engineering</em>. "Learn more", "Discover" and "Click here" appear
+    nowhere on the site.</p>
+  </div>
+</section>
+
+<!-- 05 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">05</p><p class="sec__tag">Homepage</p></div>
+  <div class="sec__body">
+    <h2>Thirteen sections, each doing one job</h2>
+    <p class="lede">The sequence is an argument: establish the category, name the pain, present the
+    model, prove each layer, then show the thing working.</p>
+
+    <ol class="steps">
+      <li><div><h4>Hero — the thesis</h4><p>Headline, the four-layer block, and a live analysis pass
+        over an isometric MEP model with one clearance failure flagged for review. Readouts are
+        labelled as illustrative in two places.</p></div></li>
+      <li><div><h4>The problem</h4><p>Four named failure modes: the model knows but cannot answer;
+        rules live outside the thing they govern; checking scales with headcount; decisions leave no
+        readable trace.</p></div></li>
+      <li><div><h4>The approach + status legend</h4><p>The four layers restated, with the capability
+        legend placed early rather than buried — the trust anchor for everything below.</p></div></li>
+      <li><div><h4>Intelligence stack</h4><p>Five instrument rows with per-layer status and
+        discipline-coloured tag chips, joined by a repeated connector reading "DATA FLOWS UP ·
+        ACCOUNTABILITY FLOWS DOWN".</p></div></li>
+      <li><div><h4>AI engineering agents</h4><p>The five-beat reasoning chain, then eight agents with
+        Input / Reasoning / Output stated for each. Four in development, four roadmap.</p></div></li>
+      <li><div><h4>What we automate</h4><p>Six workflow cards with the step sequence and the actual
+        output artefact. Five are live.</p></div></li>
+      <li><div><h4>BIM intelligence</h4><p>"Your BIM model is an engineering database", with the
+        data-layer diagram and the uncomfortable corollary that a badly authored model cannot be
+        rescued by an intelligence layer.</p></div></li>
+      <li><div><h4>Engineering</h4><p>Three service categories — Engineering, BIM, Intelligence —
+        with a status badge on every one of the 24 line items.</p></div></li>
+      <li><div><h4>Digital twin</h4><p>Composition diagram, roadmap-flagged, opening with "A 3D
+        model on a web page is not a digital twin."</p></div></li>
+      <li><div><h4>Case studies</h4><p>The five-part anatomy published in advance, with the
+        commitment that failures appear alongside successes.</p></div></li>
+      <li><div><h4>Engineering console</h4><p>Three scripted scenarios with a streaming analysis log.
+        Every run ends by holding for engineering review.</p></div></li>
+      <li><div><h4>Why BIMRACE</h4><p>Six claims that can be tested at enquiry stage, each
+        badged.</p></div></li>
+      <li><div><h4>Final CTA</h4><p>"Build the next generation of engineering workflows."</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 06 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">06</p><p class="sec__tag">Content</p></div>
+  <div class="sec__body">
+    <h2>Copy rules, and the sentences that carry the strategy</h2>
+    <p class="lede">The governing rule: <strong>a claim that names artefacts can be checked; a claim
+    that names a feeling cannot.</strong> Every workflow description on the site names a system
+    assignment, a parameter, a rule or an element ID.</p>
+
+    <h3>Banned constructions</h3>
+    <ul class="bullets">
+      <li>"AI-powered", "AI-driven", "powered by AI" as standalone modifiers. AI is demonstrated
+      through architecture, workflows and interfaces, not adjectives.</li>
+      <li>"Cutting-edge", "innovative", "world-class", "seamless", "revolutionise".</li>
+      <li>Any percentage, multiplier or time saving without a named baseline and method.</li>
+      <li>"Learn more", "Discover", "Click here".</li>
+    </ul>
+
+    <h3>Lines doing structural work</h3>
+    <div class="grid2">
+      <div class="card"><p class="card__k">Hero</p>
+        <p>"AI-assisted engineering workflows that connect BIM models, MEP design, calculations,
+        engineering rules and project data into one system — with a named engineer accountable at
+        the end of every one of them."</p></div>
+      <div class="card"><p class="card__k">Agents</p>
+        <p>"Specialised workflows, not a chatbot with a hard hat." Followed by: "None of these run
+        unattended. Where an agent exists it reads, tests and drafts."</p></div>
+      <div class="card"><p class="card__k">Clash</p>
+        <p>"Clash detection produces a number. Clash intelligence produces a decision — what actually
+        conflicts, why, and whose model has to move."</p></div>
+      <div class="card"><p class="card__k">Twin</p>
+        <p>"What we will not do is sell you a model viewer and call it a twin."</p></div>
+      <div class="card"><p class="card__k">Projects</p>
+        <p>"A case study library with no failures in it is a brochure."</p></div>
+      <div class="card"><p class="card__k">Accountability</p>
+        <p>"AI accelerates engineering. Engineers remain accountable for engineering decisions." Not
+        a disclaimer — a structural constraint that shapes what gets built.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">07</p><p class="sec__tag">Agents</p></div>
+  <div class="sec__body">
+    <h2>Eight agents, honestly graded</h2>
+    <p class="lede">Each is a workflow with a named input, an explicit rule set, a reasoning step and
+    an output an engineer signs. Grading follows what the previous site already claimed — model
+    information extraction, rule-based checking and engineering analytics were stated as in
+    development; natural-language query as future.</p>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Agent</th><th>Status</th><th>Input</th><th>Output</th></tr></thead>
+        <tbody>
+          <tr><td>BIM Analyst</td><td><span class="chip chip--dev">Dev</span></td>
+            <td>Federated model, parameter schema</td><td>Structured model inventory with element IDs</td></tr>
+          <tr><td>Coordination</td><td><span class="chip chip--dev">Dev</span></td>
+            <td>Federated model, clearance and zoning rules</td><td>Issue list grouped by responsible discipline</td></tr>
+          <tr><td>QA / QC</td><td><span class="chip chip--dev">Dev</span></td>
+            <td>Model, project rule set, level of information need</td><td>QA report with an element ID per finding</td></tr>
+          <tr><td>Documentation</td><td><span class="chip chip--dev">Dev</span></td>
+            <td>Model, sheet standard, drawing register</td><td>Draft sheets and schedules for review</td></tr>
+          <tr><td>Quantity</td><td><span class="chip chip--dev">Dev</span></td>
+            <td>Model, classification system, measurement rules</td><td>Quantity export with traceable lines</td></tr>
+          <tr><td>MEP Engineering</td><td><span class="chip chip--road">Road</span></td>
+            <td>System parameters, design criteria</td><td>Calculation sheet reconciled to the model</td></tr>
+          <tr><td>Design Optimisation</td><td><span class="chip chip--road">Road</span></td>
+            <td>Design intent, constraints, criteria</td><td>Ranked options with reasoning shown</td></tr>
+          <tr><td>Project Intelligence</td><td><span class="chip chip--road">Road</span></td>
+            <td>Model history, issue tracker, delivery plan</td><td>Project signals with evidence attached</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Where automation stops — published as six "never" statements</h3>
+    <p>Writes to a live model · closes an issue · issues a deliverable · changes a status code ·
+    settles an engineering judgement · trains on a client's model. The page states the trade
+    explicitly: these constraints make the workflows slower than a fully autonomous system and make
+    the output defensible, "which is the only state in which an engineering deliverable has value".</p>
+  </div>
+</section>
+
+<!-- 08 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">08</p><p class="sec__tag">Workflows</p></div>
+  <div class="sec__body">
+    <h2>Automation workflows and the console demonstration</h2>
+    <p class="lede">Six workflows, five of them live. Each card names its step sequence and the
+    artefact that comes out, because "we automate QA" is unfalsifiable and "QA report with an element
+    ID against every finding" is not.</p>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Workflow</th><th>Status</th><th>Sequence</th><th>Artefact produced</th></tr></thead>
+        <tbody>
+          <tr><td>Model QA</td><td><span class="chip chip--live">Live</span></td>
+            <td>Parameter validation → naming → family audit → system integrity</td>
+            <td>QA report, failures clustered to root cause</td></tr>
+          <tr><td>Clash intelligence</td><td><span class="chip chip--live">Live</span></td>
+            <td>Detect → classify → prioritise → route</td>
+            <td>Issue list by cause and discipline</td></tr>
+          <tr><td>Engineering calculations</td><td><span class="chip chip--live">Live</span></td>
+            <td>Read → calculate → validate → report</td>
+            <td>Output reconciled to the as-modelled network</td></tr>
+          <tr><td>Documentation</td><td><span class="chip chip--live">Live</span></td>
+            <td>Model → extract → generate → review</td>
+            <td>Draft sheets and schedules</td></tr>
+          <tr><td>Quantity intelligence</td><td><span class="chip chip--live">Live</span></td>
+            <td>Measure → classify → reconcile → export</td>
+            <td>Traceable structured quantity export</td></tr>
+          <tr><td>Design automation</td><td><span class="chip chip--dev">Dev</span></td>
+            <td>Intent → rules → generate → validate</td>
+            <td>Generated content for engineering acceptance</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>The console</h3>
+    <p>Three scripted scenarios — fire protection coordination, chilled water system, model QA pass —
+    each with a metric panel and a streaming log colour-coded RUN / OK / WARN / RISK. The findings
+    are specific enough to be arguable ("CLR-014 — 42mm clearance to AHU-04 supply duct, 150mm
+    required"), which is the point.</p>
+    <div class="callout callout--risk">
+      <p><strong>Simulation is disclosed in four places.</strong> A <span class="chip chip--demo">Demo
+      data</span> badge in the panel bar, "SIMULATED SESSION — NO MODEL IS CONNECTED TO THIS PAGE"
+      and "FIGURES ARE FABRICATED FOR ILLUSTRATION" in the footer strip, and a caption below. Every
+      scenario's final log line is the system holding for engineering review — the design, stated as
+      such rather than as a limitation of the demo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 ------------------------------------------------------------------ -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">09</p><p class="sec__tag">Design</p></div>
+  <div class="sec__body">
+    <h2>Visual system and UX changes</h2>
+    <p class="lede">A dark instrument panel. The rule applied throughout: nothing is decorative that
+    could be informative.</p>
+
+    <div class="rows">
+      <div class="row"><div class="row__k">Ground<small>Surfaces</small></div>
+        <div class="row__v">#07080B void, four surface steps to #212936, hairlines at 13/22/36%
+        alpha. A blueprint grid appears as a masked background on the hero, page headers and CTA
+        only.</div></div>
+      <div class="row"><div class="row__k">Colour<small>Meaning, not decoration</small></div>
+        <div class="row__v">One signal teal <em>#3DDCC4</em> for live data and the primary action.
+        Four discipline hues carried from MEP coordination drawings — mechanical teal, electrical
+        amber <em>#F0B341</em>, plumbing indigo <em>#7B95FF</em>, fire protection violet
+        <em>#C88BF5</em> — plus risk red. Amber doubles as the human-in-the-loop colour: every human
+        stage in the pipeline diagram is amber.</div></div>
+      <div class="row"><div class="row__k">Type<small>Two faces</small></div>
+        <div class="row__v">IBM Plex Sans and IBM Plex Mono. Mono carries every label, readout,
+        status badge and log line — it signals instrument rather than brochure. Weights trimmed to
+        400/500/600, dropping two font files from the request.</div></div>
+      <div class="row"><div class="row__k">Motion<small>Explains a system</small></div>
+        <div class="row__v">A sweep is a model being read. A travelling dot is data on a named route.
+        A log line is a workflow step. Nothing moves for atmosphere, and everything stops under
+        <em>prefers-reduced-motion</em>.</div></div>
+      <div class="row"><div class="row__k">Rejected<small>Deliberately absent</small></div>
+        <div class="row__v">Stock construction photography, blue corporate gradients, robot and brain
+        graphics, glassmorphism, neon, particle fields, generic chatbot bubbles.</div></div>
+    </div>
+
+    <h3>UX changes that matter</h3>
+    <ul class="bullets">
+      <li>The status badge appears in the navigation dropdown itself, so the honesty system is
+      visible before a visitor commits to a click.</li>
+      <li>The hero's flagged clearance failure survives the mobile crop; only its leader line and
+      caption step aside, so the point of the drawing is never lost.</li>
+      <li>Stack layers respond to keyboard focus, not only hover.</li>
+      <li>The contact page offers a working session under NDA as an alternative to a proposal, and
+      states plainly that roadmap items cannot be demonstrated.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10 ----------------------------------------------------------------- -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">10</p><p class="sec__tag">Technical</p></div>
+  <div class="sec__body">
+    <h2>Architecture, performance, SEO</h2>
+    <p class="lede">Still zero frameworks, zero runtime dependencies and no build step at deploy
+    time. The Python generator remains the single source of truth; <em>site/</em> is its output.</p>
+
+    <div class="rows">
+      <div class="row"><div class="row__k">Payload<small>gzip, critical path</small></div>
+        <div class="row__v">≈38 KB total — 15 KB homepage HTML, 10.5 KB CSS, 9.8 KB site JS, 3.1 KB
+        lead capture. No third-party JavaScript. Both scripts deferred. Fonts preconnected with
+        <em>display=swap</em>.</div></div>
+      <div class="row"><div class="row__k">Verified<small>Automated checks run</small></div>
+        <div class="row__v">Tag nesting parsed on all 18 pages; every internal link and fragment
+        anchor resolved; one <em>h1</em> per page; every image has alt text; every
+        <em>role="img"</em> SVG has an aria-label; horizontal overflow measured at 477, 781, 1061 and
+        1401 CSS pixels — <em>scrollWidth</em> equals viewport width on every page at every
+        width.</div></div>
+      <div class="row"><div class="row__k">Structured data<small>schema.org</small></div>
+        <div class="row__v">Organization with an expanded <em>knowsAbout</em>, an ItemList of five
+        services, a new FAQPage answering the four questions a sceptical buyer asks, and
+        BreadcrumbList on every interior page.</div></div>
+      <div class="row"><div class="row__k">Redirects<small>Needs one manual step</small></div>
+        <div class="row__v">capabilities.html ships as a noindex stub with a canonical, meta refresh
+        and JS replace, plus 301 rules in netlify.toml. <em>Amplify does not read netlify.toml</em> —
+        an equivalent rule must be added in the console. See P0 below.</div></div>
+      <div class="row"><div class="row__k">Untouched<small>Deliberately</small></div>
+        <div class="row__v">The Supabase schema, RLS policies, scoring and routing engines, the
+        lead-intake Edge Function and the CRM console. The enquiry form's field names are the
+        contract with <em>crm.enquiry_submissions</em> and were restored byte-for-byte after the
+        redesign, with a comment in the generator saying so.</div></div>
+    </div>
+
+    <h3>SEO — competing for the emerging category</h3>
+    <p>Titles and descriptions were rewritten around AI BIM, BIM automation, Revit automation, AI MEP
+    engineering, engineering automation, BIM intelligence, AEC AI, BIM AI agents and digital twin
+    engineering — carried by pages that genuinely address each, rather than stuffed. The four new
+    pages are the substantive play: they target queries the old site had no page for. Sitemap
+    priorities were reweighted so platform, engineering and automation sit at 0.9.</p>
+  </div>
+</section>
+
+<!-- 11 ----------------------------------------------------------------- -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">11</p><p class="sec__tag">Register</p></div>
+  <div class="sec__body">
+    <h2>Current versus future capability</h2>
+    <p class="lede">Nothing in this register goes beyond what the previous website already claimed.
+    The rebuild changed the prominence and the labelling, not the substance.</p>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Capability</th><th>State</th><th>Evidence basis</th></tr></thead>
+        <tbody>
+          <tr><td>BIM modelling &amp; documentation</td><td><span class="chip chip--live">Live</span></td><td>Existing published capability</td></tr>
+          <tr><td>MEP engineering (M/E/P/FP)</td><td><span class="chip chip--live">Live</span></td><td>Existing published capability</td></tr>
+          <tr><td>BIM coordination &amp; clash resolution</td><td><span class="chip chip--live">Live</span></td><td>Existing published capability</td></tr>
+          <tr><td>Parametric &amp; scripted automation</td><td><span class="chip chip--live">Live</span></td><td>Dynamo, custom checking tools — previously listed</td></tr>
+          <tr><td>Automated model checking routines</td><td><span class="chip chip--live">Live</span></td><td>Previously listed under Digital Engineering</td></tr>
+          <tr><td>Quantity extraction &amp; data export</td><td><span class="chip chip--live">Live</span></td><td>Existing published capability</td></tr>
+          <tr><td>ISO 19650-aligned delivery</td><td><span class="chip chip--live">Live</span></td><td>Working method — certification explicitly not claimed</td></tr>
+          <tr><td>Model information extraction as structured data</td><td><span class="chip chip--dev">Dev</span></td><td>Stated as in development on the previous site</td></tr>
+          <tr><td>Rule-based checking engine</td><td><span class="chip chip--dev">Dev</span></td><td>Stated as in development on the previous site</td></tr>
+          <tr><td>Engineering analytics reporting</td><td><span class="chip chip--dev">Dev</span></td><td>Stated as in development on the previous site</td></tr>
+          <tr><td>Orchestration across rules and routines</td><td><span class="chip chip--dev">Dev</span></td><td>Partially built; a person sequences most of it</td></tr>
+          <tr><td>Natural-language model query</td><td><span class="chip chip--road">Road</span></td><td>Stated as future capability previously</td></tr>
+          <tr><td>Generative / design optimisation</td><td><span class="chip chip--road">Road</span></td><td>Not built</td></tr>
+          <tr><td>Digital twin (live data + analytics)</td><td><span class="chip chip--road">Road</span></td><td>Two of five inputs delivered today</td></tr>
+          <tr><td>Predictive engineering</td><td><span class="chip chip--road">Road</span></td><td>Not built</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--warn">
+      <p><strong>This register is now a commitment.</strong> The site invites readers to audit it and
+      says a claim that cannot be demonstrated at enquiry stage "is a defect and we want to hear
+      about it". Before publishing, confirm every <span class="chip chip--dev">Dev</span> row can
+      actually be screen-shared on a call. If one cannot, downgrade it to
+      <span class="chip chip--road">Roadmap</span> — that is a one-line change in
+      <em>_source/build.py</em> and it is much cheaper than being caught.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 ----------------------------------------------------------------- -->
+<section class="sec">
+  <div class="sec__rail"><p class="sec__no">12</p><p class="sec__tag">Roadmap</p></div>
+  <div class="sec__body">
+    <h2>What to do next</h2>
+    <p class="lede">P0 blocks publication. P1 is the first fortnight. P2 and P3 are where the
+    positioning either becomes true or stays a website.</p>
+
+    <div class="rows">
+      <div class="row"><div class="row__k"><span class="chip p0">P0</span><small>Before publishing</small></div>
+        <div class="row__v"><em>Audit the register above against reality.</em> Then add the
+        <em>/capabilities.html → /engineering.html</em> 301 in the Amplify console, since
+        netlify.toml is not read there. Then confirm the enquiry form still writes to
+        <em>crm.enquiry_submissions</em> against the live Supabase project — the field contract was
+        preserved and inspected, but it has not been tested end-to-end with real
+        credentials.</div></div>
+      <div class="row"><div class="row__k"><span class="chip p1">P1</span><small>First two weeks</small></div>
+        <div class="row__v">Replace the founder portrait's Supabase-hosted URL with a local asset —
+        an external image request on every About view is both a performance and a privacy leak.
+        Regenerate the favicon set for the dark identity. Re-run Lighthouse against the deployed
+        site. Get one client to release a case study; it is worth more than any further design
+        work.</div></div>
+      <div class="row"><div class="row__k"><span class="chip p2">P2</span><small>One to three months</small></div>
+        <div class="row__v">Build Insights properly or not at all — three substantive technical
+        pieces (a real rule set explained, a false-positive analysis, a workflow post-mortem) beat
+        twenty SEO posts. Add per-agent detail pages as the agents mature. Consider a gated technical
+        deep-dive as a lead magnet aimed at BIM managers rather than
+        procurement.</div></div>
+      <div class="row"><div class="row__k"><span class="chip p3">P3</span><small>Beyond</small></div>
+        <div class="row__v">Connect the console to a real read-only model service so the
+        demonstration becomes a demonstration. That single change moves AI positioning from 8 to 10
+        and is the only thing on this list that does. Everything else is presentation; that is
+        product.</div></div>
+    </div>
+
+    <h3>Open risks</h3>
+    <ul class="bullets">
+      <li><strong>The register is a promise.</strong> The site's credibility now rests on it being
+      accurate. That is the intended design, and it is a liability if the audit in P0 is skipped.</li>
+      <li><strong>Dark-only.</strong> A deliberate commitment matching the product's world, but it
+      is a single-theme decision with no light fallback. Print styles invert.</li>
+      <li><strong>The console is fiction.</strong> Disclosed four times, but a hostile reader can
+      still frame it as a mock-up. P3 removes the objection entirely.</li>
+      <li><strong>Verification was headless.</strong> Nesting, links, anchors, alt text and overflow
+      were measured programmatically and every page was reviewed by screenshot in Edge. The site has
+      not been opened in Safari or Firefox, on a real phone, or with a screen reader.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="foot">
+  <span>BIMRACE PVT LTD · Repositioning dossier</span>
+  <span>Built from _source/build.py · rollback: git checkout site/</span>
+</footer>
+
+</div>
