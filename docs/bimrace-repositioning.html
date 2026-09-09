@@ -710,20 +710,27 @@ tr:last-child td{border-bottom:0}
   <div class="sec__rail"><p class="sec__no">09</p><p class="sec__tag">Design</p></div>
   <div class="sec__body">
     <h2>Visual system and UX changes</h2>
-    <p class="lede">A dark instrument panel. The rule applied throughout: nothing is decorative that
+    <p class="lede">A light drafting sheet. The rule applied throughout: nothing is decorative that
     could be informative.</p>
 
     <div class="rows">
       <div class="row"><div class="row__k">Ground<small>Surfaces</small></div>
-        <div class="row__v">#07080B void, four surface steps to #212936, hairlines at 13/22/36%
-        alpha. A blueprint grid appears as a masked background on the hero, page headers and CTA
-        only.</div></div>
+        <div class="row__v">#F2F5F8 paper — a cool neutral biased a touch toward the teal accent —
+        with four surface steps up to white and hairlines at 13/21/33% alpha. A blueprint grid
+        appears as a masked background on the hero, page headers and CTA only.</div></div>
       <div class="row"><div class="row__k">Colour<small>Meaning, not decoration</small></div>
-        <div class="row__v">One signal teal <em>#3DDCC4</em> for live data and the primary action.
+        <div class="row__v">One signal teal <em>#0B7C74</em> for live data and the primary action.
         Four discipline hues carried from MEP coordination drawings — mechanical teal, electrical
-        amber <em>#F0B341</em>, plumbing indigo <em>#7B95FF</em>, fire protection violet
-        <em>#C88BF5</em> — plus risk red. Amber doubles as the human-in-the-loop colour: every human
-        stage in the pipeline diagram is amber.</div></div>
+        amber <em>#97620A</em>, plumbing indigo <em>#3A56CF</em>, fire protection violet
+        <em>#8A3FBF</em> — plus risk red, all at ink densities that hold up as hairline strokes and
+        small type on paper. Amber doubles as the human-in-the-loop colour: every human stage in the
+        pipeline diagram is amber.</div></div>
+      <div class="row"><div class="row__k">Contrast<small>WCAG AA throughout</small></div>
+        <div class="row__v">The neutral ramp was solved against paper rather than eyeballed. All
+        four text steps clear 4.5:1 — <em>text-4</em> carries 9px mono labels and had been failing at
+        3.10:1, now 4.62:1 — as does every discipline hue and every darkened type variant. This is
+        the one measurable respect in which the light build beats the dark one it
+        replaced.</div></div>
       <div class="row"><div class="row__k">Type<small>Two faces</small></div>
         <div class="row__v">IBM Plex Sans and IBM Plex Mono. Mono carries every label, readout,
         status badge and log line — it signals instrument rather than brochure. Weights trimmed to
@@ -874,8 +881,10 @@ tr:last-child td{border-bottom:0}
     <ul class="bullets">
       <li><strong>The register is a promise.</strong> The site's credibility now rests on it being
       accurate. That is the intended design, and it is a liability if the audit in P0 is skipped.</li>
-      <li><strong>Dark-only.</strong> A deliberate commitment matching the product's world, but it
-      is a single-theme decision with no light fallback. Print styles invert.</li>
+      <li><strong>Light-only.</strong> The site shipped dark first and was re-themed light on
+      request. It is a single-theme commitment with no dark fallback — but every colour is now a
+      token with no literals outside the <em>:root</em> block, so reversing it or adding a
+      <em>prefers-color-scheme</em> variant is a change to one block, not to 900 lines.</li>
       <li><strong>The console is fiction.</strong> Disclosed four times, but a hostile reader can
       still frame it as a mock-up. P3 removes the objection entirely.</li>
       <li><strong>Verification was headless.</strong> Nesting, links, anchors, alt text and overflow
