@@ -1017,31 +1017,6 @@ HOME = f"""
       </div>
     </div>
 
-    <figure style="margin:0">
-      <div class="panel">
-        <div class="panel__bar">
-          <span><b>BUILDING</b> / MEP SYSTEMS / BIM MODEL</span>
-          <span class="panel__dot"><i></i>COORDINATED</span>
-        </div>
-        <svg class="viz__svg" id="hero-svg" viewBox="0 0 640 570" role="img"
-          aria-label="Isometric wireframe of a five-storey building with colour-coded mechanical,
-          electrical, plumbing and fire protection systems routed through it, coordinated inside one
-          BIM model."></svg>
-        <div class="panel__foot">
-          <span>BUILDING + MEP SYSTEMS + BIM MODEL</span>
-          <span>ILLUSTRATIVE GEOMETRY</span>
-        </div>
-      </div>
-      <ul class="vizkey" id="hero-legend" aria-label="Discipline colour key for the model above">
-        <li><i class="k--arch" aria-hidden="true"></i>Building</li>
-        <li><i class="k--mech" aria-hidden="true"></i>Mechanical</li>
-        <li><i class="k--elec" aria-hidden="true"></i>Electrical</li>
-        <li><i class="k--plumb" aria-hidden="true"></i>Plumbing</li>
-        <li><i class="k--fire" aria-hidden="true"></i>Fire protection</li>
-      </ul>
-      <figcaption class="viz__cap">The systems build into the building in the order a project is
-      coordinated. Sample geometry, not a client project.</figcaption>
-    </figure>
   </div>
 </section>
 

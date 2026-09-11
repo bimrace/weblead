@@ -280,7 +280,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   content:"";position:absolute;top:-32%;right:-12%;width:72%;height:120%;
   background:radial-gradient(closest-side,rgba(11,124,116,.07),transparent 72%);
 }
-.hero__in{position:relative;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+.hero__in{position:relative;display:grid;grid-template-columns:minmax(0,1fr);
   gap:var(--s5);align-items:center}
 .hero__tag{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:5px 13px 5px 5px;margin-bottom:24px;
   border:1px solid var(--line-2);border-radius:100px;background:var(--surface-1);
