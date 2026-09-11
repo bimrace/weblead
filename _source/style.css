@@ -272,9 +272,9 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .hero__bg{position:absolute;inset:0;pointer-events:none}
 .hero__bg::before{
   content:"";position:absolute;inset:0;
-  background-image:var(--grid-fine);background-size:64px 64px;
-  mask-image:radial-gradient(110% 80% at 28% 8%,#000 0%,transparent 70%);
-  -webkit-mask-image:radial-gradient(110% 80% at 28% 8%,#000 0%,transparent 70%);
+  background-image:var(--grid-fine);background-size:72px 72px;opacity:.5;
+  mask-image:radial-gradient(86% 62% at 22% 4%,#000 0%,transparent 68%);
+  -webkit-mask-image:radial-gradient(86% 62% at 22% 4%,#000 0%,transparent 68%);
 }
 .hero__bg::after{
   content:"";position:absolute;top:-32%;right:-12%;width:72%;height:120%;
@@ -285,11 +285,20 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .hero__tag{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:5px 13px 5px 5px;margin-bottom:24px;
   border:1px solid var(--line-2);border-radius:100px;background:var(--surface-1);
   font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2)}
+.hero__tag--plain{padding:7px 15px;border-radius:var(--r-lg);letter-spacing:.12em}
+.hero__tag--plain span{color:var(--text-4)}
 .hero__title{font-size:clamp(35px,5.1vw,62px);letter-spacing:-.036em;line-height:1.03}
 .hero__title em{font-style:normal;color:var(--sig)}
 .hero__lede{margin-top:24px;max-width:56ch;font-size:17.5px;color:var(--text-2);line-height:1.68}
 .hero__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:var(--s4)}
 .hero__thesis{margin-top:var(--s4)}
+.hero__facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:var(--s4);
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r)}
+.hero__fact{padding:14px 15px;background:var(--surface-1)}
+.hero__fact span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--text-4)}
+.hero__fact strong{display:block;margin-top:7px;font-size:14.2px;font-weight:600;
+  letter-spacing:-.012em;color:var(--text);line-height:1.35}
 
 .panel{position:relative;border:1px solid var(--line-2);border-radius:var(--r-lg);
   background:linear-gradient(180deg,var(--surface-1),var(--surface-0));overflow:hidden;
@@ -591,7 +600,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .case__h h3{font-size:20px;max-width:52ch}
 .case__k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--text-4);margin-bottom:10px}
-.case__b{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line)}
+.case__b{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line)}
 .case__c{background:var(--surface-1);padding:22px 22px 24px}
 .case__c h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--sig);font-weight:400}
@@ -875,6 +884,88 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 /* A submenu with more than six entries reads as a wall in one column. */
 .submenu--wide{min-width:640px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 
+/* The service menu is long because a visitor who knows they need HVAC has to be
+   able to reach it from the top bar. Grouping it into three labelled columns is
+   what keeps a list that length scannable: the heading answers "which kind of
+   work is this" before the eye reaches the individual services. Columns flow
+   down, so each group heading starts its own column. */
+.submenu--cols{min-width:780px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-auto-flow:column;grid-template-rows:repeat(6,auto);align-content:start;padding:14px 7px 10px}
+.submenu__h{padding:4px 12px 8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--text-4)}
+.submenu__h:not(:first-child){margin-top:0}
+
+/* ------------------------------------- 26 home: what we do / who / deliver --
+   These four components carry the homepage. Each one has a single job, because
+   the page they replaced tried to explain the services, the audience, the
+   method and the technology in the same three screens and therefore explained
+   none of them. */
+
+/* Service groups. The group heading is the plain-language label ("MEP
+   engineering"); the links under it are the disciplines by the names a client
+   would use for them. */
+.sgrps{display:grid;gap:var(--s3);margin-top:var(--s2)}
+.sgrp{display:grid;grid-template-columns:300px minmax(0,1fr);gap:var(--s4);
+  padding-top:var(--s3);border-top:1px solid var(--line)}
+.sgrp__head h3{font-size:23px;font-weight:600;letter-spacing:-.02em;color:var(--text)}
+.sgrp__head p{margin-top:12px;font-size:14.4px;color:var(--text-3);line-height:1.6}
+.sgrp__list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s1) var(--s2)}
+.sgrp__i{display:flex;flex-direction:column;gap:5px;padding:15px 17px;text-decoration:none;
+  border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface-1);
+  transition:border-color .22s var(--ease),transform .22s var(--ease)}
+.sgrp__i:hover{border-color:var(--sig-edge);transform:translateY(-2px)}
+.sgrp__t{font-size:14.8px;font-weight:600;color:var(--text);letter-spacing:-.014em}
+.sgrp__t::after{content:" →";color:var(--sig)}
+.sgrp__d{font-size:12.9px;color:var(--text-3);line-height:1.5}
+
+/* Audiences. Two labelled sentences per card: what that reader needs, and what
+   we do about it. The pairing is the point — a list of adjectives about us
+   would not tell a contractor whether to keep reading. */
+.auds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2);margin-top:var(--s2)}
+.aud{padding:24px 22px;border:1px solid var(--line);border-radius:var(--r-lg);
+  background:var(--surface-1)}
+.aud h3{font-size:18px;font-weight:600;letter-spacing:-.018em;color:var(--text)}
+.aud__p,.aud__d{margin-top:14px;font-size:13.8px;line-height:1.62;color:var(--text-2)}
+.aud__p b,.aud__d b{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;font-weight:500;color:var(--text-4);margin-bottom:6px}
+.aud__d{padding-top:14px;border-top:1px solid var(--line)}
+
+/* What you receive: five numbered steps in project order. */
+.dlvs{border-top:1px solid var(--line);margin-top:var(--s2)}
+.dlv{display:grid;grid-template-columns:64px minmax(0,1fr);gap:var(--s3);
+  padding:24px 0;border-bottom:1px solid var(--line)}
+.dlv__n{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--sig)}
+.dlv__k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-4)}
+.dlv h3{margin-top:7px;font-size:19px;font-weight:600;letter-spacing:-.018em;color:var(--text)}
+.dlv__d{margin-top:9px;max-width:76ch;font-size:14.6px;color:var(--text-2);line-height:1.64}
+
+/* Regions. Four rows, each naming the country pages behind it, so the homepage
+   can say "worldwide" without implying an office in every market. */
+.regs{display:grid;gap:1px;background:var(--line)}
+.reg{display:grid;grid-template-columns:150px minmax(0,1fr);gap:var(--s2);align-items:baseline;
+  padding:15px 2px;background:var(--surface-1)}
+.reg__k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text-4)}
+.reg__v{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14.2px}
+.reg__v a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.reg__v a:hover{color:var(--sig);border-bottom-color:var(--sig-edge)}
+
+/* ------------------------------------------------------- 27 insights page -- */
+.inss{display:grid;gap:var(--s4)}
+.ins{display:grid;grid-template-columns:64px minmax(0,1fr);gap:var(--s3);
+  padding-top:var(--s3);border-top:1px solid var(--line)}
+.ins__n{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--sig)}
+.ins__b h2{font-size:25px;font-weight:600;letter-spacing:-.022em;line-height:1.24;color:var(--text)}
+.ins__b p{margin-top:14px;max-width:78ch;font-size:15.4px;color:var(--text-2);line-height:1.68}
+
+/* A two-row spec used inside a panel, where the 250px label column is too wide. */
+.spec--tight{border-top:0}
+.spec--tight .spec__row{grid-template-columns:170px minmax(0,1fr);gap:var(--s2);padding:18px 0}
+.spec--tight .spec__row:first-child{padding-top:0}
+.spec--tight .spec__row:last-child{border-bottom:0;padding-bottom:0}
+.spec--tight .spec__v{font-size:14.2px}
+
 /* ================================ 25 RESPONSIVE ======================== */
 @media (max-width:1240px){
   .hub,.rel{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -887,6 +978,9 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .pipe__s:first-child{border-top:0}
   .mat{grid-template-columns:repeat(2,minmax(0,1fr))}
   .case__b{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .submenu--cols{min-width:600px}
+  .auds{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sgrp{grid-template-columns:240px minmax(0,1fr);gap:var(--s3)}
   .badge-legend{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:1080px){
@@ -895,6 +989,8 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .chain{grid-template-columns:repeat(2,minmax(0,1fr))}
   .console{grid-template-columns:1fr}
   .console__l{border-right:0;border-bottom:1px solid var(--line)}
+  .sgrp{grid-template-columns:minmax(0,1fr);gap:var(--s2)}
+  .hero__facts{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:980px){
   :root{--gutter:20px}
@@ -946,6 +1042,13 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .argu__set{grid-template-columns:minmax(0,1fr);gap:var(--s3)}
   .hub,.rel,.hub--tight{grid-template-columns:minmax(0,1fr)}
   .submenu--wide{min-width:0;grid-template-columns:minmax(0,1fr)}
+  .submenu--cols{min-width:0;grid-template-columns:minmax(0,1fr);grid-auto-flow:row;
+    grid-template-rows:none;padding:0 0 0 14px}
+  .submenu__h{padding:14px 0 4px}
+  .auds{grid-template-columns:minmax(0,1fr)}
+  .sgrp__list{grid-template-columns:minmax(0,1fr)}
+  .dlv,.ins{grid-template-columns:40px minmax(0,1fr);gap:var(--s2)}
+  .reg{grid-template-columns:minmax(0,1fr);gap:8px}
   .faq__i summary{font-size:16px;padding:20px 0}
   .faq__a{padding-right:0}
 }
@@ -954,6 +1057,9 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .ro:nth-child(odd){border-left:0}
   .ro:nth-child(n+3){border-top:1px solid var(--line)}
   .hero__actions .btn,.cta__actions .btn,.nf__links .btn{flex:1 1 100%}
+  .hero__facts{grid-template-columns:minmax(0,1fr)}
+  .ins__b h2{font-size:21px}
+  .dlv,.ins{grid-template-columns:minmax(0,1fr);gap:10px}
   .spec__list{grid-template-columns:1fr}
   .foot__cols{grid-template-columns:repeat(2,minmax(0,1fr))}
   .foot__bottom{flex-direction:column;gap:8px}

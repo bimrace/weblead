@@ -45,7 +45,7 @@
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Engineering",
+      "name": "Services",
       "item": "https://bimrace.com/engineering.html"
     },
     {
@@ -150,38 +150,48 @@
   <div class="shell nav__in">
     <a class="brand" href="/index.html" aria-label="BIMRACE — home">
       <svg class="brand__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
-      <span class="brand__sub">Engineering<br>Intelligence</span>
+      <span class="brand__sub">MEP &amp; BIM<br>Engineering</span>
     </a>
     <nav aria-label="Primary">
       <ul class="nav__links" id="nav-links">
       <li class="has-menu" data-open="false">
-        <button type="button" aria-expanded="false" aria-controls="menu-platfo">Platform<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-        <ul class="submenu" id="menu-platfo">
-          <li><a href="/platform.html"><span class="t">Intelligence stack <span class="b b--live">Live</span></span><span class="d">The five layers, and what is running at each one.</span></a></li>
-          <li><a href="/intelligence.html"><span class="t">BIM Intelligence <span class="b b--live">Live</span></span><span class="d">Treating the model as an engineering database, not a drawing.</span></a></li>
-          <li><a href="/automation.html"><span class="t">AI &amp; Automation <span class="b b--dev">In development</span></span><span class="d">Agents, automated workflows and where the engineer signs.</span></a></li>
+        <button type="button" aria-expanded="false" aria-controls="menu-servic">Services<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <ul class="submenu submenu--cols" id="menu-servic">
+          <li class="submenu__h">MEP engineering</li>
+          <li><a href="/services/mep-engineering-services.html"><span class="t">MEP engineering <span class="b b--live">Live</span></span><span class="d">All four disciplines designed as one connected system.</span></a></li>
+          <li><a href="/services/hvac-bim-services.html"><span class="t">HVAC design <span class="b b--live">Live</span></span><span class="d">Heating, ventilation and air-conditioning systems, ductwork and equipment.</span></a></li>
+          <li><a href="/services/electrical-bim-services.html"><span class="t">Electrical design <span class="b b--live">Live</span></span><span class="d">Power, lighting, containment and LV distribution.</span></a></li>
+          <li><a href="/services/plumbing-public-health-bim.html"><span class="t">Plumbing &amp; public health <span class="b b--live">Live</span></span><span class="d">Water supply, drainage and public health systems.</span></a></li>
+          <li><a href="/services/fire-protection-bim-services.html"><span class="t">Fire protection <span class="b b--live">Live</span></span><span class="d">Sprinkler, detection and suppression systems.</span></a></li>
+          <li class="submenu__h">BIM services</li>
+          <li><a href="/services/bim-modelling-documentation.html"><span class="t">BIM modelling &amp; documentation <span class="b b--live">Live</span></span><span class="d">Discipline models, with drawings and schedules taken from the model.</span></a></li>
+          <li><a href="/services/revit-services.html"><span class="t">Revit MEP <span class="b b--live">Live</span></span><span class="d">Templates, families, MEP authoring and parameter schemas.</span></a></li>
+          <li><a href="/services/bim-coordination-clash-detection.html"><span class="t">MEP coordination &amp; clash detection <span class="b b--live">Live</span></span><span class="d">Federated models, clearance checks and issues tracked to closure.</span></a></li>
+          <li><a href="/services/construction-support-bim.html"><span class="t">Construction support <span class="b b--live">Live</span></span><span class="d">Shop drawings, builders work and as-built models.</span></a></li>
+          <li class="submenu__h">Digital engineering</li>
+          <li><a href="/services/bim-automation-services.html"><span class="t">BIM automation <span class="b b--live">Live</span></span><span class="d">Automated model checking, quantities and documentation.</span></a></li>
+          <li><a href="/automation.html"><span class="t">AI-assisted workflows <span class="b b--dev">In development</span></span><span class="d">Where automation drafts, and where the engineer signs.</span></a></li>
           <li><a href="/technology/mcp-for-revit.html"><span class="t">MCP for Revit <span class="b b--road">Roadmap</span></span><span class="d">Connecting AI assistants to model data through a governed protocol.</span></a></li>
-          <li><a href="/digital-twin.html"><span class="t">Digital Twin <span class="b b--road">Roadmap</span></span><span class="d">What a twin actually requires, and what we have not built.</span></a></li>
-          <li><a href="/platform.html#status"><span class="t">Capability status</span><span class="d">Our four-state legend, published so you can audit it.</span></a></li>
-        </ul>
-      </li>
-      <li class="has-menu" data-open="false">
-        <button type="button" aria-expanded="false" aria-controls="menu-engine">Engineering<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-        <ul class="submenu submenu--wide" id="menu-engine">
-          <li><a href="/engineering.html"><span class="t">All engineering services</span><span class="d">The five capability groups and every deliverable in them.</span></a></li>
-          <li><a href="/services/mep-engineering-services.html"><span class="t">MEP engineering <span class="b b--live">Live</span></span><span class="d">Mechanical, electrical, public health and fire protection as connected systems.</span></a></li>
-          <li><a href="/services/bim-coordination-clash-detection.html"><span class="t">BIM coordination &amp; clash detection <span class="b b--live">Live</span></span><span class="d">Federated models, clearance and access checking, issues tracked to closure.</span></a></li>
-          <li><a href="/services/bim-modelling-documentation.html"><span class="t">BIM modelling &amp; documentation <span class="b b--live">Live</span></span><span class="d">Discipline models and model-derived drawings and schedules.</span></a></li>
-          <li><a href="/services/revit-services.html"><span class="t">Revit services <span class="b b--live">Live</span></span><span class="d">Templates, families, MEP authoring and parameter schemas.</span></a></li>
-          <li><a href="/services/bim-automation-services.html"><span class="t">BIM automation <span class="b b--live">Live</span></span><span class="d">Automated QA, quantity and documentation routines.</span></a></li>
-          <li><a href="/technology.html"><span class="t">Standards &amp; QA</span><span class="d">ISO 19650 information management and the checks before issue.</span></a></li>
+          <li><a href="/engineering.html"><span class="t">All services</span><span class="d">Every service group and deliverable in one place.</span></a></li>
         </ul>
       </li>
       <li><a href="/industries.html">Industries</a></li>
-      <li><a href="/locations.html">Locations</a></li>
       <li><a href="/projects.html">Projects</a></li>
+      <li class="has-menu" data-open="false">
+        <button type="button" aria-expanded="false" aria-controls="menu-bimamp">BIM &amp; Technology<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <ul class="submenu" id="menu-bimamp">
+          <li><a href="/technology.html"><span class="t">BIM standards &amp; QA</span><span class="d">How we model, and the checks a deliverable passes before issue.</span></a></li>
+          <li><a href="/intelligence.html"><span class="t">BIM intelligence <span class="b b--live">Live</span></span><span class="d">Treating the model as an engineering database, not a drawing.</span></a></li>
+          <li><a href="/automation.html"><span class="t">AI &amp; automation <span class="b b--dev">In development</span></span><span class="d">Automated checking and drafting, with an engineer accountable for the output.</span></a></li>
+          <li><a href="/technology/mcp-for-revit.html"><span class="t">MCP for Revit <span class="b b--road">Roadmap</span></span><span class="d">Connecting AI assistants to model data through a governed protocol.</span></a></li>
+          <li><a href="/digital-twin.html"><span class="t">Digital twin <span class="b b--road">Roadmap</span></span><span class="d">What a twin actually requires, and what we have not built.</span></a></li>
+          <li><a href="/platform.html"><span class="t">Capability status</span><span class="d">Live, in development or roadmap — published so you can audit it.</span></a></li>
+        </ul>
+      </li>
+      <li><a href="/insights.html">Insights</a></li>
       <li><a href="/about.html">About</a></li>
-        <li class="nav__cta"><a href="/contact.html">Talk to engineering</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+        <li class="nav__cta"><a href="/contact.html">Discuss your project</a></li>
       </ul>
     </nav>
     <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
@@ -441,8 +451,8 @@
     <div class="foot__top">
       <div class="foot__brand">
         <svg class="foot__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
-        <p class="foot__tagline">Engineering intelligence built around BIM — MEP engineering, model
-        data and automation for complex building projects.</p>
+        <p class="foot__tagline">MEP engineering and BIM services for complex building projects
+        — design, modelling, coordination and documentation.</p>
         <p class="foot__entity">BIMRACE PVT LTD</p>
         <p class="foot__contact">
           Somnath Baste, Founder<br>
@@ -460,12 +470,12 @@
           <li><a href="/services/bim-coordination-clash-detection.html">BIM coordination &amp; clash detection</a></li>
           <li><a href="/engineering.html">All services</a></li>
         </ul></nav>
-        <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">Platform</h2><ul>
-          <li><a href="/platform.html">Intelligence stack</a></li>
-          <li><a href="/intelligence.html">BIM Intelligence</a></li>
-          <li><a href="/automation.html">AI &amp; Automation</a></li>
+        <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">BIM &amp; technology</h2><ul>
+          <li><a href="/technology.html">BIM standards &amp; QA</a></li>
+          <li><a href="/intelligence.html">BIM intelligence</a></li>
+          <li><a href="/automation.html">AI &amp; automation</a></li>
           <li><a href="/technology/mcp-for-revit.html">MCP for Revit</a></li>
-          <li><a href="/digital-twin.html">Digital Twin</a></li>
+          <li><a href="/digital-twin.html">Digital twin</a></li>
           <li><a href="/platform.html#status">Capability status</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-ind"><h2 id="f-ind">Industries</h2><ul>
@@ -490,9 +500,9 @@
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-co"><h2 id="f-co">Company</h2><ul>
           <li><a href="/about.html">About</a></li>
-          <li><a href="/engineering.html">Engineering services</a></li>
+          <li><a href="/engineering.html">All services</a></li>
           <li><a href="/projects.html">Projects</a></li>
-          <li><a href="/technology.html">Standards &amp; QA</a></li>
+          <li><a href="/insights.html">Insights</a></li>
           <li><a href="/contact.html">Contact</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-leg"><h2 id="f-leg">Legal</h2><ul>
@@ -505,7 +515,7 @@
     <div class="foot__rule" aria-hidden="true"></div>
     <div class="foot__bottom">
       <p>© 2026 Bimrace Pvt Ltd. All rights reserved.</p>
-      <p class="foot__meta">BIM data · AI intelligence · Automation · Engineering validation</p>
+      <p class="foot__meta">MEP engineering · BIM modelling · Coordination · Documentation</p>
     </div>
   </div>
 </footer>

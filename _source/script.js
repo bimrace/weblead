@@ -47,8 +47,12 @@
   }
 
   /* --------------------------------------------------------- 2. hero model */
-  /* An isometric MEP model being read: the sweep is the analysis pass, the
-     flagged node is a coordination risk the pass has raised for review. */
+  /* An isometric building with its four MEP systems routed through it, drawn in
+     the order a project is coordinated: shell first, then each discipline. It
+     has one job, which is to make a visitor think "building engineering" before
+     they have read a word. It deliberately carries no analysis sweep and no
+     failure flag — those need the business to be understood first, and they
+     live on the platform and automation pages where it is. */
   function heroModel() {
     var svg = document.getElementById('hero-svg');
     if (!svg) return;
@@ -84,8 +88,7 @@
     });
 
     /* The build order is the argument the hero is making: an architectural
-       shell, then each discipline laid into it, then the coordination finding
-       that only exists once they are all present. Drawing them simultaneously
+       shell, then each discipline laid into it. Drawing them simultaneously
        shows a finished picture; drawing them in sequence shows a model being
        assembled, which is the thing we actually do. */
     var runs = [
@@ -121,43 +124,13 @@
       gN.appendChild(el('text', { x: (lx + 24).toFixed(1), y: (ly + 3.5).toFixed(1), class: 'm-label' }, n.t));
     });
 
-    /* the flagged intersection — an output of the analysis pass, not decoration */
-    var fp = iso(186, 96, 124);
-    var gF = el('g');
-    gF.appendChild(el('rect', { x: fp[0] - 9, y: fp[1] - 9, width: 18, height: 18, rx: 2, class: 'm-flag' }));
-    gF.appendChild(el('path', {
-      d: 'M' + (fp[0] + 9) + ' ' + (fp[1] - 9) + 'l30 -22h58', class: 'm-leader m-anno'
-    }));
-    gF.appendChild(el('text', { x: fp[0] + 44, y: fp[1] - 34, class: 'm-flag-t m-anno' }, 'CLR-014  CLEARANCE 42mm'));
-    if (!reduce) {
-      var fa = el('animate', { attributeName: 'opacity', values: '1;.35;1', dur: '2.6s', repeatCount: 'indefinite' });
-      gF.appendChild(fa);
-    }
-
     ['L01  +0.000', 'L02  +3.600', 'L03  +7.200', 'L04  +10.800', 'L05  +14.400'].forEach(function (t, i) {
       var p = iso(0, W, LEVELS[i]);
       gN.appendChild(el('path', { d: 'M' + (p[0] - 10).toFixed(1) + ' ' + p[1].toFixed(1) + 'h-14', class: 'm-leader' }));
       gN.appendChild(el('text', { x: (p[0] - 30).toFixed(1), y: (p[1] + 3.5).toFixed(1), class: 'm-label', 'text-anchor': 'end' }, t));
     });
 
-    if (!reduce) {
-      var sweep = el('g', { opacity: '.8' });
-      sweep.appendChild(el('path', { d: d([[0, 0, 0], [W, 0, 0], [W, W, 0], [0, W, 0]], true), class: 'm-scan' }));
-      sweep.appendChild(el('animateTransform', {
-        attributeName: 'transform', type: 'translate', values: '0 8; 0 -236; 0 8',
-        dur: '11s', repeatCount: 'indefinite', calcMode: 'spline',
-        keyTimes: '0;0.5;1', keySplines: '0.4 0 0.2 1;0.4 0 0.2 1'
-      }));
-      g.appendChild(sweep);
-    }
-
-    /* gF carries a SMIL <animate> on opacity, and SMIL wins over CSS opacity —
-       so the fade-in has to happen on a wrapper, not on gF itself, or the flag
-       appears immediately and the sequence reads wrong. */
-    var gFw = el('g');
-    gFw.appendChild(gF);
-
-    g.appendChild(gS); g.appendChild(gR); g.appendChild(gN); g.appendChild(gFw);
+    g.appendChild(gS); g.appendChild(gR); g.appendChild(gN);
     svg.appendChild(g);
 
     /* Sequence the reveal. The delay lives in a custom property so the timing
@@ -167,9 +140,7 @@
     if (!reduce) {
       gN.setAttribute('class', 'm-layer');
       gN.style.setProperty('--d', '1620ms');
-      gFw.setAttribute('class', 'm-layer');
-      gFw.style.setProperty('--d', '1980ms');
-      layers.push(gN, gFw);
+      layers.push(gN);
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           layers.forEach(function (l) { l.setAttribute('class', 'm-layer is-in'); });
@@ -186,9 +157,6 @@
       var narrow = mq.matches;
       svg.setAttribute('viewBox', narrow ? '104 74 372 486' : '0 0 640 570');
       gN.style.display = narrow ? 'none' : '';
-      Array.prototype.forEach.call(gF.querySelectorAll('.m-anno'), function (n) {
-        n.style.display = narrow ? 'none' : '';
-      });
     }
     fit();
     if (mq.addEventListener) mq.addEventListener('change', fit); else if (mq.addListener) mq.addListener(fit);

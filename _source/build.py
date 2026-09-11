@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BIMRACE — Engineering Intelligence site generator.
+BIMRACE — MEP engineering and BIM site generator.
 
 One source of truth for the head, navigation, CTA band and footer, so those
 blocks cannot drift between pages. Run `python build.py`, then copy dist/ over
@@ -48,45 +48,65 @@ def B(kind, label=None):
 
 
 # --------------------------------------------------------------- navigation --
-PLATFORM_MENU = [
-    ("platform.html",     "Intelligence stack",
-     "The five layers, and what is running at each one.", "live"),
-    ("intelligence.html", "BIM Intelligence",
-     "Treating the model as an engineering database, not a drawing.", "live"),
-    ("automation.html",   "AI &amp; Automation",
-     "Agents, automated workflows and where the engineer signs.", "dev"),
+# Two menus, both grouped. A visitor who arrives knowing they need HVAC design
+# has to reach it from the top bar without reading anything else first, so the
+# service menu lists the disciplines under their ordinary names. An entry with no
+# href renders as a group heading rather than a link.
+SERVICES_MENU = [
+    (None, "MEP engineering", None, None),
+    ("services/mep-engineering-services.html", "MEP engineering",
+     "All four disciplines designed as one connected system.", "live"),
+    ("services/hvac-bim-services.html", "HVAC design",
+     "Heating, ventilation and air-conditioning systems, ductwork and equipment.", "live"),
+    ("services/electrical-bim-services.html", "Electrical design",
+     "Power, lighting, containment and LV distribution.", "live"),
+    ("services/plumbing-public-health-bim.html", "Plumbing &amp; public health",
+     "Water supply, drainage and public health systems.", "live"),
+    ("services/fire-protection-bim-services.html", "Fire protection",
+     "Sprinkler, detection and suppression systems.", "live"),
+    (None, "BIM services", None, None),
+    ("services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
+     "Discipline models, with drawings and schedules taken from the model.", "live"),
+    ("services/revit-services.html", "Revit MEP",
+     "Templates, families, MEP authoring and parameter schemas.", "live"),
+    ("services/bim-coordination-clash-detection.html", "MEP coordination &amp; clash detection",
+     "Federated models, clearance checks and issues tracked to closure.", "live"),
+    ("services/construction-support-bim.html", "Construction support",
+     "Shop drawings, builders work and as-built models.", "live"),
+    (None, "Digital engineering", None, None),
+    ("services/bim-automation-services.html", "BIM automation",
+     "Automated model checking, quantities and documentation.", "live"),
+    ("automation.html", "AI-assisted workflows",
+     "Where automation drafts, and where the engineer signs.", "dev"),
     ("technology/mcp-for-revit.html", "MCP for Revit",
      "Connecting AI assistants to model data through a governed protocol.", "road"),
-    ("digital-twin.html", "Digital Twin",
-     "What a twin actually requires, and what we have not built.", "road"),
-    ("platform.html#status", "Capability status",
-     "Our four-state legend, published so you can audit it.", None),
+    ("engineering.html", "All services",
+     "Every service group and deliverable in one place.", None),
 ]
 
-ENGINEERING_MENU = [
-    ("engineering.html", "All engineering services",
-     "The five capability groups and every deliverable in them.", None),
-    ("services/mep-engineering-services.html", "MEP engineering",
-     "Mechanical, electrical, public health and fire protection as connected systems.", "live"),
-    ("services/bim-coordination-clash-detection.html", "BIM coordination &amp; clash detection",
-     "Federated models, clearance and access checking, issues tracked to closure.", "live"),
-    ("services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
-     "Discipline models and model-derived drawings and schedules.", "live"),
-    ("services/revit-services.html", "Revit services",
-     "Templates, families, MEP authoring and parameter schemas.", "live"),
-    ("services/bim-automation-services.html", "BIM automation",
-     "Automated QA, quantity and documentation routines.", "live"),
-    ("technology.html", "Standards &amp; QA",
-     "ISO 19650 information management and the checks before issue.", None),
+TECHNOLOGY_MENU = [
+    ("technology.html", "BIM standards &amp; QA",
+     "How we model, and the checks a deliverable passes before issue.", None),
+    ("intelligence.html", "BIM intelligence",
+     "Treating the model as an engineering database, not a drawing.", "live"),
+    ("automation.html", "AI &amp; automation",
+     "Automated checking and drafting, with an engineer accountable for the output.", "dev"),
+    ("technology/mcp-for-revit.html", "MCP for Revit",
+     "Connecting AI assistants to model data through a governed protocol.", "road"),
+    ("digital-twin.html", "Digital twin",
+     "What a twin actually requires, and what we have not built.", "road"),
+    ("platform.html", "Capability status",
+     "Live, in development or roadmap — published so you can audit it.", None),
 ]
 
 NAV = [
-    ("platform.html",    "Platform",    PLATFORM_MENU),
-    ("engineering.html", "Engineering", ENGINEERING_MENU),
-    ("industries.html",  "Industries",  None),
-    ("locations.html",   "Locations",   None),
-    ("projects.html",    "Projects",    None),
-    ("about.html",       "About",       None),
+    ("engineering.html", "Services",             SERVICES_MENU),
+    ("industries.html",  "Industries",           None),
+    ("projects.html",    "Projects",             None),
+    ("technology.html",  "BIM &amp; Technology", TECHNOLOGY_MENU),
+    ("insights.html",    "Insights",             None),
+    ("about.html",       "About",                None),
+    ("contact.html",     "Contact",              None),
 ]
 
 
@@ -144,33 +164,39 @@ def chrome(active):
         cur = ' aria-current="page"' if href == active else ""
         if sub:
             mid = "menu-" + re.sub(r"[^a-z]", "", label.lower())[:6]
-            links = "\n".join(
-                f'          <li><a href="{a}"><span class="t">{t}'
-                f'{(" " + B(s)) if s else ""}</span><span class="d">{d}</span></a></li>'
-                for a, t, d, s in sub)
-            wide = " submenu--wide" if len(sub) > 6 else ""
+            rows = []
+            for a, t, d, st in sub:
+                if a is None:                    # a group heading, not a link
+                    rows.append(f'          <li class="submenu__h">{t}</li>')
+                else:
+                    rows.append(
+                        f'          <li><a href="{a}"><span class="t">{t}'
+                        f'{(" " + B(st)) if st else ""}</span>'
+                        f'<span class="d">{d}</span></a></li>')
+            links = "\n".join(rows)
+            grouped = any(a is None for a, _, _, _ in sub)
+            cls = " submenu--cols" if grouped else (" submenu--wide" if len(sub) > 6 else "")
             items.append(f"""      <li class="has-menu" data-open="false">
         <button type="button" aria-expanded="false" aria-controls="{mid}">{label}{caret}</button>
-        <ul class="submenu{wide}" id="{mid}">
+        <ul class="submenu{cls}" id="{mid}">
 {links}
         </ul>
       </li>""")
         else:
             items.append(f'      <li><a href="{href}"{cur}>{label}</a></li>')
     nav_items = "\n".join(items)
-    cta_cur = ' aria-current="page"' if active == "contact.html" else ""
 
     return f"""
 <header class="nav">
   <div class="shell nav__in">
     <a class="brand" href="index.html" aria-label="BIMRACE — home">
       <svg class="brand__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
-      <span class="brand__sub">Engineering<br>Intelligence</span>
+      <span class="brand__sub">MEP &amp; BIM<br>Engineering</span>
     </a>
     <nav aria-label="Primary">
       <ul class="nav__links" id="nav-links">
 {nav_items}
-        <li class="nav__cta"><a href="contact.html"{cta_cur}>Talk to engineering</a></li>
+        <li class="nav__cta"><a href="contact.html">Discuss your project</a></li>
       </ul>
     </nav>
     <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
@@ -186,13 +212,12 @@ CTA = f"""
   <div class="shell cta__in">
     <div>
       <p class="eyebrow">Engineering enquiry</p>
-      <h2>Build the next generation of engineering workflows.</h2>
-      <p>Send a scope, a drawing set, an information requirement or a workflow you are tired of
-      doing by hand. You will get a technical response on approach, disciplines, deliverables and
-      what is realistically automatable — from an engineer, not a sales desk.</p>
+      <h2>Tell us about your project.</h2>
+      <p>Send a scope, a drawing set or an information requirement. You will get a technical
+      response on approach, disciplines and deliverables — from an engineer, not a sales desk.</p>
       <div class="cta__actions">
-        <a class="btn btn--primary btn--lg" href="contact.html">Talk to engineering</a>
-        <a class="btn btn--ghost btn--lg" href="platform.html">Explore BIM Intelligence</a>
+        <a class="btn btn--primary btn--lg" href="contact.html">Discuss your project</a>
+        <a class="btn btn--ghost btn--lg" href="engineering.html">Explore our services</a>
       </div>
     </div>
     <dl class="cta__side">
@@ -213,8 +238,8 @@ def footer():
     <div class="foot__top">
       <div class="foot__brand">
         <svg class="foot__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
-        <p class="foot__tagline">Engineering intelligence built around BIM — MEP engineering, model
-        data and automation for complex building projects.</p>
+        <p class="foot__tagline">MEP engineering and BIM services for complex building projects
+        — design, modelling, coordination and documentation.</p>
         <p class="foot__entity">{ENTITY}</p>
         <p class="foot__contact">
           Somnath Baste, Founder<br>
@@ -226,12 +251,12 @@ def footer():
         <nav class="foot__col" aria-labelledby="f-svc"><h2 id="f-svc">Services</h2><ul>
 {foot_links(SERVICES_FOOT)}
         </ul></nav>
-        <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">Platform</h2><ul>
-          <li><a href="platform.html">Intelligence stack</a></li>
-          <li><a href="intelligence.html">BIM Intelligence</a></li>
-          <li><a href="automation.html">AI &amp; Automation</a></li>
+        <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">BIM &amp; technology</h2><ul>
+          <li><a href="technology.html">BIM standards &amp; QA</a></li>
+          <li><a href="intelligence.html">BIM intelligence</a></li>
+          <li><a href="automation.html">AI &amp; automation</a></li>
           <li><a href="technology/mcp-for-revit.html">MCP for Revit</a></li>
-          <li><a href="digital-twin.html">Digital Twin</a></li>
+          <li><a href="digital-twin.html">Digital twin</a></li>
           <li><a href="platform.html#status">Capability status</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-ind"><h2 id="f-ind">Industries</h2><ul>
@@ -242,9 +267,9 @@ def footer():
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-co"><h2 id="f-co">Company</h2><ul>
           <li><a href="about.html">About</a></li>
-          <li><a href="engineering.html">Engineering services</a></li>
+          <li><a href="engineering.html">All services</a></li>
           <li><a href="projects.html">Projects</a></li>
-          <li><a href="technology.html">Standards &amp; QA</a></li>
+          <li><a href="insights.html">Insights</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-leg"><h2 id="f-leg">Legal</h2><ul>
@@ -257,7 +282,7 @@ def footer():
     <div class="foot__rule" aria-hidden="true"></div>
     <div class="foot__bottom">
       <p>© 2026 Bimrace Pvt Ltd. All rights reserved.</p>
-      <p class="foot__meta">BIM data · AI intelligence · Automation · Engineering validation</p>
+      <p class="foot__meta">MEP engineering · BIM modelling · Coordination · Documentation</p>
     </div>
   </div>
 </footer>
@@ -761,24 +786,27 @@ CASE_ANATOMY = f"""
         <div class="case__h">
           <div>
             <p class="case__k">Case study anatomy</p>
-            <h3>Every published case study will answer these five questions, in this order.</h3>
+            <h3>Every published case study will answer these six questions, in this order.</h3>
           </div>
           {B('live', 'Structure fixed')}
         </div>
         <div class="case__b">
-          <div class="case__c"><h3>01 Problem</h3>
-            <p>The engineering problem in the client's terms — what was slow, repetitive, unreliable
-            or unresolvable at the scale of the project.</p></div>
-          <div class="case__c"><h3>02 BIM data</h3>
-            <ul><li>Model size and element count</li><li>Disciplines and systems</li>
-            <li>Level of information need</li><li>Exchange formats</li></ul></div>
-          <div class="case__c"><h3>03 Intelligence</h3>
-            <ul><li>What was read from the model</li><li>Which rules were applied</li>
-            <li>What the analysis found</li><li>What it could not determine</li></ul></div>
-          <div class="case__c"><h3>04 Automation</h3>
-            <ul><li>Which steps were automated</li><li>Which stayed manual, and why</li>
-            <li>Where the engineer reviewed</li><li>What was rejected at review</li></ul></div>
-          <div class="case__c case__c--impact"><h3>05 Impact</h3>
+          <div class="case__c"><h3>01 Project</h3>
+            <ul><li>Building type and size</li><li>Location and jurisdiction</li>
+            <li>Stage at appointment</li><li>Project team</li></ul></div>
+          <div class="case__c"><h3>02 Challenge</h3>
+            <p>The problem in the client's terms &mdash; what was slow, repetitive, unreliable or
+            unresolvable at the scale of the project.</p></div>
+          <div class="case__c"><h3>03 Our scope</h3>
+            <ul><li>Disciplines engineered</li><li>Modelling and coordination scope</li>
+            <li>Level of information need</li><li>What stayed with others</li></ul></div>
+          <div class="case__c"><h3>04 Approach</h3>
+            <ul><li>How the systems were designed</li><li>How the model was structured</li>
+            <li>What was automated, and what was not</li><li>Where the engineer reviewed</li></ul></div>
+          <div class="case__c"><h3>05 Deliverables</h3>
+            <ul><li>Drawings and schedules issued</li><li>Models and formats handed over</li>
+            <li>Reports and issue records</li><li>Dates and revisions</li></ul></div>
+          <div class="case__c case__c--impact"><h3>06 Outcome</h3>
             <p>Measured against a stated baseline, with the measurement method named. Where a number
             cannot be verified, the case study will say so rather than estimate one.</p></div>
         </div>
@@ -790,62 +818,229 @@ CASE_ANATOMY = f"""
 # ============================================================================
 #  HOME
 # ============================================================================
+# The homepage answers five questions in order: what this company is, what it
+# does, who it does it for, what you actually receive, and what to do next.
+# Everything that explains *how* the work is done — the intelligence stack, the
+# agents, the automation flows, the console — lives on platform.html,
+# automation.html, intelligence.html and engineering.html, which is where a
+# visitor who has decided they care about the method will go looking. Repeating
+# those sections here is what made the old homepage unreadable: it opened with
+# the method and never stated the business.
+
+SERVICE_GROUPS = [
+    ("MEP engineering", "mep",
+     "We design the building services: heating and cooling, power and lighting, "
+     "water and drainage, and fire protection.",
+     [("services/hvac-bim-services.html", "HVAC design",
+       "Heating, ventilation and air-conditioning, ductwork and plant."),
+      ("services/electrical-bim-services.html", "Electrical design",
+       "Power, lighting, containment and LV distribution."),
+      ("services/plumbing-public-health-bim.html", "Plumbing &amp; public health",
+       "Water supply, drainage and public health systems."),
+      ("services/fire-protection-bim-services.html", "Fire protection",
+       "Sprinkler, detection and suppression systems.")]),
+    ("BIM services", "bim",
+     "We build and coordinate the models those systems live in, and produce the "
+     "drawings and schedules from them.",
+     [("services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
+       "Discipline models, drawings and schedules."),
+      ("services/revit-services.html", "Revit MEP",
+       "Templates, families, authoring and parameter schemas."),
+      ("services/bim-coordination-clash-detection.html", "MEP coordination &amp; clash detection",
+       "Federated models, clearance checks, issues to closure."),
+      ("services/construction-support-bim.html", "Construction support",
+       "Shop drawings, builders work and as-built models.")]),
+    ("Digital engineering", "digital",
+     "Where it saves an engineer time, we automate the repetitive parts of the "
+     "work above. An engineer still signs the result.",
+     [("services/bim-automation-services.html", "BIM automation",
+       "Automated model checking, quantities and documentation."),
+      ("automation.html", "AI-assisted workflows",
+       "Analysis that drafts findings for an engineer to accept or reject."),
+      ("technology/mcp-for-revit.html", "MCP for Revit",
+       "Connecting AI assistants to model data through a governed protocol.")]),
+]
+
+
+def service_groups_block():
+    """The three service groups, each a heading a non-specialist can parse and a
+    short list of the disciplines under it. This is the section that has to pass
+    the ten-second test for a visitor who arrived knowing they need HVAC."""
+    out = []
+    for name, gid, lede, rows in SERVICE_GROUPS:
+        links = "\n".join(
+            f'        <a class="sgrp__i" href="{h}"><span class="sgrp__t">{t}</span>'
+            f'<span class="sgrp__d">{d}</span></a>' for h, t, d in rows)
+        out.append(f"""    <div class="sgrp" id="{gid}">
+      <div class="sgrp__head">
+        <h3>{name}</h3>
+        <p>{lede}</p>
+      </div>
+      <div class="sgrp__list">
+{links}
+      </div>
+    </div>""")
+    return '  <div class="sgrps">\n' + "\n".join(out) + "\n  </div>"
+
+
+AUDIENCES = [
+    ("Architects",
+     "You need an MEP strategy that respects the design, and services that fit "
+     "the ceiling and riser space you have actually allowed for.",
+     "We design the systems and model them into your building so the "
+     "coordination problems surface on screen rather than on site."),
+    ("Contractors",
+     "You need coordinated MEP information before you build, not a model that "
+     "disagrees with the drawings you were issued.",
+     "We coordinate the disciplines, resolve the clashes and issue drawings and "
+     "schedules taken from the model that produced them."),
+    ("Developers",
+     "You need the building services designed and coordinated in a way that "
+     "supports your programme and your cost plan.",
+     "We deliver the design and the model as one package, so a change in the "
+     "design is visible in the quantities rather than discovered later."),
+    ("Engineering consultants",
+     "You need overflow capacity, or BIM production depth, without losing "
+     "control of the engineering.",
+     "We work to your standards and templates as an extension of your team, and "
+     "your engineer remains the one who signs."),
+]
+
+
+def audience_block():
+    rows = "\n".join(
+        f"""      <article class="aud">
+        <h3>{n}</h3>
+        <p class="aud__p"><b>What you need.</b> {need}</p>
+        <p class="aud__d"><b>What we do.</b> {does}</p>
+      </article>""" for n, need, does in AUDIENCES)
+    return '    <div class="auds">\n' + rows + "\n    </div>"
+
+
+DELIVERS = [
+    ("Design", "MEP engineering design",
+     "Load calculations, system selection, sizing and layouts for mechanical, "
+     "electrical, public health and fire protection."),
+    ("Model", "BIM and Revit modelling",
+     "Discipline models authored to the level of detail the stage needs, with "
+     "the data in them rather than bolted on afterwards."),
+    ("Coordinate", "MEP coordination and clash detection",
+     "Federated models, clash and clearance checking, and a tracked route from "
+     "an issue being raised to it being closed."),
+    ("Document", "Drawings, schedules and reports",
+     "Deliverables generated from the coordinated model, so the drawing and the "
+     "model cannot tell you two different things."),
+    ("Optimise", "Automation and AI-assisted checking",
+     "Repetitive checking and take-off run automatically. An engineer reviews "
+     "and signs the output."),
+]
+
+
+def delivers_block():
+    rows = "\n".join(
+        f"""      <div class="dlv">
+        <span class="dlv__n">0{i + 1}</span>
+        <div>
+          <p class="dlv__k">{k}</p>
+          <h3>{t}</h3>
+          <p class="dlv__d">{d}</p>
+        </div>
+      </div>""" for i, (k, t, d) in enumerate(DELIVERS))
+    return '    <div class="dlvs">\n' + rows + "\n    </div>"
+
+
+HOME_INDUSTRIES = [
+    ("industries/commercial.html", "Commercial &amp; offices",
+     "Landlord and tenant services, risers, and fit-out coordination."),
+    ("industries/residential.html", "Residential &amp; mixed use",
+     "Repeatable apartment services, risers and shared plant."),
+    ("industries/healthcare.html", "Healthcare",
+     "Medical gas, ventilation regimes and resilience requirements."),
+    ("industries/hospitality.html", "Hospitality",
+     "Guest comfort, acoustic separation and back-of-house plant."),
+    ("industries/industrial.html", "Industrial &amp; warehousing",
+     "Large-span distribution, process loads and fire protection."),
+    ("industries/data-centres.html", "Data centres",
+     "Cooling strategy, power resilience and containment density."),
+]
+
+
+def home_industries_block():
+    rows = "\n".join(
+        f'      <a class="rel__i" href="{h}"><span class="rel__t">{t}</span>'
+        f'<span class="rel__d">{d}</span></a>' for h, t, d in HOME_INDUSTRIES)
+    return '    <div class="rel">\n' + rows + "\n    </div>"
+
+
+HOME_REGIONS = [
+    ("North America", [("locations/usa.html", "United States"),
+                       ("locations/canada.html", "Canada")]),
+    ("Europe", [("locations/uk.html", "United Kingdom"),
+                ("locations/europe.html", "Europe")]),
+    ("Middle East", [("locations/uae.html", "United Arab Emirates"),
+                     ("locations/saudi-arabia.html", "Saudi Arabia")]),
+    ("Asia-Pacific", [("locations/australia.html", "Australia")]),
+]
+
+
+def home_regions_block():
+    rows = []
+    for region, places in HOME_REGIONS:
+        links = " ".join(
+            f'<a href="{h}">{t}</a>' for h, t in places)
+        rows.append(f"""          <div class="reg">
+            <p class="reg__k">{region}</p>
+            <p class="reg__v">{links}</p>
+          </div>""")
+    return '        <div class="regs">\n' + "\n".join(rows) + "\n        </div>"
+
+
 HOME = f"""
 <section class="hero">
   <div class="hero__bg" aria-hidden="true"></div>
   <div class="shell hero__in">
     <div class="hero__copy">
-      <p class="hero__tag">{B('live', 'MEP + BIM delivery live')} AI layer in development</p>
-      <h1 class="hero__title">Engineering Intelligence.<br>Built Around <em>BIM</em>.</h1>
-      <p class="hero__lede">AI-assisted engineering workflows that connect BIM models, MEP design,
-      calculations, engineering rules and project data into one system — with a named engineer
-      accountable at the end of every one of them.</p>
+      <p class="hero__tag hero__tag--plain">MEP engineering &amp; BIM consulting <span>&middot;</span> serving project teams worldwide</p>
+      <h1 class="hero__title">MEP engineering and BIM services for complex building projects</h1>
+      <p class="hero__lede">BIMRACE designs building services &mdash; heating and cooling, power,
+      water and fire protection &mdash; and delivers them as coordinated BIM models, drawings and
+      schedules for architects, contractors, developers and engineering teams.</p>
       <div class="hero__actions">
-        <a class="btn btn--primary btn--lg" href="platform.html">Explore BIM Intelligence</a>
-        <a class="btn btn--ghost btn--lg" href="contact.html">Talk to engineering</a>
+        <a class="btn btn--primary btn--lg" href="contact.html">Discuss your project</a>
+        <a class="btn btn--ghost btn--lg" href="engineering.html">Explore our services</a>
       </div>
-      <div class="thesis hero__thesis">
-        <div><b>Layer 01</b><span><strong>BIM</strong> is the engineering data layer.</span></div>
-        <div><b>Layer 02</b><span><strong>AI</strong> is the intelligence layer.</span></div>
-        <div><b>Layer 03</b><span><strong>Automation</strong> is the execution layer.</span></div>
-        <div><b>Layer 04</b><span><strong>Engineering</strong> is the validation layer.</span></div>
+      <div class="hero__facts" aria-label="What we do">
+        <div class="hero__fact"><span>Design</span><strong>MEP engineering</strong></div>
+        <div class="hero__fact"><span>Model</span><strong>BIM &amp; Revit</strong></div>
+        <div class="hero__fact"><span>Coordinate</span><strong>Clash detection</strong></div>
+        <div class="hero__fact"><span>Document</span><strong>Drawings &amp; schedules</strong></div>
       </div>
     </div>
 
     <figure style="margin:0">
       <div class="panel">
         <div class="panel__bar">
-          <span><b>MODEL</b> / MEP_COORDINATION_R04</span>
-          <span class="panel__dot"><i></i>ANALYSIS PASS RUNNING</span>
+          <span><b>BUILDING</b> / MEP SYSTEMS / BIM MODEL</span>
+          <span class="panel__dot"><i></i>COORDINATED</span>
         </div>
         <svg class="viz__svg" id="hero-svg" viewBox="0 0 640 570" role="img"
-          aria-label="Isometric wireframe of a five-storey building model showing floor plates, columns
-          and colour-coded mechanical, electrical, plumbing and fire protection runs, with one
-          clearance conflict flagged for engineering review.">
-        </svg>
-        <div class="readout readout--4">
-          <div class="ro"><span class="ro__k">Elements</span><span class="ro__v" data-count="18462">0</span></div>
-          <div class="ro"><span class="ro__k">Systems</span><span class="ro__v" data-count="27">0</span></div>
-          <div class="ro"><span class="ro__k">Rules run</span><span class="ro__v" data-count="1284">0</span></div>
-          <div class="ro ro--risk"><span class="ro__k">Flagged</span><span class="ro__v" data-count="12">0</span></div>
-        </div>
+          aria-label="Isometric wireframe of a five-storey building with colour-coded mechanical,
+          electrical, plumbing and fire protection systems routed through it, coordinated inside one
+          BIM model."></svg>
         <div class="panel__foot">
-          <span>SAMPLE GEOMETRY — NOT A CLIENT PROJECT</span>
-          <span>ALL FIGURES ILLUSTRATIVE</span>
+          <span>BUILDING + MEP SYSTEMS + BIM MODEL</span>
+          <span>ILLUSTRATIVE GEOMETRY</span>
         </div>
       </div>
       <ul class="vizkey" id="hero-legend" aria-label="Discipline colour key for the model above">
-        <li><i class="k--arch" aria-hidden="true"></i>Architecture &amp; structure</li>
+        <li><i class="k--arch" aria-hidden="true"></i>Building</li>
         <li><i class="k--mech" aria-hidden="true"></i>Mechanical</li>
         <li><i class="k--elec" aria-hidden="true"></i>Electrical</li>
-        <li><i class="k--plumb" aria-hidden="true"></i>Public health</li>
+        <li><i class="k--plumb" aria-hidden="true"></i>Plumbing</li>
         <li><i class="k--fire" aria-hidden="true"></i>Fire protection</li>
-        <li><i class="k--risk" aria-hidden="true"></i>Flagged for review</li>
       </ul>
-      <figcaption class="viz__cap">{B('demo')} The layers build in the order a model is
-      coordinated — shell, then each discipline, then the finding. The sweep is an analysis pass
-      reading the model; the flagged node is a clearance failure raised for an engineer to resolve,
-      not resolved automatically.</figcaption>
+      <figcaption class="viz__cap">The systems build into the building in the order a project is
+      coordinated. Sample geometry, not a client project.</figcaption>
     </figure>
   </div>
 </section>
@@ -853,127 +1048,78 @@ HOME = f"""
 <section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">The problem</p>
-      <h2 class="sec-title">Engineering knowledge is fragmented across the tools that hold it</h2>
-      <p class="sec-lede">The model is in one application, the calculations in a spreadsheet, the
-      rules in a PDF, the decisions in an email thread and the quantities in a document that was
-      counted by hand. Each handover strips out structure, and an engineer pays for it later by
-      rebuilding context that already existed.</p>
+      <p class="eyebrow">What we do</p>
+      <h2 class="sec-title">We design building services, and we deliver them as coordinated models</h2>
+      <p class="sec-lede">Every building needs heating, ventilation, power, water and fire
+      protection. Those systems have to fit the building, work together and be documented well
+      enough to construct. BIMRACE does the engineering and the BIM that gets that right.</p>
     </header>
-    <div class="g4">
-      <article class="card"><p class="card__k">01</p><h3>The model knows, but cannot answer</h3>
-        <p>A federated model contains the answer to almost every coordination question on a project.
-        Getting it out means opening the model and looking, one view at a time.</p></article>
-      <article class="card"><p class="card__k">02</p><h3>Rules live outside the thing they govern</h3>
-        <p>Clearances, sizing bands and standards sit in documents. Nothing connects them to the
-        elements they apply to, so compliance depends on whether someone remembered.</p></article>
-      <article class="card"><p class="card__k">03</p><h3>Checking scales with headcount</h3>
-        <p>Doubling the model doubles the checking. The only conventional lever is more people, and
-        more people checking by hand produces less consistency, not more.</p></article>
-      <article class="card"><p class="card__k">04</p><h3>Decisions leave no readable trace</h3>
-        <p>Why a duct was rerouted in March is in someone's inbox. The next stage inherits the
-        geometry without the reasoning, and re-litigates it.</p></article>
-    </div>
-  </div>
-</section>
-
-<section class="section section--grid">
-  <div class="shell">
-    <div class="split split--mid">
-      <div>
-        <p class="eyebrow">The approach</p>
-        <h2 class="sec-title">Four layers, and we are accountable for all four</h2>
-        <p class="sec-lede">Most of this industry sells one of these layers. A BIM bureau sells the
-        first. An AI vendor sells the second and third and has never sized a duct. The value is in
-        connecting them, and that requires engineers who can also build software.</p>
-        <p class="lede" style="margin-top:22px">This is also why the site labels every capability.
-        The gap between what a company can do and what it says it can do is the single most
-        expensive thing in this sector, so we publish the difference.</p>
-        <a class="btn btn--ghost" style="margin-top:30px" href="platform.html#status">Read the capability legend</a>
-      </div>
-      <div>
-        <div class="thesis" style="margin-bottom:22px">
-          <div><b>Data</b><span><strong>BIM</strong> — structured engineering context a machine can read.</span></div>
-          <div><b>Intelligence</b><span><strong>AI</strong> — reasoning over that context against rules.</span></div>
-          <div><b>Execution</b><span><strong>Automation</strong> — running what has been validated.</span></div>
-          <div><b>Validation</b><span><strong>Engineering</strong> — a named person who is accountable.</span></div>
-        </div>
-{STATUS_LEGEND}
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section section--raise" id="stack">
-  <div class="shell">
-    <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Intelligence stack</p>
-      <h2 class="sec-title">BIM &rarr; Engineering &rarr; AI &rarr; Automation &rarr; Output</h2>
-      <p class="sec-lede">Five layers, each with a status you can hold us to. Three are delivered
-      today, one is in development and used on our own work, and the site says which is which.</p>
-    </header>
-{stack_block()}
-    <p class="tiny" style="margin-top:26px">Layers 01, 02, 04 and 05 are services you can appoint
-    today. Layer 03 is internal software in development — not a released product, not licensable,
-    and no feature or date on this site is a commitment.</p>
+{service_groups_block()}
+    <p class="tiny" style="margin-top:28px">Not sure which of these you need?
+    <a href="contact.html" style="color:var(--sig)">Describe the project</a> and we will tell you
+    what the scope should be.</p>
   </div>
 </section>
 
 <section class="section">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">AI engineering agents</p>
-      <h2 class="sec-title">Specialised workflows, not a chatbot with a hard hat</h2>
-      <p class="sec-lede">An agent here is a defined workflow with a named input, an explicit rule
-      set and an output an engineer signs. Each one follows the same five beats, and the last beat
-      is always a person.</p>
+      <p class="eyebrow">Who we work with</p>
+      <h2 class="sec-title">Who we work with, and what we take off their plate</h2>
+      <p class="sec-lede">The reason you would appoint us differs by where you sit on the project.
+      Find yourself below.</p>
     </header>
-{CHAIN}
-{agents_block()}
-    <div class="note note--sig" style="max-width:none">
-      <p><strong>None of these run unattended.</strong> Where an agent exists it reads, tests and
-      drafts. It does not write to a live model, it does not close an issue, and it does not issue a
-      deliverable. An engineer accepts, amends or rejects every output, and their name goes on it.</p>
-      <p>Four of the eight are in development and used internally on our own delivery. Four are
-      roadmap — published because the architecture is coherent, not because they exist.</p>
-    </div>
+{audience_block()}
   </div>
 </section>
 
 <section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">What we automate</p>
-      <h2 class="sec-title">The work that should never have been manual</h2>
-      <p class="sec-lede">Five of these six are running on live appointments now. They are not a
-      differentiator we invented for a website — they are how the delivery already gets done, which
-      is why we can put a status badge on them.</p>
+      <p class="eyebrow">What you receive</p>
+      <h2 class="sec-title">Design &rarr; Model &rarr; Coordinate &rarr; Document</h2>
+      <p class="sec-lede">Five steps, in the order they happen on a project. Each one produces
+      something you can hold us to.</p>
     </header>
-{flows_block()}
+{delivers_block()}
   </div>
 </section>
 
 <section class="section">
   <div class="shell split split--mid">
     <div>
-      <p class="eyebrow">BIM intelligence</p>
-      <h2 class="sec-title">Your BIM model is an engineering database</h2>
-      <p class="sec-lede">Not a 3D picture with data attached — a structured record of geometry,
-      parameters, systems, equipment, relationships, quantities and design intent, all queryable if
-      it was authored that way.</p>
-      <p class="lede" style="margin-top:22px">That last clause is the whole discipline. A model
-      authored to look right and a model authored to be read are visually identical and completely
-      different assets. The second one can be checked automatically; the first one cannot, and no
-      amount of AI applied afterwards fixes it.</p>
-      <p class="lede" style="margin-top:16px">This is why BIMRACE treats information-first modelling
-      as engineering work rather than production work. It is the precondition for everything above
-      it in the stack.</p>
-      <a class="btn btn--ghost" style="margin-top:30px" href="intelligence.html">How model data becomes queryable</a>
+      <p class="eyebrow">Plain english</p>
+      <h2 class="sec-title">What does BIM actually mean?</h2>
+      <p class="sec-lede">Building Information Modelling is a way of representing a building and its
+      systems digitally, so that the architect, the engineers and the construction team can
+      coordinate the information before and during construction &mdash; rather than discovering
+      that two systems want the same space once the ceiling is being installed.</p>
+      <p class="lede" style="margin-top:22px">In practice it means the ducts, cables, pipes and
+      sprinkler mains exist as real objects with real sizes in a shared model, instead of lines on
+      separate drawings that nobody has laid over one another. A clash is something you can see and
+      fix on screen for the cost of an hour. The same clash found on site costs considerably more.</p>
+      <p class="lede" style="margin-top:16px">BIMRACE&rsquo;s role is to do the MEP engineering
+      <em>and</em> author that model, so the design decisions and the model agree with each other by
+      construction rather than by correction.</p>
+      <a class="btn btn--ghost" style="margin-top:30px" href="technology.html">How we model, and to which standards</a>
     </div>
     <div>
-      <svg class="dia" id="data-svg" viewBox="0 0 900 610" role="img"
-        aria-label="Network diagram: a central BIM model containing structured data, linked to geometry,
-        parameters, systems, equipment, relationships, quantities, specifications and spatial data."></svg>
+      <div class="panel">
+        <div class="panel__bar">
+          <span><b>BIM</b> / WHY IT MATTERS</span>
+        </div>
+        <div class="panel__body">
+          <div class="spec spec--tight">
+            <div class="spec__row"><div class="spec__k"><b>Without a coordinated model</b></div>
+              <div class="spec__v">Each discipline draws separately. Conflicts are found by a person
+              comparing drawings, or by a contractor on site. Quantities are counted by hand.</div></div>
+            <div class="spec__row"><div class="spec__k"><b>With one</b></div>
+              <div class="spec__v">The systems occupy real space in a shared model. Conflicts are
+              tested before issue. Drawings and schedules come out of the model that was
+              coordinated, so they agree with it.</div></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -981,65 +1127,30 @@ HOME = f"""
 <section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Engineering</p>
-      <h2 class="sec-title">Three categories, one accountable practice</h2>
-      <p class="sec-lede">Automation is a service category here, not an add-on at the bottom of a
-      modelling proposal. Every line carries its status.</p>
+      <p class="eyebrow">Sectors</p>
+      <h2 class="sec-title">Where we work</h2>
+      <p class="sec-lede">The engineering is the same discipline in every sector; the constraints
+      and the statutory requirements are not. These are the building types we work on most.</p>
     </header>
-{matrix_block()}
+{home_industries_block()}
+    <a class="btn btn--ghost" style="margin-top:30px" href="industries.html">All sectors</a>
   </div>
 </section>
 
 <section class="section">
-  <div class="shell split split--mid split--rev">
-    <div>
-      <svg class="dia" id="twin-svg" viewBox="20 20 716 372" role="img"
-        aria-label="Composition diagram: BIM model, asset data, live telemetry, engineering rules and
-        analytics combining into a digital twin, marked as roadmap."></svg>
-    </div>
-    <div>
-      <p class="eyebrow eyebrow--plain">Digital twin {B('road')}</p>
-      <h2 class="sec-title">A 3D model on a web page is not a digital twin</h2>
-      <p class="sec-lede">A twin is a model bound to asset data, fed by live data, governed by
-      engineering rules and read by analytics. Remove any one of those and you have a viewer.</p>
-      <p class="lede" style="margin-top:22px">BIMRACE delivers the first two of those five inputs
-      today: models structured for asset data, and the asset data itself. The live-data and
-      analytics layers are roadmap, and we would rather say so than sell a viewer as a twin — which
-      is common enough in this sector to be worth naming.</p>
-      <a class="btn btn--ghost" style="margin-top:30px" href="digital-twin.html">What a twin actually requires</a>
-    </div>
-  </div>
-</section>
-
-<section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Case studies</p>
-      <h2 class="sec-title">Structured around the engineering problem, not the render</h2>
-      <p class="sec-lede">No case studies are published yet, because no client has released one.
-      Rather than fill this section with stock imagery and unattributed numbers, the structure every
-      entry will follow is published in advance.</p>
+      <p class="eyebrow">Proof</p>
+      <h2 class="sec-title">What we have published, and what we have not</h2>
+      <p class="sec-lede">No client has released a case study yet, so there are none on this site.
+      Rather than fill the gap with stock imagery and numbers nobody can check, here is the
+      structure every published project will follow &mdash; and you can ask for a walkthrough of
+      live work at enquiry stage.</p>
     </header>
 {CASE_ANATOMY}
-    <p class="tiny" style="margin-top:26px">This site publishes no client logos, no project counts,
-    no headcount and no testimonials, because none have been earned and verified yet. When they
-    are, they will appear with attribution. <a href="projects.html" style="color:var(--sig)">See the
-    projects page</a>.</p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="shell">
-    <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Engineering console</p>
-      <h2 class="sec-title">What an engineering query looks like when the model can answer</h2>
-      <p class="sec-lede">A simulated session, shown because describing this is worse than showing
-      it. Every figure below is fabricated. Nothing on this page is connected to a model, and the
-      interface says so in three places — which is the same standard we apply to the product.</p>
-    </header>
-{CONSOLE}
-    <p class="viz__cap" style="margin-top:14px">{B('demo')} Note the last line of every run: the
-    system holds for engineering review. That is the design, not a limitation of the demo.</p>
+    <p class="tiny" style="margin-top:26px">This site publishes no client logos, no project counts
+    and no testimonials, because none have been earned and verified yet.
+    <a href="projects.html" style="color:var(--sig)">See the projects page</a>.</p>
   </div>
 </section>
 
@@ -1047,35 +1158,95 @@ HOME = f"""
   <div class="shell">
     <header class="sec-head">
       <p class="eyebrow">Why BIMRACE</p>
-      <h2 class="sec-title">Stated as things you can check</h2>
-      <p class="sec-lede">Adjectives are free. These are claims that can be tested at enquiry stage,
+      <h2 class="sec-title">Stated as things you can check at enquiry stage</h2>
+      <p class="sec-lede">Adjectives are free. These are claims you can test in a conversation,
       which is when you should test them.</p>
     </header>
     <div class="spec">
-      <div class="spec__row"><div class="spec__k">01<b>Engineers who build software</b>{B('live')}</div>
-        <div class="spec__v">The rule sets are written by people who have sized the systems they
-        govern. An automation practice without discipline depth produces confident nonsense at
-        scale, and there is a lot of it in this sector right now.</div></div>
-      <div class="spec__row"><div class="spec__k">02<b>Information-first modelling</b>{B('live')}</div>
-        <div class="spec__v">Parameters are populated during authoring, not retro-fitted before
-        handover. This is unglamorous and it is the entire reason automated checking works later.</div></div>
-      <div class="spec__row"><div class="spec__k">03<b>MEP depth, not MEP as an add-on</b>{B('live')}</div>
+      <div class="spec__row"><div class="spec__k">01<b>MEP depth, not MEP as an add-on</b></div>
         <div class="spec__v">Building services are the centre of the practice. Mechanical,
         electrical, public health and fire protection are treated as connected systems with real
         spatial constraints, not as coloured tubes in an architectural model.</div></div>
-      <div class="spec__row"><div class="spec__k">04<b>Human-in-the-loop by design</b>{B('live')}</div>
-        <div class="spec__v">Automation drafts; engineers decide. No routine writes to a live model
-        or closes an issue without a named person accepting it. This is a design constraint we do
-        not intend to remove — engineering liability does not automate.</div></div>
-      <div class="spec__row"><div class="spec__k">05<b>Published capability status</b>{B('live')}</div>
-        <div class="spec__v">Every claim on this site carries live, in-development or roadmap, and
-        the legend is published. If you find a claim here that we cannot demonstrate at enquiry
-        stage, that is a defect and we want to hear about it.</div></div>
-      <div class="spec__row"><div class="spec__k">06<b>Standards-aligned by default</b>{B('live')}</div>
-        <div class="spec__v">Naming, status codes, federation strategy and delivery are structured
-        to ISO 19650 principles on every appointment, not only where a client mandates it. We are
+      <div class="spec__row"><div class="spec__k">02<b>Engineering and BIM from one team</b></div>
+        <div class="spec__v">The people authoring the model are the people who sized the systems in
+        it. You are not managing a design consultant and a modelling bureau who each blame the
+        other for the coordination.</div></div>
+      <div class="spec__row"><div class="spec__k">03<b>Information-first modelling</b></div>
+        <div class="spec__v">Parameters are populated while the model is authored, not retro-fitted
+        before handover. It is unglamorous, and it is the reason schedules and automated checks can
+        be trusted later.</div></div>
+      <div class="spec__row"><div class="spec__k">04<b>Standards-aligned by default</b></div>
+        <div class="spec__v">Naming, status codes, federation and delivery are structured to
+        ISO&nbsp;19650 principles on every appointment, not only where a client mandates it. We are
         not certified to it and do not claim to be.</div></div>
+      <div class="spec__row"><div class="spec__k">05<b>Automation drafts, engineers decide</b></div>
+        <div class="spec__v">No routine writes to a live model, closes an issue or issues a
+        deliverable. A named engineer accepts, amends or rejects every automated output, and their
+        name goes on it.</div></div>
+      <div class="spec__row"><div class="spec__k">06<b>Published capability status</b></div>
+        <div class="spec__v">Anything on this site that is in development or on the roadmap is
+        labelled as such. If you find a claim here we cannot demonstrate at enquiry stage, that is a
+        defect and we want to hear about it.</div></div>
     </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--mid split--rev">
+    <div>
+      <div class="panel">
+        <div class="panel__bar"><span><b>DELIVERY</b> / WORLDWIDE</span></div>
+        <div class="panel__body">
+{home_regions_block()}
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="eyebrow">International delivery</p>
+      <h2 class="sec-title">Serving project teams worldwide</h2>
+      <p class="sec-lede">BIMRACE works remotely with project teams across North America, Europe,
+      the Middle East and Asia-Pacific, to the code and drawing conventions of the project&rsquo;s
+      own jurisdiction.</p>
+      <p class="lede" style="margin-top:22px">We have one office, in India, and we say so plainly:
+      the delivery model is a remote engineering team working to your standards and your programme,
+      with overlap arranged around your working day. There are no overseas branches behind the
+      pages below.</p>
+      <a class="btn btn--ghost" style="margin-top:30px" href="locations.html">How remote delivery works</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Engineering + BIM + AI</p>
+      <h2 class="sec-title">Automation and AI support the engineering. They do not replace it.</h2>
+      <p class="sec-lede">BIMRACE is building internal workflows that connect engineering data, BIM
+      models and AI-assisted checking. They make the work faster and more consistent. The business
+      is still MEP engineering, BIM coordination and design delivery, and a named engineer is
+      accountable for every output. Each capability below is labelled with what it actually is
+      today.</p>
+    </header>
+    <div class="g4">
+      <article class="card"><h3>Automated model checking {B('live')}</h3>
+        <p>Naming, parameters, clearances and sizing bands tested across the whole model rather than
+        the parts someone had time to open.</p>
+        <a class="card__more" href="services/bim-automation-services.html">BIM automation</a></article>
+      <article class="card"><h3>AI-assisted analysis {B('dev')}</h3>
+        <p>Model information read to flag coordination risks and anomalies for an engineer to
+        evaluate. It drafts findings; it does not resolve them.</p>
+        <a class="card__more" href="automation.html">AI &amp; automation</a></article>
+      <article class="card"><h3>MCP for Revit {B('road')}</h3>
+        <p>A governed protocol for connecting AI assistants to model data, so a question about the
+        model can be asked in words.</p>
+        <a class="card__more" href="technology/mcp-for-revit.html">MCP for Revit</a></article>
+      <article class="card"><h3>Digital twin {B('road')}</h3>
+        <p>A twin needs a model, asset data, live data, engineering rules and analytics. We deliver
+        the first two, and structure models so the rest stays possible.</p>
+        <a class="card__more" href="digital-twin.html">What a twin requires</a></article>
+    </div>
+    <p class="tiny" style="margin-top:26px">The full picture, layer by layer, with what is running
+    at each one: <a href="platform.html" style="color:var(--sig)">capability status</a>.</p>
   </div>
 </section>
 """
@@ -1493,6 +1664,20 @@ AUTOMATION = f"""
       our own delivery. Four are roadmap — architecturally coherent, not built. None run
       unattended, and none are offered for licence.</p>
     </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Engineering console</p>
+      <h2 class="sec-title">What an engineering query looks like when the model can answer</h2>
+      <p class="sec-lede">A simulated session, shown because describing this is worse than showing
+      it. Every figure below is fabricated and nothing here is connected to a model.</p>
+    </header>
+{CONSOLE}
+    <p class="viz__cap" style="margin-top:14px">{B('demo')} Note the last line of every run: the
+    system holds for engineering review. That is the design, not a limitation of the demo.</p>
   </div>
 </section>
 
@@ -2158,7 +2343,7 @@ ABOUT = f"""
         the rule sets and the QA output on a live workflow, under NDA. That is a more useful hour
         than a capability presentation.</p>
         <div class="hero__actions" style="margin-top:32px">
-          <a class="btn btn--primary" href="contact.html">Talk to engineering</a>
+          <a class="btn btn--primary" href="contact.html">Discuss your project</a>
           <a class="btn btn--ghost" href="tel:{TEL}">{PHONE}</a>
         </div>
       </div>
@@ -2250,11 +2435,127 @@ ABOUT = f"""
 
 
 # ============================================================================
+#  INSIGHTS
+# ============================================================================
+INSIGHT_ENTRIES = [
+    ("What BIM actually changes on a project",
+     "engineering.html", "See what is delivered",
+     ["A model is not a deliverable in itself. What changes is where conflicts are found. "
+      "Without a coordinated model, a duct and a cable tray competing for the same 300mm is "
+      "found by a person comparing two drawings, or by an installer on site with the ceiling "
+      "grid already up. With one, it is found by a clash test before the drawings are issued.",
+      "That is the whole economic argument, and it is why BIM is worth the authoring discipline "
+      "it demands. The saving is not in the modelling. It is in the rework that does not happen."]),
+    ("Why MEP is the hardest part to coordinate",
+     "services/bim-coordination-clash-detection.html", "MEP coordination &amp; clash detection",
+     ["Architecture and structure are largely fixed early and move slowly. Building services are "
+      "the opposite: four disciplines competing for the same ceiling void and the same risers, "
+      "each with its own gradient, clearance, access and statutory constraints, and each still "
+      "changing while the others are being drawn.",
+      "Ductwork needs depth and cannot be casually rerouted. Drainage needs fall and therefore "
+      "cannot be moved vertically at all without consequences. Sprinkler coverage is governed by "
+      "spacing rules. Cable containment needs maintenance access. Coordinating MEP is mostly the "
+      "work of deciding, system by system, which of those constraints yields."]),
+    ("Level of detail is a scope decision, not a quality one",
+     "services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
+     ["Asking for the most detailed model available is usually the wrong instinct. Detail costs "
+      "time to author and time to change, and a model detailed beyond the decisions the stage is "
+      "making is slower to coordinate without being more useful.",
+      "The question worth agreeing at appointment is what decisions the model has to support at "
+      "each stage, and then authoring to that. A concept-stage model that establishes riser sizes "
+      "and plant space is doing its job. The same model with every bracket in it is not better; "
+      "it is more expensive and harder to move."]),
+    ("What to ask for so the data is usable later",
+     "technology.html", "BIM standards &amp; QA",
+     ["Two models can look identical and be worth very different amounts. The difference is "
+      "whether the information was put in during authoring or added under deadline pressure "
+      "before handover.",
+      "If you want schedules, quantities or automated checks to be trustworthy, ask for the "
+      "naming convention, the parameter schema and the QA checks before authoring starts, not "
+      "at handover. Retro-fitting data into a finished model is the most expensive way to get it, "
+      "and it is where most of the disappointment with BIM comes from."]),
+    ("Where AI genuinely helps, and where it does not",
+     "automation.html", "AI &amp; automation",
+     ["Automated checking is real and useful now. Testing naming, parameters, clearances and "
+      "sizing bands across an entire model is repetitive, rule-based and exhaustive work &mdash; "
+      "which is exactly what a machine is better at than a person with a deadline.",
+      "Deciding what to do about a finding is not that. Rerouting a main to resolve a clearance "
+      "failure is an engineering judgement with liability attached, and it depends on things the "
+      "model does not contain. So automation drafts findings here and an engineer accepts, amends "
+      "or rejects them. Any supplier telling you the decision is automated is describing a "
+      "product that does not exist yet."]),
+    ("How remote delivery works without losing control",
+     "locations.html", "International delivery",
+     ["Offshore engineering support fails for two reasons: the standards were never agreed, and "
+      "nobody arranged the overlap. Both are fixable at appointment.",
+      "Working to your templates, your naming convention and your drawing conventions from the "
+      "first day removes most of it. Arranging deliberate overlap with your working day &mdash; "
+      "and putting one named engineer on the other end of it rather than a rotating pool &mdash; "
+      "removes most of the rest. We have one office, in India, and the model is a remote team "
+      "working to your standards, not a branch network."]),
+]
+
+
+def insight_block(entries):
+    out = []
+    for i, (title, href, label, paras) in enumerate(entries):
+        body = "\n".join(f"        <p>{t}</p>" for t in paras)
+        out.append(f"""    <article class="ins">
+      <p class="ins__n">{i + 1:02d}</p>
+      <div class="ins__b">
+        <h2>{title}</h2>
+{body}
+        <a class="card__more" href="{href}">{label}</a>
+      </div>
+    </article>""")
+    return '  <div class="inss">\n' + "\n".join(out) + "\n  </div>"
+
+
+INSIGHTS_FAQS = [
+    ("Do I need to understand BIM to work with BIMRACE?",
+     "No. You need to tell us what the building is, what stage it is at and what you need out of "
+     "it. We will tell you what the scope should be in ordinary language, and what you will "
+     "receive. The modelling standard is our problem to get right, not yours to specify."),
+    ("Can you work to our templates and standards?",
+     "Yes, and it is the normal case. We work inside client templates, naming conventions and "
+     "drawing standards as an extension of your team. Where you do not have them, we will "
+     "propose a structure aligned to ISO 19650 principles and agree it before authoring starts."),
+    ("Is MEP design and BIM modelling one appointment or two?",
+     "It can be either. Some clients appoint us for the engineering design and the model "
+     "together, which is where most of the value is because the decisions and the model cannot "
+     "disagree. Others already have a design and need the modelling, coordination or "
+     "documentation done properly. Both are normal."),
+    ("What do you need from us to quote?",
+     "Architectural drawings or a model, the stage, the building type and location, and what you "
+     "need delivered. If a scope document exists, send that. If it does not, describe the problem "
+     "and we will draft the scope."),
+]
+
+INSIGHTS = f"""
+{phero([("Home", "index.html"), ("Insights", None)],
+       "Insights",
+       "Plain answers to the questions that the jargon in this sector tends to hide &mdash; what "
+       "BIM changes, why MEP coordination is hard, what to ask for so the data is usable, and "
+       "where AI genuinely helps.",
+       [("Written for", "Architects, contractors, developers and project teams"),
+        ("Assumes", "No prior knowledge of BIM or Revit")])}
+
+<section class="section">
+  <div class="shell">
+{insight_block(INSIGHT_ENTRIES)}
+  </div>
+</section>
+{faq_block(INSIGHTS_FAQS, title="Questions we are asked before an appointment",
+           eyebrow="FAQ")}
+"""
+
+
+# ============================================================================
 #  CONTACT
 # ============================================================================
 CONTACT = f"""
 {phero([("Home", "index.html"), ("Contact", None)],
-       "Talk to engineering",
+       "Tell us about your project",
        "Tell us the scope, or the workflow you are tired of doing by hand. You will get a technical "
        "response from an engineer — approach, disciplines, deliverables, and an honest read on what "
        "is realistically automatable.",
@@ -2445,7 +2746,7 @@ THANKYOU = f"""
         set.</p>
       <div class="hero__actions">
         <a class="btn btn--primary" href="index.html">Back to home</a>
-        <a class="btn btn--ghost" href="platform.html">Explore BIM Intelligence</a>
+        <a class="btn btn--ghost" href="engineering.html">Explore our services</a>
       </div>
     </div>
   </div>
@@ -2458,13 +2759,12 @@ NOTFOUND = """
   <div class="shell">
     <p class="nf__code">ERROR 404 — CONTAINER NOT FOUND</p>
     <h1>This page is not in the model.</h1>
-    <p>The link is wrong, or the page has moved during the platform rebuild. The pages below are
-    the current structure.</p>
+    <p>The link is wrong, or the page has moved. The pages below are the current structure.</p>
     <div class="nf__links">
       <a class="btn btn--primary" href="index.html">Home</a>
-      <a class="btn btn--ghost" href="platform.html">Intelligence stack</a>
-      <a class="btn btn--ghost" href="engineering.html">Engineering</a>
-      <a class="btn btn--ghost" href="contact.html">Talk to engineering</a>
+      <a class="btn btn--ghost" href="engineering.html">Services</a>
+      <a class="btn btn--ghost" href="industries.html">Industries</a>
+      <a class="btn btn--ghost" href="contact.html">Discuss your project</a>
     </div>
   </div>
 </section>
@@ -2693,7 +2993,7 @@ def service_page(s):
 {faq_block(s["faqs"])}
 {related_block("Where this connects", s["related"])}
 """
-    ld = (breadcrumb_ld([("Home", ""), ("Engineering", "engineering.html"),
+    ld = (breadcrumb_ld([("Home", ""), ("Services", "engineering.html"),
                          (strip_tags(s["nav"]), url)])
           + service_ld(strip_tags(s["h1"]), s["desc"], url,
                        area=["United States", "United Kingdom", "United Arab Emirates",
@@ -3135,9 +3435,9 @@ if OUT.exists():
     shutil.rmtree(OUT)
 OUT.mkdir()
 
-DESC_HOME = ("MEP engineering, BIM coordination and AI-assisted engineering automation for AEC "
-             "project teams — with every capability on this site labelled live, in development "
-             "or roadmap.")
+DESC_HOME = ("BIMRACE provides MEP engineering design, BIM modelling, Revit coordination and "
+             "engineering documentation for architects, contractors, developers and engineering "
+             "teams worldwide.")
 
 ORG_LD = '<script type="application/ld+json">' + json.dumps({
     "@context": "https://schema.org", "@type": "Organization",
@@ -3145,14 +3445,15 @@ ORG_LD = '<script type="application/ld+json">' + json.dumps({
     "logo": SITE + "/logo.svg", "image": SITE + "/og-image.png",
     "email": EMAIL, "telephone": "+91-75079-58364",
     "description": DESC_HOME,
-    "slogan": "Engineering Intelligence. Built Around BIM.",
+    "slogan": "MEP engineering and BIM, delivered as one.",
     "address": {"@type": "PostalAddress", "addressCountry": "IN"},
     "founder": {"@type": "Person", "name": "Somnath Baste", "jobTitle": "Founder"},
     "knowsAbout": [
-        "Building Information Modelling", "MEP Engineering", "BIM Coordination",
-        "BIM Automation", "Revit Automation", "Engineering Automation",
-        "AI in Construction", "Engineering Intelligence", "Digital Twin",
-        "ISO 19650", "Clash Detection", "Model Quality Assurance",
+        "MEP Engineering", "HVAC Design", "Electrical Design",
+        "Plumbing and Public Health Design", "Fire Protection Design",
+        "Building Information Modelling", "Revit MEP", "BIM Coordination",
+        "Clash Detection", "BIM Modelling and Documentation", "ISO 19650",
+        "Model Quality Assurance", "BIM Automation", "Revit Automation",
     ],
     "contactPoint": [{"@type": "ContactPoint", "contactType": "sales", "email": EMAIL,
                       "telephone": "+91-75079-58364", "availableLanguage": ["en"]}]
@@ -3211,7 +3512,7 @@ FAQ_LD = '<script type="application/ld+json">' + json.dumps({
 }, indent=2) + '</script>\n'
 
 page("index",
-     "Engineering Intelligence Built Around BIM | BIMRACE",
+     "MEP Engineering &amp; BIM Services for Building Projects | BIMRACE",
      DESC_HOME,
      HOME, "index.html", extra=ORG_LD + SERVICE_LD + FAQ_LD)
 
@@ -3219,31 +3520,31 @@ page("platform",
      "Intelligence Stack | BIM, AI &amp; Automation | BIMRACE",
      "The five-layer BIMRACE intelligence stack — BIM data, engineering rules, AI analysis, "
      "automation and output — with every component honestly labelled.",
-     PLATFORM, "platform.html",
-     extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html")]))
+     PLATFORM, "technology.html",
+     extra=breadcrumb_ld([("Home", ""), ("BIM and Technology", "technology.html"), ("Capability status", "platform.html")]))
 
 page("intelligence",
      "BIM Intelligence | The Model as a Database | BIMRACE",
      "How BIM becomes a queryable engineering data layer: what a model holds, and the "
      "information-first authoring discipline that makes it usable.",
-     INTELLIGENCE, "platform.html",
-     extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
+     INTELLIGENCE, "technology.html",
+     extra=breadcrumb_ld([("Home", ""), ("BIM and Technology", "technology.html"),
                           ("BIM Intelligence", "intelligence.html")]))
 
 page("automation",
      "AI &amp; Engineering Automation for BIM | BIMRACE",
      "AI-assisted engineering workflows, automated BIM QA, clash intelligence and quantity "
      "extraction — with an engineering approval step at the end of every one.",
-     AUTOMATION, "platform.html",
-     extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
+     AUTOMATION, "technology.html",
+     extra=breadcrumb_ld([("Home", ""), ("BIM and Technology", "technology.html"),
                           ("AI and Automation", "automation.html")]))
 
 page("digital-twin",
      "Digital Twin | What a Twin Actually Requires | BIMRACE",
      "A digital twin needs a model, asset data, live data, engineering rules and analytics. "
      "BIMRACE delivers two of the five today, and publishes which two.",
-     DIGITAL_TWIN, "platform.html",
-     extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
+     DIGITAL_TWIN, "technology.html",
+     extra=breadcrumb_ld([("Home", ""), ("BIM and Technology", "technology.html"),
                           ("Digital Twin", "digital-twin.html")]))
 
 # The hubs link down to every child page. Without this block the new cluster
@@ -3310,7 +3611,7 @@ page("engineering",
      "MEP engineering, BIM modelling, coordination, design automation and construction support "
      "— defined by deliverable, with capability status against every line.",
      ENGINEERING + SERVICE_HUB + LOCATION_STRIP, "engineering.html",
-     extra=breadcrumb_ld([("Home", ""), ("Engineering", "engineering.html")]) + SERVICE_LD)
+     extra=breadcrumb_ld([("Home", ""), ("Services", "engineering.html")]) + SERVICE_LD)
 
 page("industries",
      "Industries | MEP &amp; BIM by Sector | BIMRACE",
@@ -3332,8 +3633,8 @@ page("technology/mcp-for-revit",
      "What the Model Context Protocol is, what a Revit MCP server would have to do, and why "
      "BIMRACE has not shipped one. Published as roadmap, not as a product.",
      _mcp.body(B, phero, faq_block, related_block, faq_ld),
-     "platform.html",
-     extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
+     "technology.html",
+     extra=breadcrumb_ld([("Home", ""), ("BIM and Technology", "technology.html"),
                           ("MCP for Revit", "technology/mcp-for-revit.html")])
            + faq_ld(_mcp.FAQS),
      cta_block=cta_band(
@@ -3341,7 +3642,7 @@ page("technology/mcp-for-revit",
          "We will show the extraction and checking work that is real today, describe honestly where "
          "the protocol layer would sit, and tell you which of the claims you have read elsewhere "
          "are further away than they are being presented as.",
-         primary=("contact.html", "Talk to an engineer"),
+         primary=("contact.html", "Discuss your project"),
          secondary=("automation.html", "See the automation workflows"),
          prefill="automation"))
 
@@ -3357,7 +3658,15 @@ page("technology",
      "ISO 19650 information management, the artefacts that govern an appointment, and the six "
      "quality checks applied before anything is issued.",
      TECHNOLOGY, "technology.html",
-     extra=breadcrumb_ld([("Home", ""), ("Standards", "technology.html")]))
+     extra=breadcrumb_ld([("Home", ""), ("BIM and Technology", "technology.html")]))
+
+page("insights",
+     "Insights on MEP Engineering &amp; BIM | BIMRACE",
+     "Plain-english explainers on MEP coordination, BIM level of detail, model data quality and "
+     "where AI genuinely helps on building projects.",
+     INSIGHTS, "insights.html",
+     extra=breadcrumb_ld([("Home", ""), ("Insights", "insights.html")])
+           + faq_ld(INSIGHTS_FAQS))
 
 page("about",
      "About | An Engineering Practice With Its Own Tools | BIMRACE",

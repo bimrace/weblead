@@ -37,7 +37,7 @@ SERVICES = [
  "slug": "mep-engineering-services",
  "nav": "MEP engineering",
  "h1": "MEP engineering design and BIM services",
- "title": "MEP Engineering &amp; BIM Services | BIMRACE",
+ "title": "MEP Engineering Design Services | BIMRACE",
  "desc": "MEP engineering design support and BIM delivery across mechanical, electrical, public "
          "health and fire protection, modelled as connected systems.",
  "eyebrow": "MEP engineering",
