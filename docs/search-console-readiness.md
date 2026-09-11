@@ -40,7 +40,7 @@ pages and fails the build if any of the following stops being true.
 | HTTPS on the live domain | Confirm the Amplify domain has a valid certificate and that `http://` redirects to `https://` |
 | One canonical host | Decide `bimrace.com` **or** `www.bimrace.com` and 301 the other. Canonicals are currently written to the apex, so the apex is the choice unless you change `SITE` in `_source/build.py` |
 | Redirect rules live | Paste `site/amplify-redirects.json` into Amplify (see below) — Amplify does not read `netlify.toml` |
-| Security headers live | Paste `site/amplify-headers.json` into Amplify |
+| Security headers live | Paste `site/amplify-headers.yml` into Amplify |
 | Search Console property | Not created |
 
 ---
@@ -61,8 +61,8 @@ signal than a 301 and looks like a soft 404.
 
 ### 2.2 Apply the security headers
 
-Same console, **App settings → Custom headers**, paste
-`site/amplify-headers.json`.
+Same console, **App settings → Custom headers → Edit**, paste
+`site/amplify-headers.yml`. That editor takes YAML, not JSON.
 
 This sets HSTS, `X-Content-Type-Options`, `Referrer-Policy`,
 `Permissions-Policy`, a Content-Security-Policy and cache headers. Verify

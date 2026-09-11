@@ -82,7 +82,7 @@ pages.
 once, and again whenever the rules change:
 
 - `site/amplify-redirects.json` → App settings → Rewrites and redirects
-- `site/amplify-headers.json` → App settings → Custom headers
+- `site/amplify-headers.yml` → App settings → Custom headers (YAML, not JSON)
 
 Until that is done the 301s are not live on the host that actually serves the
 site. See `docs/search-console-readiness.md`.

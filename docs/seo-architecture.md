@@ -202,7 +202,7 @@ were live on a host nobody uses and absent on the host in production.
 - `amplify-redirects.json` — **must be pasted** into
   Amplify → App settings → Rewrites and redirects. Amplify reads no file for
   this.
-- `amplify-headers.json` — same, for the security headers.
+- `amplify-headers.yml` — same, for the security headers. YAML, because that is what the custom-headers editor takes.
 
 | From | To | Status |
 |---|---|---|
