@@ -45,7 +45,9 @@
     return {
       source_code: first.utm_source ? 'campaign'
         : (document.referrer.indexOf('google.') > -1 ? 'google_search'
-        : (document.referrer.indexOf('linkedin.') > -1 ? 'linkedin' : 'website')),
+        : (document.referrer.indexOf('bing.') > -1 ? 'bing_search'
+        : (document.referrer.indexOf('duckduckgo.') > -1 ? 'duckduckgo_search'
+        : (document.referrer.indexOf('linkedin.') > -1 ? 'linkedin' : 'website')))),
       utm_source: first.utm_source || null,
       utm_medium: first.utm_medium || null,
       utm_campaign: first.utm_campaign || null,
@@ -54,6 +56,52 @@
       landing_page: first.landing_page,
       referrer: first.referrer
     };
+  }
+
+  /* The landing page answers "which page brought them to the site". These
+     answer "which page convinced them to enquire", which is the question that
+     tells you where the SEO investment actually pays. They travel inside
+     payload rather than as columns, so no schema migration is needed to ship
+     them — crm.enquiry_submissions.payload is jsonb and queryable. */
+  function journey() {
+    var path;
+    try { path = sessionStorage.getItem(PATHS); } catch (e) { path = null; }
+    return {
+      submitted_from: location.pathname,
+      page_title: document.title,
+      page_path: path || location.pathname,
+      screen: window.innerWidth + 'x' + window.innerHeight,
+      tz: (Intl.DateTimeFormat().resolvedOptions() || {}).timeZone || null,
+      language: navigator.language || null,
+      at: new Date().toISOString()
+    };
+  }
+
+  /* Path through the site, capped. Two or three page paths make the
+     difference between "an SEO page generated a lead" and "an SEO page
+     generated a lead about the thing that page is about". */
+  var PATHS = 'bimrace_path';
+  function trackPath() {
+    try {
+      var prev = sessionStorage.getItem(PATHS);
+      var list = prev ? prev.split(' > ') : [];
+      if (list[list.length - 1] !== location.pathname) list.push(location.pathname);
+      if (list.length > 12) list = list.slice(-12);
+      sessionStorage.setItem(PATHS, list.join(' > '));
+    } catch (e) { /* private mode */ }
+  }
+
+  /* A CTA on the HVAC page carries ?service=mep_bim. The visitor should not
+     have to re-state what they were reading when they decided to enquire. */
+  function prefill(form) {
+    var q = new URLSearchParams(location.search);
+    var want = q.get('service');
+    if (!want) return;
+    var sel = form.querySelector('select[name="lead_type"]');
+    if (!sel) return;
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === want) { sel.selectedIndex = i; return; }
+    }
   }
 
   /* ----------------------------------------------------------- helpers --- */
@@ -132,6 +180,8 @@
     var key = uuid();          // one key per form instance = idempotency
     var sending = false;
 
+    prefill(form);
+
     form.querySelectorAll('[data-required]').forEach(function (f) {
       f.addEventListener('blur', function () { validate(form); });
       f.addEventListener('input', function () {
@@ -156,10 +206,12 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
       status(form, 'info', 'Sending your enquiry…');
 
+      var data = collect(form);
+      data.__journey = journey();          // reserved key, ignored by the engine
       var body = Object.assign({
         submission_key: key,
         form_code: formCode,
-        payload: collect(form)
+        payload: data
       }, attribution());
 
       var useFn = CFG.useEdgeFunction === true;
@@ -208,6 +260,7 @@
   }
 
   function boot() {
+    trackPath();
     document.querySelectorAll('form[data-lead-form]').forEach(init);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

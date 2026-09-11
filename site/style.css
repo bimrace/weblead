@@ -343,6 +343,30 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .m-label--sig{fill:var(--sig)}
 .m-leader{stroke:var(--line-3);stroke-width:.8;stroke-dasharray:2 3;fill:none}
 .m-scan{stroke:var(--sig-edge);stroke-width:1;fill:none}
+
+/* Staged reveal: shell first, then each discipline, then the coordination
+   finding that only exists once they are all present. The delay is set per
+   group from script.js; the transition is here so it is one place to tune. */
+.m-layer{opacity:0}
+.m-layer.is-in{opacity:1;transition:opacity .55s var(--ease);transition-delay:var(--d,0ms)}
+
+/* The four discipline hues are inherited from coordination drawings and are
+   meaningless to anyone who has not read one — and to anyone who cannot
+   distinguish them. The legend names each layer, so the colour is a second
+   cue rather than the only one. */
+.vizkey{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:13px;
+  opacity:0;transition:opacity .5s var(--ease) 2.2s}
+.vizkey.is-in{opacity:1}
+.vizkey li{display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:9.6px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--text-3)}
+.vizkey i{width:14px;height:0;border-top-width:2px;border-top-style:solid;flex:none}
+.vizkey .k--mech{border-top-color:var(--mech)}
+.vizkey .k--elec{border-top-color:var(--elec)}
+.vizkey .k--plumb{border-top-color:var(--plumb)}
+.vizkey .k--fire{border-top-color:var(--struct)}
+.vizkey .k--arch{border-top-color:var(--line-3);border-top-style:dashed}
+.vizkey .k--risk{border-top-color:var(--risk);border-top-style:dotted}
 .m-flag{fill:var(--risk-wash);stroke:var(--risk);stroke-width:1}
 .m-flag-t{font-family:var(--mono);font-size:8.5px;fill:var(--risk-text);letter-spacing:.06em}
 
@@ -436,7 +460,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:var(--s4)}
 .chain > div{background:var(--surface-1);padding:16px 18px 18px;position:relative}
 .chain__n{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--sig)}
-.chain h4{margin-top:9px;font-size:14px}
+.chain h3{margin-top:9px;font-size:14px}
 .chain p{margin-top:7px;font-size:12.6px;color:var(--text-3);line-height:1.55}
 .chain > div:last-child .chain__n{color:var(--elec)}
 
@@ -450,7 +474,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .pipe__s:first-child{border-left:0}
 .pipe__s:hover{background:var(--surface-2)}
 .pipe__n{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--text-4)}
-.pipe__s h4{margin-top:10px;font-size:14px;line-height:1.3}
+.pipe__s h3{margin-top:10px;font-size:14px;line-height:1.3}
 .pipe__s p{margin-top:8px;font-size:12.4px;color:var(--text-3);line-height:1.55}
 .pipe__s .b{margin-top:12px}
 .pipe__s--ai .pipe__n{color:var(--sig)}
@@ -465,7 +489,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   border-radius:50%;background:var(--surface-0);border:1px solid var(--line-3)}
 .steps li.is-ai::before{border-color:var(--sig);background:var(--sig-wash)}
 .steps li.is-human::before{border-color:var(--elec);background:var(--elec-wash)}
-.steps h4{font-size:14.5px}
+.steps h3{font-size:14.5px}
 .steps p{margin-top:6px;font-size:13.4px;color:var(--text-2);line-height:1.6}
 .steps__k{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--text-4);display:block;margin-bottom:5px}
@@ -569,13 +593,13 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   color:var(--text-4);margin-bottom:10px}
 .case__b{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line)}
 .case__c{background:var(--surface-1);padding:22px 22px 24px}
-.case__c h4{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+.case__c h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--sig);font-weight:400}
 .case__c ul{margin-top:12px;display:grid;gap:7px}
 .case__c li{font-size:13px;color:var(--text-2);line-height:1.5;padding-left:14px;position:relative}
 .case__c li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:1px;background:var(--line-3)}
 .case__c p{margin-top:12px;font-size:13px;color:var(--text-2);line-height:1.6}
-.case__c--impact h4{color:var(--elec)}
+.case__c--impact h3{color:var(--elec)}
 .case__f{padding:16px 28px;border-top:1px solid var(--line);background:var(--surface-0);
   font-size:12.5px;color:var(--text-3)}
 
@@ -664,6 +688,29 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   outline:none;border-color:var(--sig);box-shadow:0 0 0 3px var(--focus-ring)}
 .field input[aria-invalid="true"],.field textarea[aria-invalid="true"]{border-color:var(--risk)}
 .err{font-size:12.5px;color:var(--risk-text);min-height:0}
+.hint{font-size:12.5px;color:var(--text-3);line-height:1.5}
+
+/* Progressive qualification: optional detail, closed by default. A longer form
+   qualifies better and converts worse, so the detail is offered rather than
+   imposed. <details> keeps it keyboard-operable with no JavaScript. */
+.form__more{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface-0)}
+.form__more > summary{
+  cursor:pointer;list-style:none;padding:15px 18px;font-size:14px;font-weight:500;
+  color:var(--text-2);display:flex;align-items:center;gap:10px}
+.form__more > summary::-webkit-details-marker{display:none}
+.form__more > summary::before{content:"+";font-family:var(--mono);color:var(--sig);font-size:15px}
+.form__more[open] > summary::before{content:"–"}
+.form__more > summary:hover{color:var(--text)}
+.form__more > summary:focus-visible{outline:2px solid var(--sig);outline-offset:-2px}
+.form__more-in{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;
+  padding:4px 18px 20px}
+.choices{border:0;padding:0;margin:0}
+.choices legend{font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--text-4);padding:0;margin-bottom:10px}
+.choices label{display:inline-flex;align-items:center;gap:8px;margin:0 18px 9px 0;
+  font-family:var(--sans);font-size:14px;letter-spacing:0;text-transform:none;
+  color:var(--text-2);cursor:pointer}
+.choices input{accent-color:var(--sig);width:16px;height:16px;margin:0}
 .form__foot{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
 .hp{position:absolute;left:-9999px}
 .form-status{margin:0;font-size:14px;padding:12px 14px;border-radius:var(--r);border:1px solid var(--line)}
@@ -696,14 +743,14 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .cta__side a:hover{border-color:var(--sig);color:var(--sig)}
 
 .foot{border-top:1px solid var(--line);padding-block:var(--s5) var(--s4);background:var(--void)}
-.foot__top{display:grid;grid-template-columns:minmax(250px,1fr) minmax(0,2.2fr);gap:var(--s5);align-items:start}
+.foot__top{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,2.9fr);gap:var(--s5);align-items:start}
 .foot__logo{display:block;width:146px;height:auto;color:var(--text);margin-bottom:16px}
 .foot__tagline{font-size:13.5px;color:var(--text-3);max-width:36ch;line-height:1.6}
 .foot__entity{margin-top:14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--text-2)}
 .foot__contact{margin-top:14px;font-size:14px;color:var(--text-2);line-height:1.85}
 .foot__link{color:var(--text-2);text-decoration:none;font-family:var(--mono);font-size:12.8px}
 .foot__link:hover{color:var(--sig)}
-.foot__cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s3)}
+.foot__cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:var(--s4) var(--s3)}
 .foot__col h2{font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:.18em;
   color:var(--text-4);margin-bottom:15px;text-transform:uppercase}
 .foot__col ul{display:flex;flex-direction:column;gap:10px}
@@ -758,8 +805,81 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
 .reveal.is-in{opacity:1;transform:none;
   transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0ms)}
 
-/* ================================ 21 RESPONSIVE ======================== */
+/* The spec table and its bullet list were designed for full shell width. Inside
+   a .split column they have roughly half of it, which turns a 250px label
+   column into a squeeze and a two-column bullet list into a word-per-line
+   ladder. Scope by ancestor rather than adding a modifier to every call site. */
+.split .spec__row{grid-template-columns:minmax(0,1fr);gap:12px}
+.split .spec__k b{margin-top:6px}
+.split .spec__list{grid-template-columns:minmax(0,1fr)}
+
+/* ------------------------------------------- 21 cluster pages: argument -- */
+/* Long-form argument blocks. These carry the part of a service or sector page
+   that has to read as an engineering position rather than as a feature list,
+   so they get a real measure and no card chrome. */
+.argu__set{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4) var(--s5)}
+.argu{border-top:1px solid var(--line-2);padding-top:22px}
+.argu h3{font-size:21px;letter-spacing:-.026em;max-width:26ch}
+.argu p{margin-top:14px;font-size:15.6px;color:var(--text-2);line-height:1.72;max-width:62ch}
+
+/* ---------------------------------------------- 22 cluster pages: FAQ --- */
+/* <details> rather than scripted accordions: keyboard-operable and screen
+   reader-addressable with no JavaScript, and the answer text is in the DOM for
+   a crawler whether or not the disclosure is open. */
+.faq{border-top:1px solid var(--line-2)}
+.faq__i{border-bottom:1px solid var(--line)}
+.faq__i summary{
+  display:flex;align-items:flex-start;gap:16px;cursor:pointer;list-style:none;
+  padding:22px 0;font-size:17px;font-weight:500;letter-spacing:-.018em;
+  color:var(--text);line-height:1.45}
+.faq__i summary::-webkit-details-marker{display:none}
+.faq__i summary::after{
+  content:"";flex:0 0 11px;width:11px;height:11px;margin-left:auto;margin-top:7px;
+  border-right:1.6px solid var(--sig);border-bottom:1.6px solid var(--sig);
+  transform:rotate(45deg);transition:transform .22s var(--ease)}
+.faq__i[open] summary::after{transform:rotate(-135deg)}
+.faq__i summary:hover{color:var(--sig-hi)}
+.faq__i summary:focus-visible{outline:2px solid var(--sig);outline-offset:3px}
+.faq__a{padding:0 40px 24px 0;max-width:78ch}
+.faq__a p{font-size:15.2px;color:var(--text-2);line-height:1.72}
+
+/* ------------------------------------ 23 cluster pages: internal links -- */
+/* Deliberate sideways linking. Orphan pages are the default failure mode of a
+   site that grows by adding landing pages, so every leaf page ends with one. */
+.rel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}
+.rel__i{
+  display:flex;flex-direction:column;gap:7px;padding:20px 22px;text-decoration:none;
+  border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface-1);
+  transition:border-color .22s var(--ease),transform .22s var(--ease)}
+.rel__i:hover{border-color:var(--sig-edge);transform:translateY(-2px)}
+.rel__t{font-size:15.4px;font-weight:600;color:var(--text);letter-spacing:-.016em}
+.rel__t::after{content:" →";color:var(--sig)}
+.rel__d{font-size:13.4px;color:var(--text-3);line-height:1.55}
+
+/* --------------------------------------------- 24 cluster pages: hub ---- */
+.hub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}
+.hub__i{
+  display:flex;flex-direction:column;gap:9px;padding:24px;text-decoration:none;
+  border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface-1);
+  transition:border-color .22s var(--ease),background .22s var(--ease)}
+.hub__i:hover{border-color:var(--sig-edge);background:var(--surface-0)}
+.hub__t{font-size:16.4px;font-weight:600;color:var(--text);letter-spacing:-.018em}
+.hub__t::after{content:" →";color:var(--sig)}
+.hub__d{font-size:13.6px;color:var(--text-2);line-height:1.6}
+.hub__m{margin-top:auto;padding-top:10px;font-family:var(--mono);font-size:9.6px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--text-4)}
+.hub--tight{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hub--tight .hub__i{padding:18px 20px;gap:6px}
+.hub--tight .hub__t{font-size:15px}
+
+/* A submenu with more than six entries reads as a wall in one column. */
+.submenu--wide{min-width:640px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* ================================ 25 RESPONSIVE ======================== */
 @media (max-width:1240px){
+  .hub,.rel{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hub--tight{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .submenu--wide{min-width:520px}
   .layer__in{grid-template-columns:112px minmax(0,1fr) minmax(0,1fr);gap:var(--s2)}
   .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pipe{grid-auto-flow:row;grid-auto-columns:auto}
@@ -821,8 +941,13 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .spec__row{grid-template-columns:1fr;gap:14px;padding:22px 0}
   .ind{grid-template-columns:36px 1fr;gap:10px var(--s2)}
   .ind p{grid-column:2}
-  .form{grid-template-columns:minmax(0,1fr)}
+  .form,.form__more-in{grid-template-columns:minmax(0,1fr)}
   .console__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .argu__set{grid-template-columns:minmax(0,1fr);gap:var(--s3)}
+  .hub,.rel,.hub--tight{grid-template-columns:minmax(0,1fr)}
+  .submenu--wide{min-width:0;grid-template-columns:minmax(0,1fr)}
+  .faq__i summary{font-size:16px;padding:20px 0}
+  .faq__a{padding-right:0}
 }
 @media (max-width:560px){
   .readout,.readout--4,.readout--6{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -830,7 +955,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .ro:nth-child(n+3){border-top:1px solid var(--line)}
   .hero__actions .btn,.cta__actions .btn,.nf__links .btn{flex:1 1 100%}
   .spec__list{grid-template-columns:1fr}
-  .foot__cols{grid-template-columns:1fr}
+  .foot__cols{grid-template-columns:repeat(2,minmax(0,1fr))}
   .foot__bottom{flex-direction:column;gap:8px}
   .brand__logo{width:96px}
   .brand__sub{font-size:8px;padding-left:9px;max-width:70px}
@@ -847,14 +972,21 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
     transition-duration:.001ms !important}
   .reveal{opacity:1;transform:none}
-  .btn:hover{transform:none}
+  .m-layer,.vizkey{opacity:1;transition:none}
+  .btn:hover,.rel__i:hover{transform:none}
   .log__l{opacity:1;transform:none}
+  .faq__i summary::after{transition:none}
 }
 
 @media print{
   .nav,.cta,.foot,.console__act{display:none}
   body{background:#fff}
   .section{padding-block:16px;border-top:0}
-  .panel,.card,.layer,.agent,.flow{box-shadow:none;break-inside:avoid}
+  .panel,.card,.layer,.agent,.flow,.hub__i,.rel__i{box-shadow:none;break-inside:avoid}
   .hero__bg,.section--grid::before,.phero::before{display:none}
+  /* A printed FAQ with every answer collapsed is a printed list of questions. */
+  .faq__i > .faq__a{display:block !important}
+  .faq__i summary::after{display:none}
+  .faq__i,.argu{break-inside:avoid}
+  .form__more > .form__more-in{display:grid !important}
 }

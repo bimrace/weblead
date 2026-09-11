@@ -13,9 +13,9 @@ site/ (or run `python build.py --install`).
     one honestly, it does not go on the site. The legend is published at
     platform.html#status so a reader can hold us to it.
 """
-import json, pathlib, re, shutil, sys
+import datetime, json, pathlib, re, shutil, sys
 
-ROOT = pathlib.Path(__file__).parent
+ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "dist"
 sys.path.insert(0, str(ROOT))
 from _legal import PRIVACY, TERMS, COOKIES              # noqa: E402
@@ -55,18 +55,37 @@ PLATFORM_MENU = [
      "Treating the model as an engineering database, not a drawing.", "live"),
     ("automation.html",   "AI &amp; Automation",
      "Agents, automated workflows and where the engineer signs.", "dev"),
+    ("technology/mcp-for-revit.html", "MCP for Revit",
+     "Connecting AI assistants to model data through a governed protocol.", "road"),
     ("digital-twin.html", "Digital Twin",
      "What a twin actually requires, and what we have not built.", "road"),
     ("platform.html#status", "Capability status",
      "Our four-state legend, published so you can audit it.", None),
 ]
 
+ENGINEERING_MENU = [
+    ("engineering.html", "All engineering services",
+     "The five capability groups and every deliverable in them.", None),
+    ("services/mep-engineering-services.html", "MEP engineering",
+     "Mechanical, electrical, public health and fire protection as connected systems.", "live"),
+    ("services/bim-coordination-clash-detection.html", "BIM coordination &amp; clash detection",
+     "Federated models, clearance and access checking, issues tracked to closure.", "live"),
+    ("services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
+     "Discipline models and model-derived drawings and schedules.", "live"),
+    ("services/revit-services.html", "Revit services",
+     "Templates, families, MEP authoring and parameter schemas.", "live"),
+    ("services/bim-automation-services.html", "BIM automation",
+     "Automated QA, quantity and documentation routines.", "live"),
+    ("technology.html", "Standards &amp; QA",
+     "ISO 19650 information management and the checks before issue.", None),
+]
+
 NAV = [
     ("platform.html",    "Platform",    PLATFORM_MENU),
-    ("engineering.html", "Engineering", None),
+    ("engineering.html", "Engineering", ENGINEERING_MENU),
     ("industries.html",  "Industries",  None),
+    ("locations.html",   "Locations",   None),
     ("projects.html",    "Projects",    None),
-    ("technology.html",  "Standards",   None),
     ("about.html",       "About",       None),
 ]
 
@@ -86,6 +105,7 @@ def head(title, desc, slug, extra=""):
 <link rel="canonical" href="{canon}">
 
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en">
 <meta property="og:site_name" content="BIMRACE">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
@@ -123,13 +143,15 @@ def chrome(active):
     for href, label, sub in NAV:
         cur = ' aria-current="page"' if href == active else ""
         if sub:
+            mid = "menu-" + re.sub(r"[^a-z]", "", label.lower())[:6]
             links = "\n".join(
                 f'          <li><a href="{a}"><span class="t">{t}'
                 f'{(" " + B(s)) if s else ""}</span><span class="d">{d}</span></a></li>'
                 for a, t, d, s in sub)
+            wide = " submenu--wide" if len(sub) > 6 else ""
             items.append(f"""      <li class="has-menu" data-open="false">
-        <button type="button" aria-expanded="false" aria-controls="menu-plat">{label}{caret}</button>
-        <ul class="submenu" id="menu-plat">
+        <button type="button" aria-expanded="false" aria-controls="{mid}">{label}{caret}</button>
+        <ul class="submenu{wide}" id="{mid}">
 {links}
         </ul>
       </li>""")
@@ -201,23 +223,26 @@ def footer():
         </p>
       </div>
       <div class="foot__cols">
+        <nav class="foot__col" aria-labelledby="f-svc"><h2 id="f-svc">Services</h2><ul>
+{foot_links(SERVICES_FOOT)}
+        </ul></nav>
         <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">Platform</h2><ul>
           <li><a href="platform.html">Intelligence stack</a></li>
           <li><a href="intelligence.html">BIM Intelligence</a></li>
           <li><a href="automation.html">AI &amp; Automation</a></li>
+          <li><a href="technology/mcp-for-revit.html">MCP for Revit</a></li>
           <li><a href="digital-twin.html">Digital Twin</a></li>
           <li><a href="platform.html#status">Capability status</a></li>
         </ul></nav>
-        <nav class="foot__col" aria-labelledby="f-eng"><h2 id="f-eng">Engineering</h2><ul>
-          <li><a href="engineering.html#mep">MEP Engineering</a></li>
-          <li><a href="engineering.html#modelling">BIM Modelling</a></li>
-          <li><a href="engineering.html#coordination">Coordination</a></li>
-          <li><a href="engineering.html#automation">Design Automation</a></li>
-          <li><a href="engineering.html#construction">Construction Support</a></li>
+        <nav class="foot__col" aria-labelledby="f-ind"><h2 id="f-ind">Industries</h2><ul>
+{foot_links(INDUSTRIES_FOOT)}
+        </ul></nav>
+        <nav class="foot__col" aria-labelledby="f-loc"><h2 id="f-loc">Where we work</h2><ul>
+{foot_links(LOCATIONS_FOOT)}
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-co"><h2 id="f-co">Company</h2><ul>
           <li><a href="about.html">About</a></li>
-          <li><a href="industries.html">Industries</a></li>
+          <li><a href="engineering.html">Engineering services</a></li>
           <li><a href="projects.html">Projects</a></li>
           <li><a href="technology.html">Standards &amp; QA</a></li>
           <li><a href="contact.html">Contact</a></li>
@@ -245,10 +270,28 @@ def footer():
 """
 
 
-def page(slug, title, desc, body, active, cta=True, extra=""):
+# ----------------------------------------------------------------- routing --
+# Pages are authored with bare relative hrefs ("engineering.html#mep") because
+# that is how the content reads. They are rewritten to root-relative on the way
+# out, which is the only thing that lets a page live in /services/ and still
+# resolve the same link. Do not hand-write a leading slash in page content.
+REL_HREF = re.compile(r'\b(href|src)="(?!/|#|https?:|mailto:|tel:|data:)([^"]*)"')
+
+# The build registry. Every indexable page appends itself here, and the sitemap
+# is generated from it — so a new page cannot be forgotten by the sitemap, and
+# the sitemap cannot list a page that was never built.
+REGISTRY = []
+
+
+def page(slug, title, desc, body, active, cta=True, extra="", index=True, cta_block=None):
     html = head(title, desc, slug, extra) + chrome(active) + '\n<main id="main">\n' + body \
-        + '\n</main>\n' + (CTA if cta else "") + footer()
-    (OUT / f"{slug}.html").write_text(html, encoding="utf-8")
+        + '\n</main>\n' + ((cta_block or CTA) if cta else "") + footer()
+    html = REL_HREF.sub(lambda m: f'{m.group(1)}="/{m.group(2)}"', html)
+    out = OUT / f"{slug}.html"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html, encoding="utf-8")
+    if index:
+        REGISTRY.append("" if slug == "index" else f"{slug}.html")
     return slug
 
 
@@ -282,6 +325,110 @@ def breadcrumb_ld(items):
              "item": f"{SITE}/{u}" if u else f"{SITE}/"}
             for i, (n, u) in enumerate(items)]
     }, indent=2) + '</script>\n')
+
+
+def strip_tags(s):
+    """Schema values are plain text. Badges and entities do not belong in JSON-LD."""
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", s)).replace("&amp;", "&") \
+        .replace("&mdash;", "—").replace("&rarr;", "→").replace("&hellip;", "…").strip()
+
+
+def faq_ld(pairs):
+    """FAQPage from the same list that renders the visible FAQ block. The two
+    cannot disagree, because there is only one source."""
+    return ('<script type="application/ld+json">' + json.dumps({
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [{"@type": "Question", "name": strip_tags(q),
+                        "acceptedAnswer": {"@type": "Answer", "text": strip_tags(a)}}
+                       for q, a in pairs]
+    }, indent=2) + '</script>\n')
+
+
+def service_ld(name, desc, url, area=None, service_type=None):
+    d = {"@context": "https://schema.org", "@type": "Service",
+         "name": strip_tags(name), "description": strip_tags(desc),
+         "url": f"{SITE}/{url}",
+         "provider": {"@type": "Organization", "name": "BIMRACE",
+                      "url": SITE + "/", "email": EMAIL}}
+    if service_type:
+        d["serviceType"] = service_type
+    if area:
+        d["areaServed"] = [{"@type": "Country", "name": a} for a in area]
+    return '<script type="application/ld+json">' + json.dumps(d, indent=2) + '</script>\n'
+
+
+def faq_block(pairs, title="Questions we are asked at enquiry stage",
+              eyebrow="FAQ", lede=None):
+    """A <details> list. No JavaScript, keyboard-operable for free, and the
+    answer text is in the DOM for a crawler whether or not it is open."""
+    rows = "\n".join(
+        f"""      <details class="faq__i">
+        <summary>{q}</summary>
+        <div class="faq__a"><p>{a}</p></div>
+      </details>""" for q, a in pairs)
+    l = f'      <p class="sec-lede">{lede}</p>\n' if lede else ""
+    return f"""
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="sec-title">{title}</h2>
+{l}    </header>
+    <div class="faq">
+{rows}
+    </div>
+  </div>
+</section>"""
+
+
+def related_block(title, links, eyebrow="Related"):
+    """Deliberate internal linking. Every leaf page points sideways to its
+    siblings and up to its cluster hub — orphan pages are the default failure
+    mode of a site that grows by adding landing pages."""
+    items = "\n".join(
+        f'      <a class="rel__i" href="{h}"><span class="rel__t">{t}</span>'
+        f'<span class="rel__d">{d}</span></a>' for h, t, d in links)
+    return f"""
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="sec-title">{title}</h2>
+    </header>
+    <div class="rel">
+{items}
+    </div>
+  </div>
+</section>"""
+
+
+def cta_band(heading, body, primary=("contact.html", "Discuss your project"),
+             secondary=("engineering.html", "See what is delivered"), prefill=None):
+    """A contextual conversion band. The prefill parameter carries the enquiry
+    form's service selection through the query string, so a visitor arriving
+    from the HVAC page does not have to re-state why they are here."""
+    ph = primary[0] + (f"?service={prefill}" if prefill else "")
+    return f"""
+<section class="cta">
+  <div class="shell cta__in">
+    <div>
+      <p class="eyebrow">Engineering enquiry</p>
+      <h2>{heading}</h2>
+      <p>{body}</p>
+      <div class="cta__actions">
+        <a class="btn btn--primary btn--lg" href="{ph}">{primary[1]}</a>
+        <a class="btn btn--ghost btn--lg" href="{secondary[0]}">{secondary[1]}</a>
+      </div>
+    </div>
+    <dl class="cta__side">
+      <dt>Email</dt><dd><a href="mailto:{EMAIL}">{EMAIL}</a></dd>
+      <dt>Telephone</dt><dd><a href="tel:{TEL}">{PHONE}</a></dd>
+      <dt>Response</dt><dd>Within two working days</dd>
+      <dt>Reaches</dt><dd>Somnath Baste, Founder</dd>
+    </dl>
+  </div>
+</section>
+"""
 
 
 # ============================================================================
@@ -440,15 +587,15 @@ def agents_block():
 
 CHAIN = """
     <div class="chain">
-      <div><p class="chain__n">01 INPUT</p><h4>Model and rules</h4>
+      <div><p class="chain__n">01 INPUT</p><h3>Model and rules</h3>
         <p>Structured model data plus the engineering rule set that governs it.</p></div>
-      <div><p class="chain__n">02 REASON</p><h4>Analysis</h4>
+      <div><p class="chain__n">02 REASON</p><h3>Analysis</h3>
         <p>Resolve relationships, test against rules, detect what does not fit.</p></div>
-      <div><p class="chain__n">03 VALIDATE</p><h4>Engineering rules</h4>
+      <div><p class="chain__n">03 VALIDATE</p><h3>Engineering rules</h3>
         <p>Findings checked against discipline criteria, not just geometry.</p></div>
-      <div><p class="chain__n">04 AUTOMATE</p><h4>Execution</h4>
+      <div><p class="chain__n">04 AUTOMATE</p><h3>Execution</h3>
         <p>Validated actions run as routines. Drafts, never silent model edits.</p></div>
-      <div><p class="chain__n">05 APPROVE</p><h4>Engineer signs</h4>
+      <div><p class="chain__n">05 APPROVE</p><h3>Engineer signs</h3>
         <p>A named engineer accepts, amends or rejects. Nothing issues without this.</p></div>
     </div>"""
 
@@ -619,19 +766,19 @@ CASE_ANATOMY = f"""
           {B('live', 'Structure fixed')}
         </div>
         <div class="case__b">
-          <div class="case__c"><h4>01 Problem</h4>
+          <div class="case__c"><h3>01 Problem</h3>
             <p>The engineering problem in the client's terms — what was slow, repetitive, unreliable
             or unresolvable at the scale of the project.</p></div>
-          <div class="case__c"><h4>02 BIM data</h4>
+          <div class="case__c"><h3>02 BIM data</h3>
             <ul><li>Model size and element count</li><li>Disciplines and systems</li>
             <li>Level of information need</li><li>Exchange formats</li></ul></div>
-          <div class="case__c"><h4>03 Intelligence</h4>
+          <div class="case__c"><h3>03 Intelligence</h3>
             <ul><li>What was read from the model</li><li>Which rules were applied</li>
             <li>What the analysis found</li><li>What it could not determine</li></ul></div>
-          <div class="case__c"><h4>04 Automation</h4>
+          <div class="case__c"><h3>04 Automation</h3>
             <ul><li>Which steps were automated</li><li>Which stayed manual, and why</li>
             <li>Where the engineer reviewed</li><li>What was rejected at review</li></ul></div>
-          <div class="case__c case__c--impact"><h4>05 Impact</h4>
+          <div class="case__c case__c--impact"><h3>05 Impact</h3>
             <p>Measured against a stated baseline, with the measurement method named. Where a number
             cannot be verified, the case study will say so rather than estimate one.</p></div>
         </div>
@@ -687,9 +834,18 @@ HOME = f"""
           <span>ALL FIGURES ILLUSTRATIVE</span>
         </div>
       </div>
-      <figcaption class="viz__cap">{B('demo')} The sweep is an analysis pass reading the model. The
-      flagged node is a clearance failure raised for an engineer to resolve — not resolved
-      automatically.</figcaption>
+      <ul class="vizkey" id="hero-legend" aria-label="Discipline colour key for the model above">
+        <li><i class="k--arch" aria-hidden="true"></i>Architecture &amp; structure</li>
+        <li><i class="k--mech" aria-hidden="true"></i>Mechanical</li>
+        <li><i class="k--elec" aria-hidden="true"></i>Electrical</li>
+        <li><i class="k--plumb" aria-hidden="true"></i>Public health</li>
+        <li><i class="k--fire" aria-hidden="true"></i>Fire protection</li>
+        <li><i class="k--risk" aria-hidden="true"></i>Flagged for review</li>
+      </ul>
+      <figcaption class="viz__cap">{B('demo')} The layers build in the order a model is
+      coordinated — shell, then each discipline, then the finding. The sweep is an analysis pass
+      reading the model; the flagged node is a clearance failure raised for an engineer to resolve,
+      not resolved automatically.</figcaption>
     </figure>
   </div>
 </section>
@@ -1054,19 +1210,19 @@ PLATFORM = f"""
     </div>
     <div>
       <ol class="steps">
-        <li class="is-human"><span class="steps__k">Engineer</span><h4>States the intent</h4>
+        <li class="is-human"><span class="steps__k">Engineer</span><h3>States the intent</h3>
           <p>A scope, a question or a rule set. The engineering judgement about what matters happens
           here, before any automation runs.</p></li>
-        <li class="is-ai"><span class="steps__k">System</span><h4>Reads and reasons</h4>
+        <li class="is-ai"><span class="steps__k">System</span><h3>Reads and reasons</h3>
           <p>Model data is resolved, rules applied, anomalies detected and findings classified by
           cause rather than counted.</p></li>
-        <li class="is-ai"><span class="steps__k">System</span><h4>Drafts output</h4>
+        <li class="is-ai"><span class="steps__k">System</span><h3>Drafts output</h3>
           <p>A report, a schedule, a quantity export or proposed model content — in a reviewable
           state, never written directly to the live model.</p></li>
-        <li class="is-human"><span class="steps__k">Engineer</span><h4>Validates</h4>
+        <li class="is-human"><span class="steps__k">Engineer</span><h3>Validates</h3>
           <p>Accepts, amends or rejects. Rejections are fed back into the rule set, which is how the
           system gets better rather than more confident.</p></li>
-        <li class="is-human"><span class="steps__k">Engineer</span><h4>Issues and signs</h4>
+        <li class="is-human"><span class="steps__k">Engineer</span><h3>Issues and signs</h3>
           <p>Through the CDE with the correct status code, under a named person's accountability.</p></li>
       </ol>
     </div>
@@ -1276,26 +1432,26 @@ AUTOMATION = f"""
     <div class="split">
       <div>
         <ol class="steps">
-          <li class="is-human"><span class="steps__k">Engineer</span><h4>States the query</h4>
+          <li class="is-human"><span class="steps__k">Engineer</span><h3>States the query</h3>
             <p>"Check the chilled water system on R04." The scope, the model and the standard being
             applied are established by a person who knows why it matters.</p></li>
-          <li class="is-ai"><span class="steps__k">System</span><h4>Resolves the system</h4>
+          <li class="is-ai"><span class="steps__k">System</span><h3>Resolves the system</h3>
             <p>Reads the federated model, identifies the chilled water network, and separates it
             from adjacent services by system assignment rather than by colour.</p></li>
-          <li class="is-ai"><span class="steps__k">System</span><h4>Reads the engineering data</h4>
+          <li class="is-ai"><span class="steps__k">System</span><h3>Reads the engineering data</h3>
             <p>Equipment, terminals, pipe segments, diameters, design flows, insulation and
             valve positions — off the elements, not off a spreadsheet.</p></li>
-          <li class="is-ai"><span class="steps__k">System</span><h4>Applies engineering rules</h4>
+          <li class="is-ai"><span class="steps__k">System</span><h3>Applies engineering rules</h3>
             <p>Sizing bands against flow, velocity limits, index-run pressure drop, clearance and
             access to plant, isolation and drain-down provision.</p></li>
-          <li class="is-ai"><span class="steps__k">System</span><h4>Detects abnormal conditions</h4>
+          <li class="is-ai"><span class="steps__k">System</span><h3>Detects abnormal conditions</h3>
             <p>A DN150 branch carrying flow sized for DN200 upstream. Four segments with no design
             flow parameter. A failing index run. Each finding carries its element ID and the rule
             that fired.</p></li>
-          <li class="is-ai"><span class="steps__k">System</span><h4>Drafts the report</h4>
+          <li class="is-ai"><span class="steps__k">System</span><h3>Drafts the report</h3>
             <p>Findings grouped by cause and severity, with the parameter values that produced them,
             and an explicit list of what could not be determined from the model.</p></li>
-          <li class="is-human"><span class="steps__k">Engineer</span><h4>Reviews and decides</h4>
+          <li class="is-human"><span class="steps__k">Engineer</span><h3>Reviews and decides</h3>
             <p>Confirms the real findings, discards the false ones, and decides what changes. False
             positives go back into the rule set — that feedback is the actual product.</p></li>
         </ol>
@@ -1917,18 +2073,18 @@ TECHNOLOGY = f"""
       checked against them before it is issued.</p>
     </header>
     <div class="pipe">
-      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 01</p><h4>Define</h4>
+      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 01</p><h3>Define</h3>
         <p>Confirm information requirements, scope, disciplines and level of information need.</p></div>
-      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 02</p><h4>Plan</h4>
+      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 02</p><h3>Plan</h3>
         <p>Execution plan, model structure, naming, shared coordinates and delivery programme.</p></div>
-      <div class="pipe__s"><p class="pipe__n">STAGE 03</p><h4>Model</h4>
+      <div class="pipe__s"><p class="pipe__n">STAGE 03</p><h3>Model</h3>
         <p>Discipline authoring to the agreed standard, with data populated as the model is built.</p></div>
-      <div class="pipe__s"><p class="pipe__n">STAGE 04</p><h4>Coordinate</h4>
+      <div class="pipe__s"><p class="pipe__n">STAGE 04</p><h3>Coordinate</h3>
         <p>Federate, resolve clashes and record decisions against a tracked issue list.</p></div>
-      <div class="pipe__s pipe__s--ai"><p class="pipe__n">STAGE 05</p><h4>Validate</h4>
+      <div class="pipe__s pipe__s--ai"><p class="pipe__n">STAGE 05</p><h3>Validate</h3>
         <p>Automated rule sets plus engineering review, against the plan, before anything is
         issued.</p></div>
-      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 06</p><h4>Deliver</h4>
+      <div class="pipe__s pipe__s--human"><p class="pipe__n">STAGE 06</p><h3>Deliver</h3>
         <p>Issue through the common data environment with the agreed formats and status codes.</p></div>
     </div>
   </div>
@@ -2130,7 +2286,9 @@ CONTACT = f"""
 
         <div class="field"><label for="f-email">Business email <span class="req" aria-hidden="true">*</span></label>
           <input id="f-email" name="email" type="email" autocomplete="email" data-required required>
-          <p class="err" data-for="f-email" role="alert"></p></div>
+          <p class="err" data-for="f-email" role="alert"></p>
+          <p class="hint" data-free-mail-hint hidden>A company address reaches us faster and helps us
+          identify the project. A personal address is still fine.</p></div>
 
         <div class="field"><label for="f-phone">Telephone</label>
           <input id="f-phone" name="phone" type="tel" autocomplete="tel">
@@ -2172,6 +2330,54 @@ CONTACT = f"""
           <textarea id="f-msg" name="message" data-required data-minlen="20" required
             placeholder="Building type, size, disciplines, stage, level of information need, programme, and any workflow you would like automated."></textarea>
           <p class="err" data-for="f-msg" role="alert"></p></div>
+
+        <!-- Progressive qualification. Everything below is optional and closed by
+             default: a longer form qualifies better and converts worse, so the
+             detail is available to anyone who wants to give it and costs nothing
+             to anyone who does not. Field names map to crm.leads columns via
+             fn_process_submission; do not rename without migrating. -->
+        <details class="form__more field--full">
+          <summary>Add project detail &mdash; optional, and it makes the reply more useful</summary>
+          <div class="form__more-in">
+            <div class="field"><label for="f-role">Your role</label>
+              <input id="f-role" name="job_title" type="text" autocomplete="organization-title"
+                     placeholder="e.g. BIM manager, project engineer"></div>
+
+            <div class="field"><label for="f-type">Project type</label>
+              <input id="f-type" name="project_type" type="text"
+                     placeholder="e.g. new build, fit-out, refurbishment"></div>
+
+            <div class="field"><label for="f-size">Approximate project size</label>
+              <select id="f-size" name="project_size">
+                <option value="">Select&hellip;</option>
+                <option>Under 5,000 m&sup2;</option>
+                <option>5,000 &ndash; 20,000 m&sup2;</option>
+                <option>20,000 &ndash; 100,000 m&sup2;</option>
+                <option>Over 100,000 m&sup2;</option>
+                <option>Multiple buildings / programme</option>
+                <option>Not a building &mdash; workflow or automation</option>
+              </select></div>
+
+            <div class="field"><label for="f-due">Required delivery date</label>
+              <input id="f-due" name="required_delivery_date" type="date"></div>
+
+            <fieldset class="field field--full choices">
+              <legend>Disciplines involved</legend>
+              <label><input type="checkbox" name="disciplines" value="Mechanical"> Mechanical</label>
+              <label><input type="checkbox" name="disciplines" value="Electrical"> Electrical</label>
+              <label><input type="checkbox" name="disciplines" value="Public health"> Public health</label>
+              <label><input type="checkbox" name="disciplines" value="Fire protection"> Fire protection</label>
+              <label><input type="checkbox" name="disciplines" value="Structural"> Structural</label>
+              <label><input type="checkbox" name="disciplines" value="Architectural"> Architectural</label>
+            </fieldset>
+
+            <fieldset class="field field--full choices">
+              <legend>Is there an existing model?</legend>
+              <label><input type="radio" name="existing_model" value="true"> Yes</label>
+              <label><input type="radio" name="existing_model" value="false"> No</label>
+            </fieldset>
+          </div>
+        </details>
 
         <div class="form__foot">
           <p class="tiny" style="max-width:44ch">By sending this enquiry you agree to our
@@ -2269,6 +2475,7 @@ PROJECT_TEMPLATE = f"""
 <section class="section section--flush">
   <div class="shell">
     <h1 class="sec-title" style="margin-bottom:24px">Case study template</h1>
+    <h2 class="eyebrow" style="margin-bottom:12px">How to use this file</h2>
     <div class="note" style="max-width:none;margin-bottom:48px">
       <p><strong>This is the case study template.</strong> Duplicate this file, rename it
       (for example <code>project-riverside-hospital.html</code>), replace every highlighted
@@ -2290,25 +2497,25 @@ PROJECT_TEMPLATE = f"""
         {B('live', 'Client released')}
       </div>
       <div class="case__b">
-        <div class="case__c"><h4>01 Problem</h4>
+        <div class="case__c"><h3>01 Problem</h3>
           <p><span class="fill">What was slow, repetitive, unreliable or unresolvable at this
           project's scale. In the client's terms.</span></p></div>
-        <div class="case__c"><h4>02 BIM data</h4>
+        <div class="case__c"><h3>02 BIM data</h3>
           <ul><li><span class="fill">Element count</span></li>
           <li><span class="fill">Disciplines and systems</span></li>
           <li><span class="fill">Level of information need</span></li>
           <li><span class="fill">Exchange formats</span></li></ul></div>
-        <div class="case__c"><h4>03 Intelligence</h4>
+        <div class="case__c"><h3>03 Intelligence</h3>
           <ul><li><span class="fill">What was read from the model</span></li>
           <li><span class="fill">Which rules were applied</span></li>
           <li><span class="fill">What the analysis found</span></li>
           <li><span class="fill">What it could not determine</span></li></ul></div>
-        <div class="case__c"><h4>04 Automation</h4>
+        <div class="case__c"><h3>04 Automation</h3>
           <ul><li><span class="fill">Steps automated</span></li>
           <li><span class="fill">Steps kept manual, and why</span></li>
           <li><span class="fill">Engineer review point</span></li>
           <li><span class="fill">False-positive rate</span></li></ul></div>
-        <div class="case__c case__c--impact"><h4>05 Impact</h4>
+        <div class="case__c case__c--impact"><h3>05 Impact</h3>
           <p><span class="fill">Measured against a stated baseline, with the method named. Delete
           this block entirely if no figure can be evidenced.</span></p></div>
       </div>
@@ -2318,6 +2525,566 @@ PROJECT_TEMPLATE = f"""
   </div>
 </section>
 """
+
+
+# ============================================================================
+#  SERVICE / INDUSTRY / LOCATION CLUSTERS
+#  Content lives in _services.py, _industries.py and _locations.py. This
+#  section is layout only — if a page reads thin, the fix is in the content
+#  module, not here.
+# ============================================================================
+# Aliased on import: build.py already uses INDUSTRY_PAGES for the sector hub page
+# body, and a silent rebind would be a very confusing bug to find.
+from _services import SERVICES as SERVICE_PAGES, SERVICE_BY_SLUG        # noqa: E402
+from _industries import INDUSTRIES as INDUSTRY_PAGES, INDUSTRY_BY_SLUG  # noqa: E402
+from _locations import LOCATIONS as LOCATION_PAGES, LOCATION_BY_SLUG    # noqa: E402
+import _mcp                                               # noqa: E402
+
+# Footer link inventory — built from the same lists that build the pages, so
+# the footer cannot point at a page that does not exist or omit one that does.
+SERVICES_FOOT = [(f"services/{s['slug']}.html", s["nav"]) for s in SERVICE_PAGES[:6]] + \
+                [("engineering.html", "All services")]
+INDUSTRIES_FOOT = [(f"industries/{i['slug']}.html", i["nav"]) for i in INDUSTRY_PAGES]
+LOCATIONS_FOOT = [(f"locations/{l['slug']}.html", l["nav"]) for l in LOCATION_PAGES] + \
+                 [("locations.html", "How we work remotely")]
+
+
+def foot_links(pairs):
+    return "\n".join(f'          <li><a href="{h}">{t}</a></li>' for h, t in pairs)
+
+
+def prose(blocks):
+    """Two-column argument blocks. Long-form prose in a single measure reads
+    better than a card grid, and these are arguments rather than features."""
+    return "\n".join(f"""    <div class="argu">
+      <h3>{h}</h3>
+      <p>{p}</p>
+    </div>""" for h, p in blocks)
+
+
+def spec_rows(rows, kicker="Deliverable"):
+    return "\n".join(f"""      <div class="spec__row">
+        <div class="spec__k">{kicker}<b>{n}</b></div>
+        <div class="spec__v">{d}</div>
+      </div>""" for n, d in rows)
+
+
+def badged_rows(rows, kicker="Automation"):
+    return "\n".join(f"""      <div class="spec__row">
+        <div class="spec__k">{kicker}<b>{n}</b>{B(s)}</div>
+        <div class="spec__v">{d}</div>
+      </div>""" for n, s, d in rows)
+
+
+def step_cards(steps):
+    return "\n".join(f"""      <article class="flow">
+        <div class="flow__top"><span class="flow__n">{n}</span></div>
+        <h3>{t}</h3>
+        <p>{d}</p>
+      </article>""" for n, t, d in steps)
+
+
+def bullets(items):
+    return "\n".join(f"        <li>{i}</li>" for i in items)
+
+
+def rel_for(service_slugs=(), industry_slugs=(), location_slugs=(), extra=()):
+    out = []
+    for s in service_slugs:
+        v = SERVICE_BY_SLUG[s]
+        out.append((f"services/{v['slug']}.html", strip_tags(v["nav"]), strip_tags(v["lede"])[:104] + "…"))
+    for s in industry_slugs:
+        v = INDUSTRY_BY_SLUG[s]
+        out.append((f"industries/{v['slug']}.html", strip_tags(v["nav"]), strip_tags(v["lede"])[:104] + "…"))
+    for s in location_slugs:
+        v = LOCATION_BY_SLUG[s]
+        out.append((f"locations/{v['slug']}.html", strip_tags(v["nav"]),
+                    strip_tags(v["lede"])[:104] + "…"))
+    return out + list(extra)
+
+
+# --------------------------------------------------------------- service --
+def service_page(s):
+    slug = s["slug"]
+    url = f"services/{slug}.html"
+    body = f"""
+{phero([("Home", "index.html"), ("Engineering", "engineering.html"), (strip_tags(s["nav"]), None)],
+       s["h1"], s["lede"], s["meta"])}
+
+<section class="section section--flush">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">{s["eyebrow"]}</p>
+      <h2 class="sec-title">The engineering position</h2>
+    </header>
+    <div class="argu__set">
+{prose(s["position"])}
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Deliverables</p>
+      <h2 class="sec-title">What is actually produced and issued</h2>
+      <p class="sec-lede">Any of these can be appointed on their own or combined. Nothing here
+      depends on buying the intelligence layer, which is not for sale in any case.</p>
+    </header>
+    <div class="spec">
+{spec_rows(s["delivers"])}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">How it runs</p>
+      <h2 class="sec-title">The sequence, and why it is in this order</h2>
+      <p class="sec-lede">Sequence is not a formality on this kind of work. Most of the expensive
+      rework we are asked to fix was produced by doing step four before step two.</p>
+    </header>
+    <div class="flows">
+{step_cards(s["process"])}
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">What we need to start</p>
+      <h2 class="sec-title">The inputs that decide whether a start is a real start</h2>
+      <p class="sec-lede">Missing any of these is survivable. Not knowing which of them are missing
+      is not, so we establish it at enquiry stage rather than at forty per cent.</p>
+      <ul class="spec__list" style="margin-top:22px">
+{bullets(s["inputs"])}
+      </ul>
+      <a class="btn btn--ghost" style="margin-top:30px" href="contact.html?service={s['prefill']}">Send us what you have</a>
+    </div>
+    <div>
+      <p class="eyebrow">Automation</p>
+      <h2 class="sec-title">Where automation applies to this work</h2>
+      <p class="sec-lede">Every line carries its real status. Three of the four states on this site
+      mean "not yet", and we use them.</p>
+      <div class="spec" style="margin-top:22px">
+{badged_rows(s["autos"])}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Scope boundary</p>
+      <h2 class="sec-title">What this appointment does not include</h2>
+      <p class="sec-lede">Published because a scope boundary discovered at month three is a dispute,
+      and the same boundary stated at enquiry stage is just information.</p>
+    </header>
+    <div class="note" style="max-width:none">
+      <ul class="spec__list">
+{bullets(s["nots"])}
+      </ul>
+    </div>
+  </div>
+</section>
+{faq_block(s["faqs"])}
+{related_block("Where this connects", s["related"])}
+"""
+    ld = (breadcrumb_ld([("Home", ""), ("Engineering", "engineering.html"),
+                         (strip_tags(s["nav"]), url)])
+          + service_ld(strip_tags(s["h1"]), s["desc"], url,
+                       area=["United States", "United Kingdom", "United Arab Emirates",
+                             "Saudi Arabia", "Australia", "Canada", "India"],
+                       service_type=strip_tags(s["eyebrow"]))
+          + faq_ld(s["faqs"]))
+    page(f"services/{slug}", s["title"], s["desc"], body, "engineering.html", extra=ld,
+         cta_block=cta_band(
+             f"Talk to an engineer about {strip_tags(s['nav']).lower()}.",
+             "Send a scope, a drawing set or the workflow you want this applied to. You will get a "
+             "technical response on approach, disciplines, deliverables and what is realistically "
+             "automatable — from an engineer, not a sales desk.",
+             primary=("contact.html", "Discuss your project"),
+             secondary=("engineering.html", "See all engineering services"),
+             prefill=s["prefill"]))
+
+
+# -------------------------------------------------------------- industry --
+def industry_page(i):
+    slug = i["slug"]
+    url = f"industries/{slug}.html"
+    svc_links = "\n".join(
+        f'        <li><a href="services/{x}.html">{strip_tags(SERVICE_BY_SLUG[x]["nav"])}</a></li>'
+        for x in i["services"])
+    body = f"""
+{phero([("Home", "index.html"), ("Industries", "industries.html"), (strip_tags(i["nav"]), None)],
+       i["h1"], i["lede"], i["meta"])}
+
+<section class="section section--flush">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">{i["eyebrow"]}</p>
+      <h2 class="sec-title">What makes coordination hard in this sector</h2>
+    </header>
+    <div class="argu__set">
+{prose(i["profile"])}
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Difficulty drivers</p>
+      <h2 class="sec-title">Where the effort actually goes</h2>
+      <p class="sec-lede">Services density and constraint tightness set coordination effort far more
+      than floor area does. These are the drivers that dominate here.</p>
+    </header>
+    <div class="spec">
+{spec_rows(i["drivers"], kicker="Driver")}
+    </div>
+    <div class="note" style="max-width:none">
+      <p><strong>Leading discipline.</strong> {i["lead_disc"]}</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Information requirements</p>
+      <h2 class="sec-title">What the model has to be able to answer here</h2>
+      <p class="sec-lede">Level of information need is a sector-specific question. These are the
+      requirements that are characteristic of this building type rather than generic to BIM.</p>
+      <ul class="spec__list" style="margin-top:22px">
+{bullets(i["info_req"])}
+      </ul>
+    </div>
+    <div>
+      <p class="eyebrow">Automation</p>
+      <h2 class="sec-title">Where automation earns its place here</h2>
+      <p class="sec-lede">Not everywhere, and not equally. Each line carries its real status.</p>
+      <div class="spec" style="margin-top:22px">
+{badged_rows(i["autos"], kicker="Applies")}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Services</p>
+      <h2 class="sec-title">The capabilities that matter most here</h2>
+      <ul class="spec__list" style="margin-top:22px">
+{svc_links}
+      </ul>
+      <a class="btn btn--ghost" style="margin-top:30px" href="engineering.html">All engineering services</a>
+    </div>
+    <div>
+      <div class="note" style="max-width:none">
+        <p><strong>What this page does and does not say.</strong> It describes the discipline mix,
+        the coordination character and the workflow fit for this building type. It does not claim
+        completed projects in the sector.</p>
+        <p>This site publishes no client logos, no project counts and no testimonials, because none
+        have been released and verified yet. If you want evidence rather than a description at
+        enquiry stage, ask for a working session — we will screen-share the rule sets and live QA
+        output under NDA. <a href="projects.html" style="color:var(--sig)">The projects page</a>
+        explains the measurement rules we have committed to in advance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{faq_block(i["faqs"])}
+{related_block("Where this connects",
+               rel_for(service_slugs=i["services"][:3],
+                       extra=[("industries.html", "All sectors",
+                               "Where coordination difficulty sits across the eight building types "
+                               "our discipline mix suits."),
+                              ("locations.html", "International delivery",
+                               "How remote delivery is actually run, market by market.")]))}
+"""
+    ld = (breadcrumb_ld([("Home", ""), ("Industries", "industries.html"),
+                         (strip_tags(i["nav"]), url)]) + faq_ld(i["faqs"]))
+    page(f"industries/{slug}", i["title"], i["desc"], body, "industries.html", extra=ld,
+         cta_block=cta_band(
+             f"Discuss a {strip_tags(i['nav']).lower()} project.",
+             "Send the scope, the stage and the disciplines. You will get a technical response on "
+             "approach, deliverables and where automation is and is not worth applying on a project "
+             "of this type.",
+             secondary=("industries.html", "Compare sectors")))
+
+
+# -------------------------------------------------------------- location --
+def location_page(l):
+    slug = l["slug"]
+    url = f"locations/{slug}.html"
+    svc_links = "\n".join(
+        f'        <li><a href="services/{x}.html">{strip_tags(SERVICE_BY_SLUG[x]["nav"])}</a></li>'
+        for x in l["services"])
+    sec_links = "\n".join(
+        f'        <li><a href="industries/{x}.html">{strip_tags(INDUSTRY_BY_SLUG[x]["nav"])}</a></li>'
+        for x in l["sectors"])
+    body = f"""
+{phero([("Home", "index.html"), ("Locations", "locations.html"), (strip_tags(l["nav"]), None)],
+       l["h1"], l["lede"], l["meta"])}
+
+<section class="section section--flush">
+  <div class="shell">
+    <div class="note note--sig" style="max-width:none">
+      <p><strong>Read this before anything else on the page.</strong> BIMRACE is an India-based
+      engineering practice delivering remotely. We do not have an office, a registered entity or
+      professional licensure in {strip_tags(l["nav"])}, and this page does not imply that we do.</p>
+      <ul class="spec__list" style="margin-top:14px">
+{bullets(l["honest"])}
+      </ul>
+      <p style="margin-top:14px">This section exists because implying local presence is the most
+      common form of dishonesty in this sector's international marketing, and it is cheap to tell
+      and expensive to be caught in.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">{l["eyebrow"]}</p>
+      <h2 class="sec-title">What is actually different about working here</h2>
+    </header>
+    <div class="argu__set">
+{prose(l["intro"])}
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Standards basis</p>
+      <h2 class="sec-title">What the engineering is written to</h2>
+      <p class="sec-lede">General industry context, not legal advice and not a claim of
+      accreditation. Which of these applies to your project is a fact we ask for rather than
+      assume — assuming it is a common and expensive failure in offshore work.</p>
+    </header>
+    <div class="spec">
+{spec_rows(l["standards"], kicker="Basis")}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Working hours</p>
+      <h2 class="sec-title">The overlap, stated specifically enough to hold us to</h2>
+      <p class="sec-lede">{l["overlap"]}</p>
+    </div>
+    <div>
+      <p class="eyebrow">Collaboration model</p>
+      <h2 class="sec-title">How the appointment actually runs</h2>
+      <div class="spec" style="margin-top:22px">
+{spec_rows(l["model"], kicker="Model")}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Typical engagements</p>
+      <h2 class="sec-title">What teams in this market actually appoint us for</h2>
+    </header>
+    <div class="spec">
+{spec_rows(l["typical"], kicker="Engagement")}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Services</p>
+      <h2 class="sec-title">Relevant capabilities</h2>
+      <ul class="spec__list" style="margin-top:22px">
+{svc_links}
+      </ul>
+      <a class="btn btn--ghost" style="margin-top:24px" href="engineering.html">All engineering services</a>
+    </div>
+    <div>
+      <p class="eyebrow">Sectors</p>
+      <h2 class="sec-title">Relevant building types</h2>
+      <ul class="spec__list" style="margin-top:22px">
+{sec_links}
+      </ul>
+      <a class="btn btn--ghost" style="margin-top:24px" href="industries.html">All sectors</a>
+    </div>
+  </div>
+</section>
+{faq_block(l["faqs"], title=f"Working with BIMRACE from {strip_tags(l['nav'])}",
+           lede="The licensure question is answered first, because it is the one that decides "
+                "whether the rest of the conversation is worth having.")}
+{related_block("Where this connects",
+               rel_for(location_slugs=[x["slug"] for x in LOCATION_PAGES if x["slug"] != slug][:4],
+                       extra=[("locations.html", "International delivery",
+                               "How remote delivery is run, and the boundary we hold in every "
+                               "market."),
+                              ("about.html", "About BIMRACE",
+                               "Who this is, where it is, and what it does not claim to be.")]),
+               eyebrow="Other markets")}
+"""
+    ld = (breadcrumb_ld([("Home", ""), ("Locations", "locations.html"),
+                         (strip_tags(l["nav"]), url)]) + faq_ld(l["faqs"]))
+    page(f"locations/{slug}", l["title"], l["desc"], body, "locations.html", extra=ld,
+         cta_block=cta_band(
+             f"Discuss a project in {strip_tags(l['nav'])}.",
+             "Send the scope, the standards basis and the stage. You will get a technical response "
+             "from an engineer — including an honest read on where our remote model fits your "
+             "project and where it does not.",
+             secondary=("locations.html", "How remote delivery works")))
+
+
+# ------------------------------------------------------------ locations hub --
+def locations_hub():
+    cards = "\n".join(f"""      <a class="hub__i" href="locations/{l['slug']}.html">
+        <span class="hub__t">{l['nav']}</span>
+        <span class="hub__d">{strip_tags(l['lede'])}</span>
+        <span class="hub__m">{strip_tags(l['meta'][1][0])}: {strip_tags(l['meta'][1][1])}</span>
+      </a>""" for l in LOCATION_PAGES)
+    body = f"""
+{phero([("Home", "index.html"), ("Locations", None)],
+       "International delivery, and the boundary we hold in every market",
+       "BIMRACE is an India-based engineering practice working remotely with project teams "
+       "internationally. These pages set out the standards basis, the working overlap and the "
+       "collaboration model per market — and state, on every one of them, that we hold no local "
+       "office and no local licensure.",
+       [("Based", "India"), ("Offices elsewhere", "None"),
+        ("Licensure elsewhere", "None"), ("Markets described", str(len(LOCATION_PAGES)))])}
+
+<section class="section section--flush">
+  <div class="shell">
+    <div class="note note--sig" style="max-width:none">
+      <p><strong>The one thing worth saying before the rest.</strong> Every market page on this site
+      begins by stating that BIMRACE has no office, no registered entity and no professional
+      licensure in that market. That is not a disclaimer we were forced into — it is the position,
+      and it determines the only delivery model we offer: engineering and BIM production behind
+      your licensed engineer, consultant or practitioner of record.</p>
+      <p>The alternative — an offshore provider implying local presence and local sign-off — is
+      common, cheap to claim and impossible to honour. If a competitor's location page does not tell
+      you where their engineers are licensed, that is the question to ask them.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Markets</p>
+      <h2 class="sec-title">Where we work, and what differs</h2>
+      <p class="sec-lede">These pages exist because the standards basis, the approval route and the
+      practical working overlap genuinely differ by market. They are not the same page with a
+      country name substituted, and if one of them reads that way it is a defect.</p>
+    </header>
+    <div class="hub">
+{cards}
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Delivery model</p>
+      <h2 class="sec-title">How remote engineering delivery is actually run</h2>
+      <p class="sec-lede">The failure modes of offshore delivery are well known and largely
+      avoidable. These are the ones we design against.</p>
+    </header>
+    <div class="spec">
+      <div class="spec__row"><div class="spec__k">01<b>A fixed handover, not an expectation of overlap</b></div>
+        <div class="spec__v">Where the time difference is large, we agree a daily handover time and
+        a written note of what progressed, what is blocked and what needs a decision. An overlap
+        nobody has scheduled is not an overlap, and "we're flexible" is how two teams end up waiting
+        for each other.</div></div>
+      <div class="spec__row"><div class="spec__k">02<b>Your standards, your environment</b></div>
+        <div class="spec__v">We work inside your templates, your BEP and your CDE wherever they
+        exist, so the deliverable arrives usable rather than requiring a translation step. Where
+        there is no standard, we apply ours and hand over the documentation for it.</div></div>
+      <div class="spec__row"><div class="spec__k">03<b>Rule sets instead of supervision</b></div>
+        <div class="spec__v">Consistency across a distributed team is not achievable by watching
+        people. It is achievable by writing the check down and running it on every model, every
+        time. This is the single largest reason our remote delivery holds together at
+        volume.</div></div>
+      <div class="spec__row"><div class="spec__k">04<b>Your engineer of record, always</b></div>
+        <div class="spec__v">Statutory sign-off, authority submission and professional
+        responsibility sit with your licensed engineer, consultant or practitioner. We produce the
+        engineering and BIM deliverables that go into that; we never imply we can replace
+        it.</div></div>
+      <div class="spec__row"><div class="spec__k">05<b>NDA before drawings</b></div>
+        <div class="spec__v">Signed as a matter of course before any model or drawing set is shared.
+        Send yours or ask for ours.</div></div>
+      <div class="spec__row"><div class="spec__k">06<b>A named person, not a queue</b></div>
+        <div class="spec__v">Enquiries reach the founder directly. On an appointment, a named
+        engineer is accountable for what we issue, and their name is on it.</div></div>
+    </div>
+  </div>
+</section>
+{faq_block([
+ ("Do you have offices outside India?",
+  "No. BIMRACE is an India-based practice and every market page on this site says so explicitly. "
+  "We do not list foreign addresses or phone numbers, because we do not have them."),
+ ("Can your engineers sign off or stamp drawings in our country?",
+  "No. No BIMRACE engineer holds professional licensure or registration in any of the markets "
+  "described on this site. All engineering we produce is delivered under your licensed engineer, "
+  "consultant or practitioner of record, who reviews it and takes professional responsibility."),
+ ("Which markets do you actually work with?",
+  "The markets described on these pages are where our standards familiarity and working overlap "
+  "make a remote appointment workable. We are not claiming project history in each one — this site "
+  "publishes no project history until a client releases it."),
+ ("How do you handle a large time difference?",
+  "With a scheduled daily handover and a written progress, blocker and decision note, rather than "
+  "an expectation of live availability. For the US and Canada the practical benefit is overnight "
+  "progression; for the UK, Europe, the Gulf and Australia there is real same-day overlap."),
+ ("What happens to our model data?",
+  "It stays inside the environment agreed in the appointment, under an NDA signed before anything "
+  "is shared. Where a client requires work to be done inside their own environment and systems, "
+  "that is the normal team-extension arrangement."),
+], title="International delivery — the questions that decide it",
+   lede="Starting with the two that a location page should never make you go looking for.")}
+{related_block("Where this connects", [
+  ("engineering.html", "Engineering services",
+   "The five capability groups, and every deliverable in them."),
+  ("industries.html", "Industries",
+   "Where coordination difficulty sits across eight building types."),
+  ("technology.html", "Standards and QA",
+   "ISO 19650 information management and the checks applied before issue."),
+  ("about.html", "About BIMRACE",
+   "Who this is, where it is, and what it does not claim to be."),
+])}
+"""
+    faqs_for_ld = [
+        ("Do you have offices outside India?",
+         "No. BIMRACE is an India-based practice and every market page on this site says so "
+         "explicitly. We do not list foreign addresses or phone numbers, because we do not have "
+         "them."),
+        ("Can your engineers sign off or stamp drawings in our country?",
+         "No. No BIMRACE engineer holds professional licensure or registration in any of the "
+         "markets described on this site. All engineering we produce is delivered under your "
+         "licensed engineer, consultant or practitioner of record."),
+    ]
+    ld = (breadcrumb_ld([("Home", ""), ("Locations", "locations.html")]) + faq_ld(faqs_for_ld))
+    page("locations",
+         "International MEP &amp; BIM Delivery | BIMRACE",
+         "MEP engineering and BIM delivered remotely to the USA, UK, UAE, Saudi Arabia, Australia, "
+         "Canada and Europe — with the licensure boundary stated on every market page.",
+         body, "locations.html", extra=ld,
+         cta_block=cta_band(
+             "Tell us where the project is and what stage it is at.",
+             "You will get a technical response from an engineer, including an honest read on "
+             "whether our remote model suits your project's approval route — and where it does "
+             "not.",
+             secondary=("engineering.html", "See what is delivered")))
 
 
 REDIRECT_PAGES = [
@@ -2334,11 +3101,13 @@ def redirect_page(slug, target, label):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{label} has moved | BIMRACE</title>
+<meta name="description" content="This page has moved. {label} is now published at
+/{target} as part of the BIMRACE platform restructure.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="{SITE}/{target}">
-<meta http-equiv="refresh" content="0; url={target}">
+<meta http-equiv="refresh" content="0; url=/{target}">
 <meta name="theme-color" content="{THEME}">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <main id="main" class="nf">
@@ -2346,13 +3115,16 @@ def redirect_page(slug, target, label):
     <p class="nf__code">MOVED — 301</p>
     <h1>{label} is now Engineering.</h1>
     <p>This page has moved as part of the platform restructure.
-    <a href="{target}" style="color:var(--sig)">Continue to {target}</a>.</p>
+    <a href="/{target}" style="color:var(--sig)">Continue to {target}</a>.</p>
   </div>
 </main>
-<script>location.replace("{target}");</script>
 </body>
 </html>
 """
+# No inline <script> redirect: the Content-Security-Policy this site ships with
+# sets script-src 'self', which would block it silently. The meta refresh above
+# does the work, the real 301 is in netlify.toml and amplify-redirects.json, and
+# the visible link is the fallback if both are somehow missing.
     (OUT / f"{slug}.html").write_text(html, encoding="utf-8")
 
 
@@ -2363,9 +3135,9 @@ if OUT.exists():
     shutil.rmtree(OUT)
 OUT.mkdir()
 
-DESC_HOME = ("BIMRACE builds engineering intelligence around BIM: MEP engineering, model data, "
-             "AI-assisted analysis and engineering automation for AEC project teams — with every "
-             "capability labelled live, in development or roadmap.")
+DESC_HOME = ("MEP engineering, BIM coordination and AI-assisted engineering automation for AEC "
+             "project teams — with every capability on this site labelled live, in development "
+             "or roadmap.")
 
 ORG_LD = '<script type="application/ld+json">' + json.dumps({
     "@context": "https://schema.org", "@type": "Organization",
@@ -2439,111 +3211,197 @@ FAQ_LD = '<script type="application/ld+json">' + json.dumps({
 }, indent=2) + '</script>\n'
 
 page("index",
-     "Engineering Intelligence Built Around BIM | AI BIM &amp; MEP Automation | BIMRACE",
+     "Engineering Intelligence Built Around BIM | BIMRACE",
      DESC_HOME,
      HOME, "index.html", extra=ORG_LD + SERVICE_LD + FAQ_LD)
 
 page("platform",
-     "Intelligence Stack | BIM, AI &amp; Engineering Automation Architecture | BIMRACE",
+     "Intelligence Stack | BIM, AI &amp; Automation | BIMRACE",
      "The five-layer BIMRACE intelligence stack — BIM data, engineering rules, AI analysis, "
-     "automation and engineering output — with every component labelled live, in development or "
-     "roadmap.",
+     "automation and output — with every component honestly labelled.",
      PLATFORM, "platform.html",
      extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html")]))
 
 page("intelligence",
-     "BIM Intelligence | Your Model as an Engineering Database | BIMRACE",
-     "How BIM becomes a queryable engineering data layer: what a model actually holds, the "
-     "information-first authoring discipline that makes it usable, and how model data is governed.",
+     "BIM Intelligence | The Model as a Database | BIMRACE",
+     "How BIM becomes a queryable engineering data layer: what a model holds, and the "
+     "information-first authoring discipline that makes it usable.",
      INTELLIGENCE, "platform.html",
      extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
                           ("BIM Intelligence", "intelligence.html")]))
 
 page("automation",
-     "AI &amp; Engineering Automation | BIM Workflow Automation | BIMRACE",
-     "AI-assisted engineering workflows, automated BIM QA, clash intelligence, quantity extraction "
-     "and design automation — with the engineering approval step at the end of every one.",
+     "AI &amp; Engineering Automation for BIM | BIMRACE",
+     "AI-assisted engineering workflows, automated BIM QA, clash intelligence and quantity "
+     "extraction — with an engineering approval step at the end of every one.",
      AUTOMATION, "platform.html",
      extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
                           ("AI and Automation", "automation.html")]))
 
 page("digital-twin",
-     "Digital Twin Engineering | What a Twin Actually Requires | BIMRACE",
-     "A digital twin needs a BIM model, asset data, live data, engineering rules and analytics. "
-     "BIMRACE delivers two of the five today and publishes exactly which — because a model viewer "
-     "is not a twin.",
+     "Digital Twin | What a Twin Actually Requires | BIMRACE",
+     "A digital twin needs a model, asset data, live data, engineering rules and analytics. "
+     "BIMRACE delivers two of the five today, and publishes which two.",
      DIGITAL_TWIN, "platform.html",
      extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
                           ("Digital Twin", "digital-twin.html")]))
 
+# The hubs link down to every child page. Without this block the new cluster
+# pages are reachable only from the footer, which is how orphan pages happen.
+SERVICE_HUB = f"""
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Service pages</p>
+      <h2 class="sec-title">Each capability in detail</h2>
+      <p class="sec-lede">Deliverables, sequence, required inputs, where automation applies and what
+      the appointment does not include — set out per service rather than summarised.</p>
+    </header>
+    <div class="hub">
+{chr(10).join(f'''      <a class="hub__i" href="services/{s['slug']}.html">
+        <span class="hub__t">{s['nav']}</span>
+        <span class="hub__d">{strip_tags(s['lede'])}</span>
+        <span class="hub__m">{strip_tags(s['eyebrow'])}</span>
+      </a>''' for s in SERVICE_PAGES)}
+    </div>
+  </div>
+</section>"""
+
+INDUSTRY_HUB = f"""
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Sector pages</p>
+      <h2 class="sec-title">Each sector in detail</h2>
+      <p class="sec-lede">What drives coordination difficulty, which discipline dominates, what the
+      model has to be able to answer, and where automation earns its place — per building type.</p>
+    </header>
+    <div class="hub">
+{chr(10).join(f'''      <a class="hub__i" href="industries/{i['slug']}.html">
+        <span class="hub__t">{i['nav']}</span>
+        <span class="hub__d">{strip_tags(i['lede'])}</span>
+        <span class="hub__m">{strip_tags(i['meta'][0][0])}: {strip_tags(i['meta'][0][1])}</span>
+      </a>''' for i in INDUSTRY_PAGES)}
+    </div>
+  </div>
+</section>"""
+
+LOCATION_STRIP = f"""
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">International delivery</p>
+      <h2 class="sec-title">Where these services are delivered</h2>
+      <p class="sec-lede">BIMRACE is an India-based practice working remotely. Every market page
+      states the standards basis, the working overlap and — first — that we hold no local office and
+      no local licensure there.</p>
+    </header>
+    <div class="hub hub--tight">
+{chr(10).join(f'''      <a class="hub__i" href="locations/{l['slug']}.html">
+        <span class="hub__t">{l['nav']}</span>
+        <span class="hub__m">{strip_tags(l['meta'][2][0])}: {strip_tags(l['meta'][2][1])}</span>
+      </a>''' for l in LOCATION_PAGES)}
+    </div>
+  </div>
+</section>"""
+
 page("engineering",
-     "MEP Engineering, BIM Delivery &amp; Automation Services | BIMRACE",
-     "MEP engineering, BIM modelling, coordination, design automation and construction support — "
-     "defined by deliverable rather than by software, with capability status published against "
-     "every line.",
-     ENGINEERING, "engineering.html",
+     "MEP Engineering &amp; BIM Delivery Services | BIMRACE",
+     "MEP engineering, BIM modelling, coordination, design automation and construction support "
+     "— defined by deliverable, with capability status against every line.",
+     ENGINEERING + SERVICE_HUB + LOCATION_STRIP, "engineering.html",
      extra=breadcrumb_ld([("Home", ""), ("Engineering", "engineering.html")]) + SERVICE_LD)
 
 page("industries",
-     "Industries | Sector Coordination Difficulty | BIMRACE",
-     "Where coordination difficulty actually sits by sector — commercial, residential, healthcare, "
-     "data centres, industrial, hospitality, education and retail — and where automation earns its "
-     "place in each.",
-     INDUSTRIES, "industries.html",
+     "Industries | MEP &amp; BIM by Sector | BIMRACE",
+     "Where coordination difficulty actually sits by sector: commercial, residential, "
+     "healthcare, data centres, industrial, hospitality, education and retail.",
+     INDUSTRIES + INDUSTRY_HUB, "industries.html",
      extra=breadcrumb_ld([("Home", ""), ("Industries", "industries.html")]))
 
+for _s in SERVICE_PAGES:
+    service_page(_s)
+for _i in INDUSTRY_PAGES:
+    industry_page(_i)
+locations_hub()
+for _l in LOCATION_PAGES:
+    location_page(_l)
+
+page("technology/mcp-for-revit",
+     "MCP for Revit | Model Context Protocol | BIMRACE",
+     "What the Model Context Protocol is, what a Revit MCP server would have to do, and why "
+     "BIMRACE has not shipped one. Published as roadmap, not as a product.",
+     _mcp.body(B, phero, faq_block, related_block, faq_ld),
+     "platform.html",
+     extra=breadcrumb_ld([("Home", ""), ("Platform", "platform.html"),
+                          ("MCP for Revit", "technology/mcp-for-revit.html")])
+           + faq_ld(_mcp.FAQS),
+     cta_block=cta_band(
+         "Evaluating AI for BIM? Ask for the working session, not the demo.",
+         "We will show the extraction and checking work that is real today, describe honestly where "
+         "the protocol layer would sit, and tell you which of the claims you have read elsewhere "
+         "are further away than they are being presented as.",
+         primary=("contact.html", "Talk to an engineer"),
+         secondary=("automation.html", "See the automation workflows"),
+         prefill="automation"))
+
 page("projects",
-     "Projects | Case Study Structure &amp; Measurement Rules | BIMRACE",
-     "Case studies structured around the engineering problem: BIM data, intelligence, automation "
-     "and verified impact. No case studies are published yet, and this page explains exactly why.",
+     "Projects | Case Study Structure &amp; Rules | BIMRACE",
+     "Case studies structured around the engineering problem. None are published yet — this "
+     "page explains exactly why, and what every entry will contain when they are.",
      PROJECTS, "projects.html",
      extra=breadcrumb_ld([("Home", ""), ("Projects", "projects.html")]))
 
 page("technology",
-     "Standards &amp; QA | ISO 19650 Information Management | BIMRACE",
+     "Standards &amp; QA | ISO 19650 Delivery | BIMRACE",
      "ISO 19650 information management, the artefacts that govern an appointment, and the six "
-     "quality checks applied before anything is issued — the discipline the intelligence layer is "
-     "built on.",
+     "quality checks applied before anything is issued.",
      TECHNOLOGY, "technology.html",
      extra=breadcrumb_ld([("Home", ""), ("Standards", "technology.html")]))
 
 page("about",
-     "About | An Engineering Practice That Builds Its Own Tools | BIMRACE",
-     "BIMRACE is a focused MEP and BIM engineering practice building its own intelligence layer — "
-     "and publishing the capability status of every claim on this site.",
+     "About | An Engineering Practice With Its Own Tools | BIMRACE",
+     "BIMRACE is a focused MEP and BIM engineering practice building its own intelligence "
+     "layer, and publishing the capability status of every claim on this site.",
      ABOUT, "about.html",
      extra=breadcrumb_ld([("Home", ""), ("About", "about.html")]))
 
 page("contact",
      "Talk to Engineering | Project Enquiry | BIMRACE",
-     "Send a scope, a drawing set or a workflow you want automated. You will get a technical "
-     "response from an engineer within two working days.",
+     "Send a scope, a drawing set or a workflow you want automated. You get a technical reply "
+     "from an engineer — approach, disciplines and deliverables — within two working days.",
      CONTACT, "contact.html", cta=False,
      extra=breadcrumb_ld([("Home", ""), ("Contact", "contact.html")]))
 
 page("thank-you", "Enquiry received | BIMRACE",
-     "Your enquiry has reached BIMRACE and a technical response follows within two working days.",
+     "Your enquiry has reached BIMRACE. A technical response from an engineer follows within "
+     "two working days, and urgent items can be raised by telephone.",
      THANKYOU, "contact.html", cta=False,
      extra='<meta name="robots" content="noindex, follow">\n')
 
 page("404", "Page not found | BIMRACE",
-     "The page you requested is not on this site.",
+     "The page you requested is not on this site. The current structure of the BIMRACE site is "
+     "listed here, with a link to every main section.",
      NOTFOUND, "", cta=False,
      extra='<meta name="robots" content="noindex, follow">\n')
 
 page("project-template", "Case study template | BIMRACE",
-     "Internal template for BIMRACE case studies.",
+     "Internal template for BIMRACE case studies. Not a published page: it is marked noindex "
+     "and excluded from the sitemap.",
      PROJECT_TEMPLATE, "projects.html", cta=False,
      extra='<meta name="robots" content="noindex, nofollow">\n')
 
 page("privacy", "Privacy Policy | BIMRACE",
-     "How BIMRACE handles personal data submitted through this website.",
+     "How BIMRACE handles personal data submitted through this website: what is collected, "
+     "why, how long it is kept, and how to have it removed.",
      PRIVACY, "", cta=False)
 page("terms", "Terms of Use | BIMRACE",
-     "The terms on which the BIMRACE website is made available.",
+     "The terms on which the BIMRACE website is made available, including use of content, "
+     "capability statements and the limitation of liability that applies.",
      TERMS, "", cta=False)
 page("cookies", "Cookie Policy | BIMRACE",
-     "What cookies and third-party requests the BIMRACE website uses, and how to control them.",
+     "What cookies and third-party requests the BIMRACE website makes, what is stored in your "
+     "browser and why, and how to control or remove it.",
      COOKIES, "", cta=False)
 
 for slug, target, label in REDIRECT_PAGES:
@@ -2566,89 +3424,159 @@ for f in ["style.css", "script.js", "lead-capture.js", "config.js", "logo.svg", 
               {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
               {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
               {"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml"}]
-}, indent=2) + "\n")
+}, indent=2) + "\n", encoding="utf-8")
 
 (OUT / "robots.txt").write_text(
-    "User-agent: *\nAllow: /\n"
-    "Disallow: /project-template.html\nDisallow: /thank-you.html\n\n"
-    f"Sitemap: {SITE}/sitemap.xml\n")
+    "# BIMRACE — https://bimrace.com\n"
+    "# Everything public is crawlable. The two disallowed paths are a\n"
+    "# post-submission page and an internal template; both also carry a\n"
+    "# noindex tag, and neither is in the sitemap.\n\n"
+    "User-agent: *\n"
+    "Allow: /\n"
+    "Disallow: /project-template.html\n"
+    "Disallow: /thank-you.html\n"
+    "Disallow: /_source/\n\n"
+    "# Nothing blocks CSS, JS, SVG or images: blocking them breaks rendering\n"
+    "# for the crawler and costs more than it protects.\n\n"
+    f"Sitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
 
-PUBLIC = [("", "1.0", "weekly"),
-          ("platform.html", "0.9", "monthly"),
-          ("engineering.html", "0.9", "monthly"),
-          ("automation.html", "0.9", "monthly"),
-          ("intelligence.html", "0.8", "monthly"),
-          ("digital-twin.html", "0.7", "monthly"),
-          ("industries.html", "0.7", "monthly"),
-          ("projects.html", "0.8", "weekly"),
-          ("technology.html", "0.7", "monthly"),
-          ("about.html", "0.7", "monthly"),
-          ("contact.html", "0.9", "monthly"),
-          ("privacy.html", "0.3", "yearly"),
-          ("terms.html", "0.3", "yearly"),
-          ("cookies.html", "0.3", "yearly")]
+# ------------------------------------------------------------------ sitemap --
+# Generated from REGISTRY, which every indexable page appends itself to at build
+# time. A page therefore cannot be missing from the sitemap, and the sitemap
+# cannot list a URL that was never built. Do not hand-maintain a list here again.
+#
+# No <priority> and no <changefreq>: Google ignores both, and a file full of
+# values nobody reads is a file nobody keeps accurate. <lastmod> is the build
+# date, which is honest for a generated static site — every page is rewritten on
+# every build.
+NOINDEX = {"thank-you.html", "404.html", "project-template.html",
+           "capabilities.html"}
+SITEMAP_URLS = [u for u in REGISTRY if u not in NOINDEX]
+assert len(SITEMAP_URLS) == len(set(SITEMAP_URLS)), "duplicate URL in sitemap registry"
+BUILD_DATE = datetime.date.today().isoformat()
+
 (OUT / "sitemap.xml").write_text(
-    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    + "\n".join(f"  <url>\n    <loc>{SITE}/{u}</loc>\n    <changefreq>{c}</changefreq>\n"
-                f"    <priority>{p}</priority>\n  </url>" for u, p, c in PUBLIC)
-    + "\n</urlset>\n")
+    '<?xml version="1.0" encoding="UTF-8"?>\n'
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + "\n".join(f"  <url>\n    <loc>{SITE}/{u}</loc>\n"
+                f"    <lastmod>{BUILD_DATE}</lastmod>\n  </url>"
+                for u in SITEMAP_URLS)
+    + "\n</urlset>\n", encoding="utf-8")
 
-(OUT / "netlify.toml").write_text("""# Netlify configuration — static site, no build step required.
+# ------------------------------------------------------------ host config --
+# Two hosts, two formats, one source of truth. amplify-redirects.json is emitted
+# because Amplify reads neither netlify.toml nor _redirects: the 301s written for
+# the platform restructure were live on Netlify and dead on Amplify, which is the
+# host amplify.yml actually deploys from. Paste the JSON into
+# Amplify > App settings > Rewrites and redirects.
+REDIRECT_RULES = [
+    ("/capabilities", "/engineering.html", 301),
+    ("/capabilities.html", "/engineering.html", 301),
+    # Directory-style requests for the cluster hubs, so a hand-typed or
+    # mis-linked /services/ lands on the hub instead of a 404.
+    ("/services", "/engineering.html", 301),
+    ("/services/", "/engineering.html", 301),
+    ("/industries/", "/industries.html", 301),
+    ("/locations/", "/locations.html", 301),
+    ("/technology/", "/technology.html", 301),
+]
 
-[build]
-  publish = "."
+SECURITY_HEADERS = [
+    ("X-Frame-Options", "SAMEORIGIN"),
+    ("X-Content-Type-Options", "nosniff"),
+    ("Referrer-Policy", "strict-origin-when-cross-origin"),
+    ("Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()"),
+    ("Strict-Transport-Security", "max-age=31536000; includeSubDomains"),
+    ("Cross-Origin-Opener-Policy", "same-origin"),
+    # The enquiry form posts to Supabase and the fonts come from Google.
+    # Everything else is same-origin, so the policy can be tight.
+    # 'unsafe-inline' is required for style-src only because the generator emits
+    # a number of inline style attributes; there is no inline <script> anywhere,
+    # so script-src stays strict.
+    ("Content-Security-Policy",
+     "default-src 'self'; "
+     "script-src 'self'; "
+     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+     "font-src 'self' https://fonts.gstatic.com; "
+     # The founder photograph on the About page is served from Supabase
+     # Storage. Self-hosting it would let this drop to 'self' data:, and the
+     # cookie policy already says so.
+     "img-src 'self' data: https://*.supabase.co; "
+     "connect-src 'self' https://*.supabase.co; "
+     "form-action 'self'; "
+     "frame-ancestors 'self'; "
+     "base-uri 'self'; "
+     "object-src 'none'"),
+]
 
-# Renamed during the Engineering Intelligence restructure.
-[[redirects]]
-  from = "/capabilities"
-  to = "/engineering.html"
-  status = 301
-[[redirects]]
-  from = "/capabilities.html"
-  to = "/engineering.html"
-  status = 301
+_nl = "\n"
+(OUT / "netlify.toml").write_text(
+    "# Netlify configuration - static site, no build step required." + _nl
+    + "# Generated by _source/build.py. Do not edit in place." + _nl + _nl
+    + '[build]' + _nl + '  publish = "."' + _nl + _nl
+    + "".join('[[redirects]]' + _nl + f'  from = "{f}"' + _nl + f'  to = "{t}"' + _nl
+              + f'  status = {c}' + _nl + '  force = true' + _nl + _nl
+              for f, t, c in REDIRECT_RULES)
+    + '[[redirects]]' + _nl + '  from = "/_source/*"' + _nl
+    + '  to = "/404.html"' + _nl + '  status = 404' + _nl + _nl
+    + '[[headers]]' + _nl + '  for = "/*"' + _nl + '  [headers.values]' + _nl
+    + "".join(f'    {k} = "{v}"' + _nl for k, v in SECURITY_HEADERS) + _nl
+    + '[[headers]]' + _nl + '  for = "/*.css"' + _nl + '  [headers.values]' + _nl
+    + '    Cache-Control = "public, max-age=31536000, immutable"' + _nl + _nl
+    + '[[headers]]' + _nl + '  for = "/*.js"' + _nl + '  [headers.values]' + _nl
+    + '    Cache-Control = "public, max-age=31536000, immutable"' + _nl + _nl
+    + '[[headers]]' + _nl + '  for = "/*.html"' + _nl + '  [headers.values]' + _nl
+    + '    Cache-Control = "public, max-age=0, must-revalidate"' + _nl + _nl
+    + '[[headers]]' + _nl + '  for = "/sitemap.xml"' + _nl + '  [headers.values]' + _nl
+    + '    Cache-Control = "public, max-age=3600"' + _nl,
+    encoding="utf-8")
 
-[[redirects]]
-  from = "/_source/*"
-  to = "/404.html"
-  status = 404
+(OUT / "amplify-redirects.json").write_text(json.dumps(
+    [{"source": f, "target": t, "status": str(c), "condition": None}
+     for f, t, c in REDIRECT_RULES]
+    + [{"source": "/<*>", "target": "/404.html", "status": "404", "condition": None}],
+    indent=2) + _nl, encoding="utf-8")
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-""")
+(OUT / "amplify-headers.json").write_text(json.dumps(
+    {"customHeaders": [
+        {"pattern": "**",
+         "headers": [{"key": k, "value": v} for k, v in SECURITY_HEADERS]},
+        {"pattern": "**/*.css",
+         "headers": [{"key": "Cache-Control",
+                      "value": "public, max-age=31536000, immutable"}]},
+        {"pattern": "**/*.js",
+         "headers": [{"key": "Cache-Control",
+                      "value": "public, max-age=31536000, immutable"}]},
+        {"pattern": "**/*.html",
+         "headers": [{"key": "Cache-Control",
+                      "value": "public, max-age=0, must-revalidate"}]},
+    ]}, indent=2) + _nl, encoding="utf-8")
 
 # --install copies the build over the deployed folder in one step, so site/
 # can never drift from this generator again.
 if "--install" in sys.argv:
     site = ROOT.parent / "site"
-    keep = {"config.js"}
-    for f in OUT.iterdir():
-        if f.name in keep and (site / f.name).exists():
+    keep = {"config.js"}                       # runtime config is environment-specific
+    built = set()
+    for f in OUT.rglob("*"):
+        if f.is_dir():
             continue
-        shutil.copy(f, site / f.name)
-    for stale in site.glob("*.html"):
-        if not (OUT / stale.name).exists():
+        rel = f.relative_to(OUT)
+        built.add(rel.as_posix())
+        if rel.as_posix() in keep and (site / rel).exists():
+            continue
+        (site / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(f, site / rel)
+    # A page removed from the generator must disappear from the deployed folder,
+    # or it stays live, stays indexed and contradicts the sitemap.
+    for stale in site.rglob("*.html"):
+        if stale.relative_to(site).as_posix() not in built:
             stale.unlink()
+    for d in sorted((p for p in site.rglob("*") if p.is_dir()),
+                    key=lambda p: len(p.parts), reverse=True):
+        if not any(d.iterdir()):
+            d.rmdir()
     print("installed ->", site)
 
-print(f"built {len(list(OUT.glob('*.html')))} pages ->", OUT)
+print(f"built {len(list(OUT.rglob('*.html')))} pages "
+      f"({len(SITEMAP_URLS)} indexable) ->", OUT)

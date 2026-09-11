@@ -1,6 +1,15 @@
+# BIMRACE — https://bimrace.com
+# Everything public is crawlable. The two disallowed paths are a
+# post-submission page and an internal template; both also carry a
+# noindex tag, and neither is in the sitemap.
+
 User-agent: *
 Allow: /
 Disallow: /project-template.html
 Disallow: /thank-you.html
+Disallow: /_source/
+
+# Nothing blocks CSS, JS, SVG or images: blocking them breaks rendering
+# for the crawler and costs more than it protects.
 
 Sitemap: https://bimrace.com/sitemap.xml

@@ -2,72 +2,166 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bimrace.com/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/platform.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://bimrace.com/engineering.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://bimrace.com/automation.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/intelligence.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/automation.html</loc>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/digital-twin.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/engineering.html</loc>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/mep-engineering-services.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/hvac-bim-services.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/electrical-bim-services.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/plumbing-public-health-bim.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/fire-protection-bim-services.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/bim-coordination-clash-detection.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/bim-modelling-documentation.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/revit-services.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/bim-automation-services.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/construction-support-bim.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/commercial.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/residential.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/healthcare.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/data-centres.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/industrial.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/hospitality.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/education.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/retail.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/usa.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/uk.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/uae.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/saudi-arabia.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/australia.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/canada.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/locations/europe.html</loc>
+    <lastmod>2026-09-11</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/technology/mcp-for-revit.html</loc>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/projects.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/technology.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/about.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/contact.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/privacy.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/terms.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/cookies.html</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-09-11</lastmod>
   </url>
 </urlset>

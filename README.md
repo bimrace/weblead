@@ -1,7 +1,9 @@
 # BIMRACE Lead Engine
 
-Website + lead capture + CRM on Supabase. No framework, no build step, no runtime
-dependencies beyond `supabase-js` loaded from a CDN in the console.
+Website + lead capture + CRM on Supabase. No framework and no runtime
+dependencies beyond `supabase-js` loaded from a CDN in the console. The public
+site is generated from `_source/` by a single Python script with no third-party
+packages; `site/` is its committed output and is what gets deployed.
 
 ---
 
@@ -22,6 +24,19 @@ the RLS policies in migration `0003`.
 ## What is in this package
 
 ```
+_source/             THE SITE SOURCE — edit here, never in site/
+  build.py           generator: head, nav, footer, page registry, sitemap, robots
+  _services.py       10 service page contents
+  _industries.py     8 sector page contents
+  _locations.py      7 market page contents
+  _mcp.py            the MCP for Revit page
+  _legal.py          privacy, terms, cookies
+  style.css          design system (one file, token-driven)
+  script.js          diagrams and behaviour (vanilla, no dependencies)
+  lead-capture.js    public form handler + attribution
+  audit.py           SEO / a11y / link build audit — run before every deploy
+  audit_css.py       unstyled classes and dead CSS
+  audit_js.py        JavaScript smoke test
 supabase/
   migrations/     0001–0005, apply in order
   functions/      lead-intake Edge Function (optional hardening layer)
@@ -31,8 +46,46 @@ web/
   config.example.js   copy to config.js and fill in
   lead-capture.js     public form handler
   crm/                internal operations console
-site/                 the public marketing site (already built)
+site/                 GENERATED OUTPUT — do not hand-edit, build.py overwrites it
+docs/
+  seo-architecture.md            URL structure, schema, linking, attribution
+  search-console-readiness.md    setup steps and what is already satisfied
 ```
+
+---
+
+## Building the site
+
+`site/` is generated. Editing it directly works until the next build, then the
+change disappears — so edit `_source/` and rebuild.
+
+```bash
+cd _source
+python build.py --install      # regenerate and copy over site/
+python audit.py --strict       # 0 errors required before deploy
+python audit_css.py            # unstyled classes / dead CSS
+python audit_js.py --strict    # JS smoke test
+```
+
+`audit.py` is the gate. It fails on broken internal links, duplicate or missing
+titles, descriptions or canonicals, wrong canonicals, missing or multiple `h1`,
+heading-level skips, `img` without `alt`, invalid JSON-LD, any rating or review
+key in structured data, orphan pages, a CTA whose `?service=` value has no
+matching option on the enquiry form, and any disagreement between the built
+pages and `sitemap.xml`. It currently reports **0 errors, 0 warnings** across 45
+pages.
+
+### After deploying
+
+`netlify.toml` is read automatically. **Amplify is not** — it reads neither
+`netlify.toml` nor `_redirects`, so two files have to be pasted into the console
+once, and again whenever the rules change:
+
+- `site/amplify-redirects.json` → App settings → Rewrites and redirects
+- `site/amplify-headers.json` → App settings → Custom headers
+
+Until that is done the 301s are not live on the host that actually serves the
+site. See `docs/search-console-readiness.md`.
 
 ---
 
@@ -100,8 +153,8 @@ Then set `useEdgeFunction: true` in `config.js`.
 
 ## 4. Deploy the site
 
-Drag the `site/` folder onto Netlify (`index.html` is at its root). The CRM in
-`web/crm/` is a separate deploy — put it on its own private Netlify site with
+Run `python _source/build.py --install` first, then drag the `site/` folder onto
+Netlify (`index.html` is at its root). The CRM in `web/crm/` is a separate deploy — put it on its own private Netlify site with
 password protection, or a subdomain such as `ops.bimrace.com`. **Do not publish
 the console on the public marketing domain.**
 
@@ -209,5 +262,16 @@ Being explicit so you can plan the next phase:
   analytics and settings screens are not built; the data model supports them.
 - **Realtime is not enabled.** Add it per-table when there is a second concurrent
   user; it adds nothing today.
+- **No analytics and no Search Console.** Neither is installed. The cookie
+  policy currently says so truthfully; installing analytics makes that page
+  inaccurate, so update it in the same change. Search Console setup is written
+  up step by step in `docs/search-console-readiness.md`.
+- **No case studies, no client logos, no testimonials, no project counts.**
+  None have been released and verified. `projects.html` publishes the five
+  measurement rules they will follow when they exist, and the sector and market
+  pages state explicitly that they describe capability rather than history.
+- **No MCP server for Revit.** `/technology/mcp-for-revit.html` explains the
+  architecture and says in its first paragraph that it has not been built. If
+  that changes, that page changes with it.
 - **Virus scanning** has an `attachments.scan_status` column and is designed for,
   but no scanner is connected.

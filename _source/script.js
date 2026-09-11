@@ -83,20 +83,30 @@
       gS.appendChild(el('path', { d: d([[c[0], c[1], 0], [c[0], c[1], 232]]), class: 'm-brace' }));
     });
 
+    /* The build order is the argument the hero is making: an architectural
+       shell, then each discipline laid into it, then the coordination finding
+       that only exists once they are all present. Drawing them simultaneously
+       shows a finished picture; drawing them in sequence shows a model being
+       assembled, which is the thing we actually do. */
     var runs = [
       { id: 'run-mech', sys: 'mech', dur: 4.2, pts: [[24, 52, 182], [170, 52, 182], [170, 150, 182], [66, 150, 182]] },
       { id: 'run-elec', sys: 'elec', dur: 5.4, pts: [[28, 158, 66], [28, 60, 66], [148, 60, 66], [148, 124, 66], [188, 124, 66]] },
       { id: 'run-plumb', sys: 'plumb', dur: 6.0, pts: [[152, 34, 12], [152, 34, 224], [78, 34, 224]] },
       { id: 'run-fire', sys: 'struct', dur: 5.0, pts: [[40, 96, 124], [186, 96, 124], [186, 40, 124]] }
     ];
-    runs.forEach(function (r) {
+    var layers = [];
+    runs.forEach(function (r, i) {
       var p = d(r.pts);
-      gR.appendChild(el('path', { d: p, class: 'm-glow m-glow--' + r.sys }));
-      gR.appendChild(el('path', { d: p, id: r.id, class: 'm-run m-run--' + r.sys }));
-    });
-    if (!reduce) runs.forEach(function (r) {
-      gR.appendChild(pulse(r.id, 'm-pulse--' + r.sys, r.dur, 0, 3.2));
-      gR.appendChild(pulse(r.id, 'm-pulse--' + r.sys, r.dur, r.dur / 2, 2.2));
+      var gL = el('g', { class: 'm-layer', 'data-sys': r.sys });
+      gL.appendChild(el('path', { d: p, class: 'm-glow m-glow--' + r.sys }));
+      gL.appendChild(el('path', { d: p, id: r.id, class: 'm-run m-run--' + r.sys }));
+      if (!reduce) {
+        gL.appendChild(pulse(r.id, 'm-pulse--' + r.sys, r.dur, 0, 3.2));
+        gL.appendChild(pulse(r.id, 'm-pulse--' + r.sys, r.dur, r.dur / 2, 2.2));
+        gL.style.setProperty('--d', (360 + i * 300) + 'ms');
+      }
+      gR.appendChild(gL);
+      layers.push(gL);
     });
 
     [{ p: [170, 52, 182], sys: 'mech', t: 'AHU-04 / SUPPLY DUCT', o: [46, -26] },
@@ -141,8 +151,33 @@
       g.appendChild(sweep);
     }
 
-    g.appendChild(gS); g.appendChild(gR); g.appendChild(gN); g.appendChild(gF);
+    /* gF carries a SMIL <animate> on opacity, and SMIL wins over CSS opacity —
+       so the fade-in has to happen on a wrapper, not on gF itself, or the flag
+       appears immediately and the sequence reads wrong. */
+    var gFw = el('g');
+    gFw.appendChild(gF);
+
+    g.appendChild(gS); g.appendChild(gR); g.appendChild(gN); g.appendChild(gFw);
     svg.appendChild(g);
+
+    /* Sequence the reveal. The delay lives in a custom property so the timing
+       is readable in one place, and the whole thing is skipped under
+       prefers-reduced-motion — where the model simply appears complete, which
+       is the correct result rather than a degraded one. */
+    if (!reduce) {
+      gN.setAttribute('class', 'm-layer');
+      gN.style.setProperty('--d', '1620ms');
+      gFw.setAttribute('class', 'm-layer');
+      gFw.style.setProperty('--d', '1980ms');
+      layers.push(gN, gFw);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          layers.forEach(function (l) { l.setAttribute('class', 'm-layer is-in'); });
+          var legend = document.getElementById('hero-legend');
+          if (legend) legend.className = 'vizkey is-in';
+        });
+      });
+    }
 
     /* On phones the annotation type falls below legibility, so the drawing
        crops to the model and the callouts step aside. */

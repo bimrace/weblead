@@ -204,7 +204,19 @@ COOKIES = legal_body("Cookie Policy", "Legal 03 — Cookies",
      ("ours", "What this site stores", P(
         "<strong>This website sets no cookies of its own.</strong> It has no accounts and no advertising, "
         "so there is nothing for a cookie to do. It runs no analytics software, no advertising or social "
-        "media pixels, and no session recording. Nothing is written to your browser's local storage.")),
+        "media pixels, and no session recording.") + "\n" + P(
+        "It does use <strong>session storage</strong>, which is cleared when you close the tab and is "
+        "never sent to a server unless you submit the enquiry form. Two items are written:") + "\n" + UL(
+        "<code>bimrace_attr</code> — the campaign parameters (utm_source and similar) and referring "
+        "site for the visit, so that if you later send an enquiry we can tell which page brought you "
+        "here rather than guessing.",
+        "<code>bimrace_path</code> — the list of pages you have opened in this tab on this site, for "
+        "the same reason.") + "\n" + P(
+        "Both are read only at the moment you submit the enquiry form, and they are attached to that "
+        "enquiry. If you never submit the form, they are discarded with the tab and we never see them. "
+        "Neither contains anything you have typed, and neither is used to track you across other "
+        "websites. Blocking site data in your browser removes both, and the site works normally "
+        "without them.")),
      ("third", "Third-party requests", P(
         "The site makes the following requests to third parties. None sets a cookie for ordinary browsing, "
         "but as with any web request your IP address and browser details are visible to the server "
@@ -212,9 +224,10 @@ COOKIES = legal_body("Cookie Policy", "Legal 03 — Cookies",
         "<strong>Google Fonts</strong> (fonts.googleapis.com, fonts.gstatic.com) — serves the IBM Plex "
         "typefaces used across the site.",
         "<strong>Supabase Storage</strong> — hosts the founder photograph on the About page.",
-        "<strong>Netlify</strong> — hosts the site and receives enquiry form submissions when you send "
-        "the form. Netlify may set a cookie in connection with form spam prevention at the point of "
-        "submission.") + "\n" + P(
+        "<strong>Supabase</strong> — receives your enquiry when you submit the form, and only then. "
+        "No request is made to it while you are reading the site.",
+        "<strong>AWS Amplify</strong> — hosts and serves these pages, and therefore sees the request "
+        "for every page you open, as any web host does.") + "\n" + P(
         "The first two can be removed by self-hosting: download the IBM Plex families and reference them "
         "with a local <code>@font-face</code> declaration, and save the photograph alongside the site "
         "files. Neither change breaks anything — the site falls back to system typefaces and to the "

@@ -1,0 +1,50 @@
+[
+  {
+    "source": "/capabilities",
+    "target": "/engineering.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/capabilities.html",
+    "target": "/engineering.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/services",
+    "target": "/engineering.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/services/",
+    "target": "/engineering.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/industries/",
+    "target": "/industries.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/locations/",
+    "target": "/locations.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/technology/",
+    "target": "/technology.html",
+    "status": "301",
+    "condition": null
+  },
+  {
+    "source": "/<*>",
+    "target": "/404.html",
+    "status": "404",
+    "condition": null
+  }
+]
