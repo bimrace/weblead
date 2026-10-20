@@ -3291,7 +3291,7 @@ def service_page(s):
   <div class="shell split">
     <div>
       <p class="eyebrow">Request a quote</p>
-      <h2 class="sec-title">Get a quote for {strip_tags(s["nav"]).lower()}</h2>
+      <h2 class="sec-title">Get a quote: {strip_tags(s["nav"])}</h2>
       <p class="sec-lede">Tell us the building, the stage and what you need. An engineer replies
       within two working days with approach, deliverables and a fee basis.</p>
 {quick_form(s["prefill"], strip_tags(s["nav"]).lower())}
@@ -4057,6 +4057,117 @@ page("industries",
 
 for _s in SERVICE_PAGES:
     service_page(_s)
+
+# --------------------------------------------------------- case studies --
+# Data-driven: one entry in _projects.py becomes one page, a card on the
+# projects page and a sitemap entry. validate() refuses unreleased entries and
+# outcomes without a measurement basis.
+from _projects import CASE_STUDIES, validate as _validate_case       # noqa: E402
+
+for _c in CASE_STUDIES:
+    _validate_case(_c, set(SERVICE_BY_SLUG), set(INDUSTRY_BY_SLUG))
+
+
+def case_study_page(c):
+    url = f"projects/{c['slug']}.html"
+    sector = INDUSTRY_BY_SLUG[c["sector"]]
+    lis = lambda xs: "\n".join(f"            <li>{x}</li>" for x in xs)
+    svc = "\n".join(f'            <li><a href="services/{x}.html">{strip_tags(SERVICE_BY_SLUG[x]["nav"])}</a></li>'
+                    for x in c["services"])
+    img = (f'\n      <figure class="sectfig"><img src="projects/{c["image"]}" alt="{c["image_alt"]}" '
+           f'loading="lazy" decoding="async" style="display:block;width:100%;height:auto"></figure>'
+           if c.get("image") else "")
+    outcome = (f"""        <div class="case__c case__c--impact"><h3>05 Outcome</h3>
+          <p>{c["outcome"]}</p>
+          <p class="tiny">Measured from: {c["outcome_basis"]}</p></div>""" if c.get("outcome") else "")
+    body = f"""
+{phero([("Home", "index.html"), ("Projects", "projects.html"), (c["h1"], None)],
+       c["h1"], f'{strip_tags(sector["nav"])} · {c["location"]} · {c["scale"]}',
+       [("Client", c["client"]), ("Sector", strip_tags(sector["nav"])), ("Stage", c["stage"]),
+        ("Year", c["year"])])}
+
+<section class="section section--flush">
+  <div class="shell">{img}
+    <article class="case">
+      <div class="case__h">
+        <div>
+          <p class="case__k">{strip_tags(sector["nav"])} · {c["scale"]} · {c["stage"]}</p>
+          <h2>{c["h1"]}</h2>
+        </div>
+        {B('live', 'Client released')}
+      </div>
+      <div class="case__b">
+        <div class="case__c"><h3>01 Problem</h3>
+          <p>{c["problem"]}</p></div>
+        <div class="case__c"><h3>02 Our scope</h3>
+          <ul>
+{lis(c["scope"])}
+          </ul></div>
+        <div class="case__c"><h3>03 Approach</h3>
+          <ul>
+{lis(c["approach"])}
+          </ul></div>
+        <div class="case__c"><h3>04 Deliverables</h3>
+          <ul>
+{lis(c["deliverables"])}
+          </ul></div>
+{outcome}
+      </div>
+      <div class="case__f">{c["lessons"]}</div>
+    </article>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Services on this project</p>
+      <h2 class="sec-title">What we delivered</h2>
+      <ul class="spec__list" style="margin-top:22px">
+{svc}
+      </ul>
+    </div>
+    <div>
+      <p class="eyebrow">Sector</p>
+      <h2 class="sec-title">{strip_tags(sector["nav"])}</h2>
+      <a class="btn btn--ghost" style="margin-top:22px" href="industries/{sector["slug"]}.html">More on this sector</a>
+    </div>
+  </div>
+</section>
+"""
+    ld = (breadcrumb_ld([("Home", ""), ("Projects", "projects.html"), (c["h1"], url)])
+          + '<script type="application/ld+json">' + json.dumps({
+              "@context": "https://schema.org", "@type": "CreativeWork",
+              "name": c["h1"], "description": c["desc"], "url": f"{SITE}/{url}",
+              "dateCreated": c["year"], "about": strip_tags(sector["nav"]),
+              "creator": {"@type": "Organization", "name": "BIMRACE"}}, indent=2) + "</script>\n")
+    page(f"projects/{c['slug']}", c["title"], c["desc"], body, "projects.html", extra=ld)
+
+
+for _c in CASE_STUDIES:
+    case_study_page(_c)
+
+
+def case_list_block():
+    if not CASE_STUDIES:
+        return ""
+    cards = "\n".join(f"""      <a class="hub__i" href="projects/{c['slug']}.html">
+        <span class="hub__t">{c['h1']}</span>
+        <span class="hub__d">{strip_tags(INDUSTRY_BY_SLUG[c['sector']]['nav'])} · {c['location']} · {c['scale']}</span>
+        <span class="hub__m">{c['stage']} · {c['year']}</span>
+      </a>""" for c in CASE_STUDIES)
+    return f"""
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Published case studies</p>
+      <h2 class="sec-title">Released by our clients</h2>
+    </header>
+    <div class="hub">
+{cards}
+    </div>
+  </div>
+</section>"""
 for _i in INDUSTRY_PAGES:
     industry_page(_i)
 locations_hub()
@@ -4082,10 +4193,13 @@ page("technology/mcp-for-revit",
          prefill="general"))
 
 page("projects",
-     "Projects | Case Study Structure &amp; Rules | BIMRACE",
-     "Case studies structured around the engineering problem. None are published yet — this "
-     "page explains exactly why, and what every entry will contain when they are.",
-     PROJECTS, "projects.html",
+     ("Projects | MEP Design &amp; BIM Case Studies | BIMRACE" if CASE_STUDIES else
+      "Projects | Case Study Structure &amp; Rules | BIMRACE"),
+     ("MEP design and BIM case studies released by our clients: the engineering problem, our "
+      "scope, the approach and what was delivered." if CASE_STUDIES else
+      "Case studies structured around the engineering problem. None are published yet — this "
+      "page explains exactly why, and what every entry will contain when they are."),
+     case_list_block() + PROJECTS, "projects.html",
      extra=breadcrumb_ld([("Home", ""), ("Projects", "projects.html")]))
 
 page("technology",
@@ -4152,6 +4266,13 @@ for slug, target, label in REDIRECT_PAGES:
     redirect_page(slug, target, label)
 
 # ------------------------------------------------------------- static files --
+_proj_src = ROOT / "projects"
+if _proj_src.is_dir():
+    (OUT / "projects").mkdir(parents=True, exist_ok=True)
+    for _img in _proj_src.iterdir():
+        if _img.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}:
+            shutil.copy(_img, OUT / "projects" / _img.name)
+
 for f in ["style.css", "script.js", "lead-capture.js", "config.js", "logo.svg", "logo-mark.svg",
           "favicon.svg", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png",
           "og-image.png"]:

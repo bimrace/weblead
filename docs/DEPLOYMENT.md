@@ -108,6 +108,11 @@ gh pr create --fill               # opens a pull request; CI runs
 ```
 When CI is green, merge the pull request. Amplify publishes within a few minutes.
 
+**Publishing a project (case study):** get the client's written permission, then add an entry to
+`_source/_projects.py` (copy `EXAMPLE`, set `"client_released": True`, optional image in
+`_source/projects/`). Rebuild — the page appears at `/projects/<slug>.html`, on the Projects page
+and in the sitemap. The build refuses unreleased entries and outcome figures without a measurement basis.
+
 **Changing services:** edit the Excel workbook, then
 `python _source/generate_catalogue.py "path/to/BIMRACE_Building_Sector_Service_Catalogue.xlsx"` and rebuild.
 
