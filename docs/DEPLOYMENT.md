@@ -115,8 +115,8 @@ must then send `turnstile_token`; ask before enabling, because the front end nee
    ```
 4. Domain management → Add domain `bimrace.com` → subdomain `portal` → this app. Add the CNAME
    record Amplify shows at your DNS provider.
-5. Supabase → Authentication → URL Configuration: add `https://portal.bimrace.com` to Redirect URLs
-   (password reset links).
+5. Supabase auth redirect URLs are already set from `supabase/config.toml` (`[auth]`), applied
+   with `npx supabase config push`.
 6. Sign in as admin → **Team** → create accounts. Each person gets a temporary password (shown once)
    and must set their own at first sign-in.
 

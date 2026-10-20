@@ -22,3 +22,8 @@ verify_jwt = false
 
 [functions.staff-admin]
 verify_jwt = true
+
+# Password-reset and recovery links may return only to these URLs.
+[auth]
+site_url = "https://bimrace.com"
+additional_redirect_urls = ["https://portal.bimrace.com", "https://portal.bimrace.com/", "http://localhost:3200/"]
