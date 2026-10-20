@@ -285,6 +285,7 @@ def footer():
     </div>
   </div>
 </footer>
+<a class="mcta" href="contact.html">Get a quote</a>
 
 <script src="config.js"></script>
 <script src="script.js" defer></script>
@@ -2682,12 +2683,98 @@ from _services import SERVICES as _FORM_SERVICES                      # noqa: E4
 SERVICE_OPTIONS = "\n".join(
     f'            <option value="{s["prefill"]}">{s["nav"]}</option>' for s in _FORM_SERVICES)
 
+UPLOAD_FIELD = """
+        <div class="field field--full"><label for="f-files">Drawings or models <span class="opt">(optional)</span></label>
+          <input id="f-files" name="files" type="file" multiple data-upload
+                 accept=".pdf,.dwg,.dxf,.ifc,.rvt,.nwd,.nwc,.zip,.png,.jpg,.jpeg,.webp">
+          <p class="hint">Up to 5 files, 50&nbsp;MB each: PDF, DWG, DXF, IFC, RVT, NWD, ZIP or images.
+          Files go to private storage that only our team can open. For larger or confidential
+          sets, mention it in the message and we will arrange an NDA and a secure transfer.</p></div>
+"""
+
+
+def quick_form(lead_type, label):
+    """Compact quote form for service pages. The service is fixed by the page,
+    so the visitor only gives contact details and a short description. Posts
+    through the same lead-intake Edge Function as every other form."""
+    return f"""      <div data-form-scope>
+      <form class="form" data-lead-form="service_quote" novalidate>
+        <p class="hp"><label>Do not fill this in
+          <input name="company_website_hp" tabindex="-1" autocomplete="off"></label></p>
+        <input type="hidden" name="lead_type" value="{lead_type}">
+        <div class="field"><label for="q-name">Name <span class="req" aria-hidden="true">*</span></label>
+          <input id="q-name" name="name" type="text" autocomplete="name" data-required required>
+          <p class="err" data-for="q-name" role="alert"></p></div>
+        <div class="field"><label for="q-company">Company <span class="req" aria-hidden="true">*</span></label>
+          <input id="q-company" name="company" type="text" autocomplete="organization" data-required required>
+          <p class="err" data-for="q-company" role="alert"></p></div>
+        <div class="field"><label for="q-email">Business email <span class="req" aria-hidden="true">*</span></label>
+          <input id="q-email" name="email" type="email" autocomplete="email" data-required required>
+          <p class="err" data-for="q-email" role="alert"></p>
+          <p class="hint" data-free-mail-hint hidden>A company address reaches us faster. A personal
+          address is still fine.</p></div>
+        <div class="field"><label for="q-phone">Telephone / WhatsApp</label>
+          <input id="q-phone" name="phone" type="tel" autocomplete="tel"></div>
+        <div class="field field--full"><label for="q-msg">Project and scope <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="q-msg" name="message" data-required data-minlen="20" required
+            placeholder="Building type and size, location, stage, and what you need for {label}."></textarea>
+          <p class="err" data-for="q-msg" role="alert"></p></div>
+        <div class="form__foot">
+          <p class="tiny" style="max-width:44ch">By sending this you agree to our
+          <a href="privacy.html" style="color:var(--text-2)">Privacy Policy</a>. No mailing list.</p>
+          <button class="btn btn--primary btn--lg" type="submit">Request a quote</button>
+        </div>
+        <p class="form-status" data-form-status hidden></p>
+      </form>
+      <div class="form-success" data-form-success hidden tabindex="-1" style="margin-top:24px">
+        <p class="eyebrow">Quote request received</p>
+        <h3 style="font-size:22px">Thank you &mdash; an engineer will reply within two working days.</h3>
+        <p class="lede" style="margin-top:12px">Have drawings ready? Use the
+        <a href="contact.html" style="color:var(--sig)">full enquiry form</a> to attach them.</p>
+      </div>
+      </div>"""
+
+
+CALLBACK_FORM = f"""      <div data-form-scope>
+      <form class="form form--compact" data-lead-form="callback" novalidate>
+        <p class="hp"><label>Do not fill this in
+          <input name="company_website_hp" tabindex="-1" autocomplete="off"></label></p>
+        <input type="hidden" name="lead_type" value="general">
+        <div class="field field--full"><label for="c-name">Name <span class="req" aria-hidden="true">*</span></label>
+          <input id="c-name" name="name" type="text" autocomplete="name" data-required required>
+          <p class="err" data-for="c-name" role="alert"></p></div>
+        <div class="field field--full"><label for="c-email">Email <span class="req" aria-hidden="true">*</span></label>
+          <input id="c-email" name="email" type="email" autocomplete="email" data-required required>
+          <p class="err" data-for="c-email" role="alert"></p></div>
+        <div class="field field--full"><label for="c-phone">Phone with country code <span class="req" aria-hidden="true">*</span></label>
+          <input id="c-phone" name="phone" type="tel" autocomplete="tel" placeholder="+44 20&hellip;" data-required required>
+          <p class="err" data-for="c-phone" role="alert"></p></div>
+        <div class="field field--full"><label for="c-time">Best time to call (your time zone)</label>
+          <select id="c-time" name="message">
+            <option value="Callback requested: morning (9am-12pm, visitor's time zone)">Morning (9am&ndash;12pm)</option>
+            <option value="Callback requested: afternoon (12pm-5pm, visitor's time zone)">Afternoon (12&ndash;5pm)</option>
+            <option value="Callback requested: evening (5pm-8pm, visitor's time zone)">Evening (5&ndash;8pm)</option>
+          </select></div>
+        <div class="form__foot">
+          <button class="btn btn--ghost" type="submit">Request a callback</button>
+        </div>
+        <p class="form-status" data-form-status hidden></p>
+      </form>
+      <div class="form-success" data-form-success hidden tabindex="-1">
+        <p class="eyebrow">Callback requested</p>
+        <p class="lede" style="margin-top:8px">We will call you at the time you chose, within two
+        working days.</p>
+      </div>
+      </div>"""
+
+
 def enquiry_form(sector=""):
     """The one enquiry form. Used on the contact page and on sector pages, so the
     field contract with crm.enquiry_submissions and lead-capture.js exists once.
     A sector page pre-fills the Sector field; the visitor can still change it."""
     sector_attr = f' value="{sector}"' if sector else ""
-    return f"""      <!-- Field names are the contract with crm.enquiry_submissions. Do not
+    return f"""      <div data-form-scope>
+      <!-- Field names are the contract with crm.enquiry_submissions. Do not
            rename them without migrating the Supabase schema and lead-capture.js. -->
       <form class="form" id="enquiry-form" data-lead-form="project_enquiry" novalidate
             style="margin-top:var(--s4)">
@@ -2789,7 +2876,7 @@ def enquiry_form(sector=""):
             </fieldset>
           </div>
         </details>
-
+{UPLOAD_FIELD}
         <div class="form__foot">
           <p class="tiny" style="max-width:44ch">By sending this enquiry you agree to our
           <a href="privacy.html" style="color:var(--text-2)">Privacy Policy</a>. We use these
@@ -2805,6 +2892,7 @@ def enquiry_form(sector=""):
         <p class="lede" style="margin-top:12px">It has been logged and routed to the right person.
         We respond within two working days. If it is urgent, call
         <a href="tel:{TEL}" style="color:var(--sig)">{PHONE}</a>.</p>
+      </div>
       </div>
 """
 
@@ -2838,6 +2926,15 @@ CONTACT = f"""
             <dt>Reaches</dt><dd>Somnath Baste, Founder</dd>
             <dt>Response</dt><dd>Within two working days</dd>
           </dl>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:24px">
+        <div class="panel__bar"><span><b>CALLBACK</b> / ENGINEERING</span></div>
+        <div class="panel__body">
+          <p class="tiny" style="margin-bottom:14px">Prefer to talk first? Leave a number and we will
+          call you.</p>
+{CALLBACK_FORM}
         </div>
       </div>
 
@@ -3147,6 +3244,29 @@ def service_page(s):
     </div>
   </div>
 </section>
+<section class="section section--raise" id="quote">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Request a quote</p>
+      <h2 class="sec-title">Get a quote for {strip_tags(s["nav"]).lower()}</h2>
+      <p class="sec-lede">Tell us the building, the stage and what you need. An engineer replies
+      within two working days with approach, deliverables and a fee basis.</p>
+{quick_form(s["prefill"], strip_tags(s["nav"]).lower())}
+    </div>
+    <div>
+      <div class="note" style="max-width:none">
+        <p><strong>What a useful quote needs.</strong> Building type and approximate area, the
+        disciplines, the project stage, and which drawings or models exist. If you have them ready,
+        the <a href="contact.html?service={s["prefill"]}" style="color:var(--sig)">full enquiry
+        form</a> takes file uploads.</p>
+      </div>
+      <div class="note" style="margin-top:18px;max-width:none">
+        <p><strong>NDAs.</strong> We sign before drawings or models are shared, as a matter of
+        course.</p>
+      </div>
+    </div>
+  </div>
+</section>
 {faq_block(s["faqs"])}
 {related_block("Where this connects", s["related"])}
 """
@@ -3285,8 +3405,9 @@ def sector_form_block(i):
         disciplines, deliverables and what is in or out of scope.</p>
       </div>
       <div class="note" style="margin-top:18px;max-width:none">
-        <p><strong>Drawings and models.</strong> Please do not attach confidential project files to
-        this form. We sign an NDA and arrange a secure transfer before anything is shared.</p>
+        <p><strong>Drawings and models.</strong> You can attach up to five files; they go to
+        private storage only our team can open. For confidential sets we sign an NDA first and
+        arrange a secure transfer.</p>
       </div>
     </div>
   </div>

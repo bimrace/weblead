@@ -71,6 +71,44 @@ async function turnstileOk(token: string | undefined, ip: string) {
   return d.success === true;
 }
 
+const BUCKET = "enquiry-files";
+const MAX_ATTACHMENTS = 5;
+
+// deno-lint-ignore no-explicit-any
+async function linkAttachments(db: any, key: string, submissionId: string, items: unknown[]) {
+  const prefix = `incoming/${key}`;
+  const { data: sub } = await db.schema("crm").from("enquiry_submissions")
+    .select("lead_id").eq("id", submissionId).single();
+  const leadId = sub?.lead_id ?? null;          // null when the submission was rejected
+  if (!leadId) return 0;
+
+  const { data: objects, error } = await db.storage.from(BUCKET).list(prefix, { limit: 50 });
+  if (error || !objects) { console.error("attachment_list_failed", error); return 0; }
+  // deno-lint-ignore no-explicit-any
+  const byName = new Map<string, any>(objects.map((o: any) => [o.name, o]));
+
+  let linked = 0;
+  for (const item of items) {
+    // deno-lint-ignore no-explicit-any
+    const path = typeof (item as any)?.path === "string" ? (item as any).path : "";
+    if (!path.startsWith(prefix + "/") || path.includes("..")) continue;
+    const obj = byName.get(path.slice(prefix.length + 1));
+    if (!obj) continue;                          // never uploaded
+    const size = Number(obj.metadata?.size ?? 0);
+    if (!size || size > 52428800) continue;
+    const { error: insErr } = await db.schema("crm").from("attachments").insert({
+      lead_id: leadId,
+      storage_path: path,
+      file_name: String((item as any).file_name ?? obj.name).slice(0, 200),
+      mime_type: String(obj.metadata?.mimetype ?? "application/octet-stream"),
+      byte_size: size,
+    });
+    if (insErr && insErr.code !== "23505") console.error("attachment_insert_failed", insErr);
+    else linked++;
+  }
+  return linked;
+}
+
 Deno.serve(async (req) => {
   const cors = corsFor(req);
   const json = responder(cors);
@@ -85,7 +123,7 @@ Deno.serve(async (req) => {
     if (rateLimited(ip)) return json({ error: "rate_limited" }, 429);
 
     const body = JSON.parse(raw);
-    const { submission_key, form_code, payload, turnstile_token, ...attribution } = body;
+    const { submission_key, form_code, payload, turnstile_token, attachments, ...attribution } = body;
 
     if (!submission_key || !form_code || typeof payload !== "object") {
       return json({ error: "invalid_request" }, 400);
@@ -133,7 +171,16 @@ Deno.serve(async (req) => {
       return json({ error: "storage_failed" }, 500);   // never leak DB detail
     }
 
-    return json({ ok: true, id: data.id });
+    // Link files uploaded through lead-upload. Only paths inside this
+    // submission's own folder are accepted, each must exist in storage, and
+    // size and type come from storage metadata rather than from the browser.
+    let linked = 0;
+    if (Array.isArray(attachments) && attachments.length) {
+      linked = await linkAttachments(db, String(submission_key).toLowerCase(), data.id,
+                                     attachments.slice(0, MAX_ATTACHMENTS));
+    }
+
+    return json({ ok: true, id: data.id, attachments: linked });
   } catch (err) {
     console.error("intake_unhandled", err);
     return json({ error: "unexpected_error" }, 500);

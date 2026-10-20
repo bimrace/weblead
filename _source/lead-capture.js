@@ -14,7 +14,14 @@
   var CFG = window.BIMRACE_CONFIG || {};
   if (!CFG.supabaseUrl || !CFG.supabaseAnonKey) return;
 
-  var FN = CFG.supabaseUrl.replace(/\/$/, '') + '/functions/v1/lead-intake';
+  var BASE = CFG.supabaseUrl.replace(/\/$/, '');
+  var FN = BASE + '/functions/v1/lead-intake';
+  var FN_UPLOAD = BASE + '/functions/v1/lead-upload';
+
+  /* Drawings and models: checked here for a fast answer, enforced again by
+     lead-upload on the server (type, size, count) and by the private bucket. */
+  var MAX_FILES = 5, MAX_FILE_BYTES = 50 * 1024 * 1024;
+  var FILE_EXT = /\.(pdf|png|jpe?g|webp|zip|dwg|dxf|ifc|rvt|nwd|nwc)$/i;
 
   /* ------------------------------------------------------- attribution --- */
   var STORE = 'bimrace_attr';
@@ -149,7 +156,7 @@
   function collect(form) {
     var payload = {};
     form.querySelectorAll('[name]').forEach(function (f) {
-      if (!f.name || f.name.indexOf('_') === 0) return;
+      if (!f.name || f.name.indexOf('_') === 0 || f.type === 'file') return;
       if (f.type === 'checkbox') {
         if (!f.checked) return;
         (payload[f.name] = payload[f.name] || []).push(f.value);
@@ -172,6 +179,49 @@
     box.className = 'form-status form-status--' + kind;
     box.textContent = text;
     box.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  }
+
+  /* ------------------------------------------------------------- files --- */
+  function fileInput(form) { return form.querySelector('input[type=file][data-upload]'); }
+
+  function checkFiles(form) {
+    var inp = fileInput(form);
+    if (!inp || !inp.files || !inp.files.length) return '';
+    if (inp.files.length > MAX_FILES) return 'Please attach at most ' + MAX_FILES + ' files.';
+    for (var i = 0; i < inp.files.length; i++) {
+      var f = inp.files[i];
+      if (!FILE_EXT.test(f.name)) return f.name + ': file type not accepted (PDF, DWG, DXF, IFC, RVT, NWD, ZIP or image).';
+      if (f.size > MAX_FILE_BYTES) return f.name + ': larger than 50 MB. Send a link in the message instead.';
+    }
+    return '';
+  }
+
+  /* Each file: ask lead-upload for a one-time signed URL, then PUT the file
+     straight into the private bucket. The browser never holds storage rights. */
+  function uploadFiles(form, key, onProgress) {
+    var inp = fileInput(form);
+    if (!inp || !inp.files || !inp.files.length) return Promise.resolve([]);
+    var files = Array.prototype.slice.call(inp.files), done = [];
+    return files.reduce(function (chain, f, i) {
+      return chain.then(function () {
+        onProgress(i + 1, files.length, f.name);
+        return fetch(FN_UPLOAD, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + CFG.supabaseAnonKey },
+          body: JSON.stringify({ submission_key: key, file_name: f.name, byte_size: f.size })
+        }).then(function (r) {
+          if (!r.ok) throw new Error('upload_url_' + r.status);
+          return r.json();
+        }).then(function (u) {
+          return fetch(u.signed_url, {
+            method: 'PUT', headers: { 'content-type': u.content_type }, body: f
+          }).then(function (r) {
+            if (!r.ok) throw new Error('upload_' + r.status);
+            done.push({ path: u.path, file_name: f.name });
+          });
+        });
+      });
+    }, Promise.resolve()).then(function () { return done; });
   }
 
   /* ------------------------------------------------------------ submit --- */
@@ -199,6 +249,11 @@
         status(form, 'error', 'Please correct the highlighted fields.');
         return;
       }
+      var fileProblem = checkFiles(form);
+      if (fileProblem) {
+        status(form, 'error', fileProblem);
+        return;
+      }
 
       var btn = form.querySelector('[type=submit]');
       var label = btn ? btn.textContent : '';
@@ -221,9 +276,17 @@
       };
 
       var ctrl = new AbortController();
-      var timer = setTimeout(function () { ctrl.abort(); }, 15000);
+      var timer;
 
-      fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(body), signal: ctrl.signal })
+      uploadFiles(form, key, function (i, n, name) {
+        status(form, 'info', 'Uploading ' + i + ' of ' + n + ': ' + name + '…');
+      })
+        .then(function (files) {
+          if (files.length) body.attachments = files;
+          status(form, 'info', 'Sending your enquiry…');
+          timer = setTimeout(function () { ctrl.abort(); }, 15000);
+          return fetch(url, { method: 'POST', headers: headers, body: JSON.stringify(body), signal: ctrl.signal });
+        })
         .then(function (r) {
           clearTimeout(timer);
           if (r.status === 429) throw new Error('rate');
@@ -233,7 +296,11 @@
         })
         .then(function () {
           form.hidden = true;
-          var done = document.querySelector('[data-form-success]');
+          if (window.BIMRACE_TRACK) window.BIMRACE_TRACK('lead_submitted', { form: formCode });
+          /* Several forms can share a page (quick quote, callback), so each
+             one reveals the success panel that belongs to it. */
+          var scope = form.closest('[data-form-scope]') || document;
+          var done = scope.querySelector('[data-form-success]');
           if (done) { done.hidden = false; done.focus(); }
           else if (CFG.thankYouUrl) location.href = CFG.thankYouUrl;
         })
@@ -244,6 +311,8 @@
             ? 'The request timed out. Please check your connection and try again.'
             : err.message === 'rate'
               ? 'Too many enquiries from this connection. Please try again later, or email ' + (CFG.email || 'us') + '.'
+              : /^upload/.test(err.message)
+                ? 'Your files could not be uploaded. Remove them and send the enquiry, or email them to ' + (CFG.email || 'us') + '.'
               : 'We could not send your enquiry. Please email ' + (CFG.email || 'us') + ' and we will pick it up.';
           status(form, 'error', msg);
           /* Technical detail stays in the console; the visitor never sees a

@@ -133,6 +133,7 @@
       <p class="sec-lede">The more specific the scope, the more useful the response. If you have a
       drawing set, an EIR or a BEP, say so and we will ask for it under NDA.</p>
 
+      <div data-form-scope>
       <!-- Field names are the contract with crm.enquiry_submissions. Do not
            rename them without migrating the Supabase schema and lead-capture.js. -->
       <form class="form" id="enquiry-form" data-lead-form="project_enquiry" novalidate
@@ -244,6 +245,13 @@
           </div>
         </details>
 
+        <div class="field field--full"><label for="f-files">Drawings or models <span class="opt">(optional)</span></label>
+          <input id="f-files" name="files" type="file" multiple data-upload
+                 accept=".pdf,.dwg,.dxf,.ifc,.rvt,.nwd,.nwc,.zip,.png,.jpg,.jpeg,.webp">
+          <p class="hint">Up to 5 files, 50&nbsp;MB each: PDF, DWG, DXF, IFC, RVT, NWD, ZIP or images.
+          Files go to private storage that only our team can open. For larger or confidential
+          sets, mention it in the message and we will arrange an NDA and a secure transfer.</p></div>
+
         <div class="form__foot">
           <p class="tiny" style="max-width:44ch">By sending this enquiry you agree to our
           <a href="/privacy.html" style="color:var(--text-2)">Privacy Policy</a>. We use these
@@ -260,6 +268,7 @@
         We respond within two working days. If it is urgent, call
         <a href="tel:+917507958364" style="color:var(--sig)">+91 75079 58364</a>.</p>
       </div>
+      </div>
     </div>
 
     <div>
@@ -272,6 +281,45 @@
             <dt>Reaches</dt><dd>Somnath Baste, Founder</dd>
             <dt>Response</dt><dd>Within two working days</dd>
           </dl>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:24px">
+        <div class="panel__bar"><span><b>CALLBACK</b> / ENGINEERING</span></div>
+        <div class="panel__body">
+          <p class="tiny" style="margin-bottom:14px">Prefer to talk first? Leave a number and we will
+          call you.</p>
+      <div data-form-scope>
+      <form class="form form--compact" data-lead-form="callback" novalidate>
+        <p class="hp"><label>Do not fill this in
+          <input name="company_website_hp" tabindex="-1" autocomplete="off"></label></p>
+        <input type="hidden" name="lead_type" value="general">
+        <div class="field field--full"><label for="c-name">Name <span class="req" aria-hidden="true">*</span></label>
+          <input id="c-name" name="name" type="text" autocomplete="name" data-required required>
+          <p class="err" data-for="c-name" role="alert"></p></div>
+        <div class="field field--full"><label for="c-email">Email <span class="req" aria-hidden="true">*</span></label>
+          <input id="c-email" name="email" type="email" autocomplete="email" data-required required>
+          <p class="err" data-for="c-email" role="alert"></p></div>
+        <div class="field field--full"><label for="c-phone">Phone with country code <span class="req" aria-hidden="true">*</span></label>
+          <input id="c-phone" name="phone" type="tel" autocomplete="tel" placeholder="+44 20&hellip;" data-required required>
+          <p class="err" data-for="c-phone" role="alert"></p></div>
+        <div class="field field--full"><label for="c-time">Best time to call (your time zone)</label>
+          <select id="c-time" name="message">
+            <option value="Callback requested: morning (9am-12pm, visitor's time zone)">Morning (9am&ndash;12pm)</option>
+            <option value="Callback requested: afternoon (12pm-5pm, visitor's time zone)">Afternoon (12&ndash;5pm)</option>
+            <option value="Callback requested: evening (5pm-8pm, visitor's time zone)">Evening (5&ndash;8pm)</option>
+          </select></div>
+        <div class="form__foot">
+          <button class="btn btn--ghost" type="submit">Request a callback</button>
+        </div>
+        <p class="form-status" data-form-status hidden></p>
+      </form>
+      <div class="form-success" data-form-success hidden tabindex="-1">
+        <p class="eyebrow">Callback requested</p>
+        <p class="lede" style="margin-top:8px">We will call you at the time you chose, within two
+        working days.</p>
+      </div>
+      </div>
         </div>
       </div>
 
@@ -371,6 +419,7 @@
     </div>
   </div>
 </footer>
+<a class="mcta" href="/contact.html">Get a quote</a>
 
 <script src="/config.js"></script>
 <script src="/script.js" defer></script>

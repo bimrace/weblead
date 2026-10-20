@@ -523,6 +523,7 @@
       <h2 class="sec-title">Tell us about your transportation buildings project</h2>
       <p class="sec-lede">Scope, stage, disciplines and the drawings or models you have. The Sector
       field is already filled in; change it if it does not fit.</p>
+      <div data-form-scope>
       <!-- Field names are the contract with crm.enquiry_submissions. Do not
            rename them without migrating the Supabase schema and lead-capture.js. -->
       <form class="form" id="enquiry-form" data-lead-form="project_enquiry" novalidate
@@ -634,6 +635,13 @@
           </div>
         </details>
 
+        <div class="field field--full"><label for="f-files">Drawings or models <span class="opt">(optional)</span></label>
+          <input id="f-files" name="files" type="file" multiple data-upload
+                 accept=".pdf,.dwg,.dxf,.ifc,.rvt,.nwd,.nwc,.zip,.png,.jpg,.jpeg,.webp">
+          <p class="hint">Up to 5 files, 50&nbsp;MB each: PDF, DWG, DXF, IFC, RVT, NWD, ZIP or images.
+          Files go to private storage that only our team can open. For larger or confidential
+          sets, mention it in the message and we will arrange an NDA and a secure transfer.</p></div>
+
         <div class="form__foot">
           <p class="tiny" style="max-width:44ch">By sending this enquiry you agree to our
           <a href="/privacy.html" style="color:var(--text-2)">Privacy Policy</a>. We use these
@@ -650,6 +658,7 @@
         We respond within two working days. If it is urgent, call
         <a href="tel:+917507958364" style="color:var(--sig)">+91 75079 58364</a>.</p>
       </div>
+      </div>
 
     </div>
     <div>
@@ -659,8 +668,9 @@
         disciplines, deliverables and what is in or out of scope.</p>
       </div>
       <div class="note" style="margin-top:18px;max-width:none">
-        <p><strong>Drawings and models.</strong> Please do not attach confidential project files to
-        this form. We sign an NDA and arrange a secure transfer before anything is shared.</p>
+        <p><strong>Drawings and models.</strong> You can attach up to five files; they go to
+        private storage only our team can open. For confidential sets we sign an NDA first and
+        arrange a secure transfer.</p>
       </div>
     </div>
   </div>
@@ -763,6 +773,7 @@
     </div>
   </div>
 </footer>
+<a class="mcta" href="/contact.html">Get a quote</a>
 
 <script src="/config.js"></script>
 <script src="/script.js" defer></script>
