@@ -4090,6 +4090,13 @@ SECURITY_HEADERS = [
      "object-src 'none'"),
 ]
 
+# Asset file names are not content-hashed (style.css, script.js), so a long
+# "immutable" cache would keep returning visitors on stale files for a year
+# after a deploy. One hour is enough for performance and lets changes land.
+# config.js carries the environment (Supabase project) and must never be stale.
+ASSET_CACHE = "public, max-age=3600, must-revalidate"
+CONFIG_CACHE = "no-cache, must-revalidate"
+
 _nl = "\n"
 (OUT / "netlify.toml").write_text(
     "# Netlify configuration - static site, no build step required." + _nl
@@ -4103,9 +4110,11 @@ _nl = "\n"
     + '[[headers]]' + _nl + '  for = "/*"' + _nl + '  [headers.values]' + _nl
     + "".join(f'    {k} = "{v}"' + _nl for k, v in SECURITY_HEADERS) + _nl
     + '[[headers]]' + _nl + '  for = "/*.css"' + _nl + '  [headers.values]' + _nl
-    + '    Cache-Control = "public, max-age=31536000, immutable"' + _nl + _nl
+    + f'    Cache-Control = "{ASSET_CACHE}"' + _nl + _nl
     + '[[headers]]' + _nl + '  for = "/*.js"' + _nl + '  [headers.values]' + _nl
-    + '    Cache-Control = "public, max-age=31536000, immutable"' + _nl + _nl
+    + f'    Cache-Control = "{ASSET_CACHE}"' + _nl + _nl
+    + '[[headers]]' + _nl + '  for = "/config.js"' + _nl + '  [headers.values]' + _nl
+    + f'    Cache-Control = "{CONFIG_CACHE}"' + _nl + _nl
     + '[[headers]]' + _nl + '  for = "/*.html"' + _nl + '  [headers.values]' + _nl
     + '    Cache-Control = "public, max-age=0, must-revalidate"' + _nl + _nl
     + '[[headers]]' + _nl + '  for = "/sitemap.xml"' + _nl + '  [headers.values]' + _nl
@@ -4124,8 +4133,9 @@ _nl = "\n"
 # YAML scalars treat as structure.
 HEADER_GROUPS = [
     ("**", SECURITY_HEADERS),
-    ("**/*.css", [("Cache-Control", "public, max-age=31536000, immutable")]),
-    ("**/*.js", [("Cache-Control", "public, max-age=31536000, immutable")]),
+    ("**/*.css", [("Cache-Control", ASSET_CACHE)]),
+    ("**/*.js", [("Cache-Control", ASSET_CACHE)]),
+    ("config.js", [("Cache-Control", CONFIG_CACHE)]),
     ("**/*.html", [("Cache-Control", "public, max-age=0, must-revalidate")]),
 ]
 

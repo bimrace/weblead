@@ -22,11 +22,15 @@ customHeaders:
   - pattern: "**/*.css"
     headers:
       - key: "Cache-Control"
-        value: "public, max-age=31536000, immutable"
+        value: "public, max-age=3600, must-revalidate"
   - pattern: "**/*.js"
     headers:
       - key: "Cache-Control"
-        value: "public, max-age=31536000, immutable"
+        value: "public, max-age=3600, must-revalidate"
+  - pattern: "config.js"
+    headers:
+      - key: "Cache-Control"
+        value: "no-cache, must-revalidate"
   - pattern: "**/*.html"
     headers:
       - key: "Cache-Control"
