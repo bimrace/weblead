@@ -33,6 +33,8 @@ _source/             THE SITE SOURCE — edit here, never in site/
   generate_catalogue.py  regenerate _catalogue.py (needs openpyxl; build.py does not)
   _industries.py     8 original sector page contents
   _industries_public_transport.py  public & government and transportation sector pages
+  _services_design.py  MEP engineering design pages (catalogue PKG-05)
+  _projects.py       published case studies (data-driven; see docs/DEPLOYMENT.md)
   _locations.py      7 market page contents
   _mcp.py            the MCP for Revit page
   _legal.py          privacy, terms, cookies
