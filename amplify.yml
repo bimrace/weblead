@@ -1,11 +1,23 @@
+# One repository, two Amplify apps:
+#   - bimrace.com         (no APP_TARGET)        publishes site/
+#   - portal.bimrace.com  (APP_TARGET=portal)    publishes portal/
+# Each build writes its own config.js from that app's environment variables.
 version: 1
 frontend:
   phases:
     build:
       commands:
-        - node _source/build-amplify-config.js
+        - |
+          rm -rf _deploy
+          if [ "$APP_TARGET" = "portal" ]; then
+            node portal/build-config.js
+            cp -r portal _deploy
+          else
+            node _source/build-amplify-config.js
+            cp -r site _deploy
+          fi
   artifacts:
-    baseDirectory: site
+    baseDirectory: _deploy
     files:
       - '**/*'
   cache:

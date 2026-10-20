@@ -178,8 +178,8 @@ select crm.fn_dashboard_metrics();
 ```bash
 cp web/config.example.js site/config.js
 ```
-Fill in `supabaseUrl` and `supabaseAnonKey`. Copy the same file to `web/crm/config.js`
-(the console loads `../config.js`, so place it one level above `crm/`).
+Fill in `supabaseUrl` and `supabaseAnonKey`. For the staff portal, copy
+`portal/config.example.js` to `portal/config.js` (Amplify generates it on deploy).
 
 All public submissions go through the `lead-intake` Edge Function. Since migration
 0008 the anon key has no table or storage privileges, so there is no direct
@@ -203,7 +203,7 @@ GitHub Action `Deploy Supabase` does this on every merge that touches `supabase/
 ## 4. Deploy the site
 
 Run `python _source/build.py --install` first, then drag the `site/` folder onto
-Netlify (`index.html` is at its root). The CRM in `web/crm/` is a separate deploy — put it on its own private Netlify site with
+Netlify (`index.html` is at its root). The staff portal in `portal/` is a separate deploy (portal.bimrace.com, see docs/DEPLOYMENT.md) — never on
 password protection, or a subdomain such as `ops.bimrace.com`. **Do not publish
 the console on the public marketing domain.**
 

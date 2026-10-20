@@ -1,0 +1,11 @@
+-- ============================================================================
+-- BIMRACE Lead Engine — 0010 engineer role
+--
+-- Engineers work on delivery projects in the portal. They see only the
+-- projects they are members of, and never leads, contacts, proposals or
+-- contracts (policies in 0011).
+--
+-- Kept in its own migration: PostgreSQL does not allow a newly added enum
+-- value to be used inside the same transaction that adds it.
+-- ============================================================================
+alter type crm.app_role add value if not exists 'engineer';
