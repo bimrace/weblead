@@ -1,4 +1,4 @@
-# CD — apply Supabase migrations and deploy the lead-intake Edge Function.
+# CD — apply Supabase migrations and deploy the Edge Functions.
 #
 # Runs when supabase/** changes on main (or manually). Uses the "production"
 # GitHub environment, so you can require a reviewer to approve before anything
@@ -57,5 +57,10 @@ jobs:
       - name: Apply migrations
         run: supabase db push --linked --yes
 
-      - name: Deploy lead-intake Edge Function
-        run: supabase functions deploy lead-intake --no-verify-jwt --use-api --project-ref "$SUPABASE_PROJECT_ID"
+      # Public Edge Functions: they authenticate nothing themselves beyond the
+      # publishable key, so JWT verification stays off; each validates input.
+      - name: Deploy public Edge Functions
+        run: |
+          for fn in lead-intake lead-upload; do
+            supabase functions deploy "$fn" --no-verify-jwt --use-api --project-ref "$SUPABASE_PROJECT_ID"
+          done

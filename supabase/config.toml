@@ -16,3 +16,6 @@ file_size_limit = "50MiB"
 
 [functions.lead-intake]
 verify_jwt = false
+
+[functions.lead-upload]
+verify_jwt = false
