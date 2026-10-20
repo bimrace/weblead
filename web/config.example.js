@@ -8,10 +8,9 @@ window.BIMRACE_CONFIG = {
   supabaseUrl: 'https://YOUR-PROJECT.supabase.co',
   supabaseAnonKey: 'YOUR_ANON_PUBLISHABLE_KEY',
 
-  // false = browser inserts straight into crm.enquiry_submissions (RLS-protected).
-  // true  = route through the lead-intake Edge Function for rate limiting,
-  //         Turnstile verification and IP hashing. Deploy the function first.
-  useEdgeFunction: false,
+  // Kept for compatibility. Public forms always use the lead-intake Edge
+  // Function; the anon key has no direct database access (migration 0008).
+  useEdgeFunction: true,
 
   email: 'info@bimrace.com',
   thankYouUrl: '/thank-you.html'

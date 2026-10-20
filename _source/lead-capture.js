@@ -2,10 +2,11 @@
    BIMRACE — public lead capture
    Attaches to any <form data-lead-form="<form_code>"> on the marketing site.
 
-   Only the anon key is used here. It is safe to publish: RLS grants anonymous
-   users INSERT on crm.enquiry_submissions and nothing else, so this key cannot
-   read the pipeline, cannot set a lead score, status or owner, and cannot
-   touch crm.leads. The service_role key must never appear in this file.
+   Every submission goes to the lead-intake Edge Function, never straight to the
+   database: the function rate-limits, checks the honeypot, hashes the IP and
+   writes with server-side credentials. Anonymous users hold no table or
+   storage privileges at all (migration 0008). Only the publishable key is used
+   here, and the secret key must never appear in this file.
    ========================================================================== */
 (function () {
   'use strict';
@@ -13,8 +14,7 @@
   var CFG = window.BIMRACE_CONFIG || {};
   if (!CFG.supabaseUrl || !CFG.supabaseAnonKey) return;
 
-  var REST = CFG.supabaseUrl.replace(/\/$/, '') + '/rest/v1/enquiry_submissions';
-  var FN   = CFG.supabaseUrl.replace(/\/$/, '') + '/functions/v1/lead-intake';
+  var FN = CFG.supabaseUrl.replace(/\/$/, '') + '/functions/v1/lead-intake';
 
   /* ------------------------------------------------------- attribution --- */
   var STORE = 'bimrace_attr';
@@ -214,17 +214,11 @@
         payload: data
       }, attribution());
 
-      var useFn = CFG.useEdgeFunction === true;
-      var url = useFn ? FN : REST;
-      var headers = { 'content-type': 'application/json' };
-      if (!useFn) {
-        headers.apikey = CFG.supabaseAnonKey;
-        headers.Authorization = 'Bearer ' + CFG.supabaseAnonKey;
-        headers['Content-Profile'] = 'crm';
-        headers.Prefer = 'return=minimal';
-      } else {
-        headers.Authorization = 'Bearer ' + CFG.supabaseAnonKey;
-      }
+      var url = FN;
+      var headers = {
+        'content-type': 'application/json',
+        Authorization: 'Bearer ' + CFG.supabaseAnonKey
+      };
 
       var ctrl = new AbortController();
       var timer = setTimeout(function () { ctrl.abort(); }, 15000);

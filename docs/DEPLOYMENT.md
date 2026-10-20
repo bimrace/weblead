@@ -34,7 +34,7 @@ Amplify → your app → **Hosting → Environment variables → Manage variable
 |---|---|
 | `SUPABASE_URL` | `https://aknvdryanbtqqadssboc.supabase.co` |
 | `SUPABASE_ANON_KEY` | `sb_publishable_RPzPdpDEi0tBavMYUuL7gw_1cLafQkK` |
-| `USE_EDGE_FUNCTION` | `true` |
+| `USE_EDGE_FUNCTION` | `true` (optional; forms always use the Edge Function) |
 
 Save, then **Deployments → Redeploy this version**.
 Check: open `https://bimrace.com/config.js` — it must show `aknvdryanbtqqadssboc`.
