@@ -12,7 +12,7 @@ PHONE  = "+91 75079 58364"
 TEL    = "+917507958364"
 ENTITY = "BIMRACE PVT LTD"
 
-LEGAL_UPDATED = "1 September 2026"
+LEGAL_UPDATED = "20 October 2026"
 MAIL = f'<a href="mailto:{EMAIL}">{EMAIL}</a>'
 CALL = f'<a href="tel:{TEL}">{PHONE}</a>'
 P = lambda *t: "\n".join(f"          <p>{x}</p>" for x in t)
@@ -63,26 +63,41 @@ PRIVACY = legal_body("Privacy Policy", "Legal 01 — Privacy",
         "governed by that agreement.",
         "It also does not cover third-party websites you reach from links on this site.")),
      ("collect", "Information we collect", P("We collect two kinds of information.") + "\n" + UL(
-        "<strong>Information you give us.</strong> If you submit the enquiry form we receive your name, "
-        "company, business email, and any telephone number, service, project stage, sector, location and "
-        "message you choose to provide. If you email or call us we hold that correspondence.",
+        "<strong>Information you give us.</strong> If you submit an enquiry, quote or callback form we "
+        "receive your name, company, email, and any telephone number, service, project stage, sector, "
+        "location, project details and message you choose to provide. If you email or call us we hold "
+        "that correspondence.",
+        "<strong>Files you upload.</strong> If you attach drawings or models to an enquiry, the files are "
+        "stored in private storage that only authorised BIMRACE staff can open, through short-lived "
+        "links. Please do not upload information you are not entitled to share.",
+        "<strong>Enquiry context.</strong> When you submit a form we also record how you reached it: the "
+        "campaign parameters and referring page you arrived with, the pages you viewed in that visit, "
+        "your browser language, time zone and screen size. This tells us which pages are useful; it is "
+        "stored with your enquiry and is not used to track you across other websites.",
+        "<strong>Security information.</strong> Our enquiry service stores a one-way hashed form of your "
+        "IP address (not the address itself) to prevent spam and abuse.",
         "<strong>Technical information.</strong> Our hosting provider records standard server logs when a "
         "page is served: IP address, browser and device type, the page requested, and the date and time. "
         "This is ordinary web-server activity used for security and reliability.") + "\n" + P(
-        "We do not run advertising trackers, we do not build visitor profiles, and we do not buy "
+        "We do not run advertising trackers, we do not build advertising profiles, and we do not buy "
         "personal data from third parties.")),
      ("use", "How we use information", P("We use this information only to:") + "\n" + UL(
         "respond to and assess project enquiries;",
         "carry out an appointment where one follows;",
         "keep the website available, secure and working correctly;",
         "meet legal and record-keeping obligations that apply to us.") + "\n" + P(
-        "We do not use your information for automated decision-making, and we do not sell it.")),
+        "To decide who should reply first, our enquiry system gives each enquiry an automated "
+        "priority score from the information you provide (for example the service requested and whether "
+        "a company is named). The score only orders our work: a person reviews every enquiry, and no "
+        "decision with legal or similarly significant effect is made automatically. We do not sell your "
+        "information.")),
      ("cookies", "Cookies and analytics", P(
         "This site sets no cookies of its own and runs no analytics software. It makes third-party "
         "requests for typefaces, the founder photograph and enquiry form handling, all of which are "
         'set out in our <a href="cookies.html">Cookie Policy</a>.')),
      ("sharing", "Sharing your information", P("We share personal information only where necessary:") + "\n" + UL(
-        "with our hosting and form-handling providers, who process data on our instructions;",
+        "with our service providers, who process data on our instructions: Amazon Web Services "
+        "(website hosting) and Supabase (enquiry processing, database and file storage);",
         "with professional advisers such as accountants or lawyers, where relevant;",
         "where required by law, regulation or a valid legal request.") + "\n" + P(
         "We do not sell, rent or trade personal information.")),
@@ -105,6 +120,10 @@ PRIVACY = legal_body("Privacy Policy", "Legal 01 — Privacy",
         f"To exercise any of these, email {MAIL}. We respond within the period required by applicable "
         "law. Visitors in India have rights under the Digital Personal Data Protection Act, 2023; "
         "visitors in the EEA and UK have rights under the GDPR.")),
+     ("staff", "Staff and portal accounts", P(
+        "If you are given an account on our internal portal, we process your name, work email, role "
+        "and a record of the actions you take in the portal (an audit log) to run the service and "
+        "keep client information secure. Access is limited by role.")),
      ("children", "Children's privacy", P(
         "This website is aimed at construction and engineering professionals. It is not directed at "
         "children and we do not knowingly collect information from them.")),
@@ -131,9 +150,10 @@ TERMS = legal_body("Terms of Use", "Legal 02 — Terms",
      ("nature", "Nature of the information on this site", P(
         "This site describes services BIMRACE offers and working methods it applies. Capability "
         "descriptions are statements of what the practice is equipped to deliver.",
-        "The internal platform described on the technology page is <strong>under development</strong>. "
-        "Statements about it describe intent, not released functionality, and are not a commitment to "
-        "deliver any feature or to any date.",
+        "The AI and automation tools described on this site are internal tools used in our own "
+        "delivery, labelled live, in development or roadmap. They are not products offered to you, and "
+        "statements about items in development or on the roadmap are not a commitment to deliver any "
+        "feature or to any date.",
         "Nothing on this site is an offer capable of acceptance, a quotation, or a contractual "
         "commitment. Scope, price and programme are agreed in writing for each appointment.")),
      ("advice", "Not engineering advice", P(
@@ -143,7 +163,10 @@ TERMS = legal_body("Terms of Use", "Legal 02 — Terms",
         "professional engaged on your project.",
         "Any engineering decision remains the responsibility of the competent professional making it. "
         "Models, drawings and system designs must be checked and approved by appropriately qualified "
-        "people in accordance with applicable codes and standards.")),
+        "people in accordance with applicable codes and standards.",
+        "MEP engineering design is provided only under a written appointment that defines the design "
+        "responsibility. Where a jurisdiction requires a locally licensed engineer to sign, stamp or "
+        "submit drawings and calculations, that engineer of record does so.")),
      ("standards", "Statements about standards", P(
         "Where this site refers to ISO 19650, it describes alignment of working method with the "
         "principles of that standard series. It is not a claim of third-party certification, "
@@ -161,9 +184,10 @@ TERMS = legal_body("Terms of Use", "Legal 02 — Terms",
         "You may quote short extracts with clear attribution and a link back to this site. Any other "
         "reproduction, adaptation or commercial use requires our written permission.")),
      ("enquiries", "Enquiries and confidentiality", P(
-        "Information you send through the enquiry form is received in confidence for the purpose of "
-        "assessing the enquiry. Do not send commercially sensitive project information through the form "
-        "before a non-disclosure agreement is in place — ask and we will put one in place first.")),
+        "Information and files you send through our forms are received in confidence for the purpose "
+        "of assessing the enquiry and are stored privately. You confirm you are entitled to share "
+        "anything you upload. For commercially sensitive project information, ask and we will put a "
+        "non-disclosure agreement in place before you send it.")),
      ("links", "Third-party links", P(
         "The site may link to third-party websites. We do not control those sites and are not "
         "responsible for their content, accuracy, availability or privacy practices.")),

@@ -28,6 +28,12 @@ TEL    = "+917507958364"
 ENTITY = "BIMRACE PVT LTD"
 THEME  = "#F2F5F8"
 
+# Search engine ownership verification. Paste the content value of the
+# <meta name="google-site-verification"> tag from Search Console (and Bing
+# Webmaster Tools) here; empty values emit nothing.
+GOOGLE_SITE_VERIFICATION = ""
+BING_SITE_VERIFICATION = ""
+
 WORD_D = re.search(r'<path d="(.*?)"', (ROOT / "logo.svg").read_text(), re.S).group(1)
 WORD_TF = "scale(0.3333333) translate(0,306) scale(0.25,-0.25)"
 
@@ -53,12 +59,23 @@ def B(kind, label=None):
 # has to reach it from the top bar without reading anything else first, so the
 # service menu lists the disciplines under their ordinary names. An entry with no
 # href renders as a group heading rather than a link.
-# Follows the BIMRACE service catalogue: four MEP disciplines, the BIM services
-# that sit across them, then handover. The grouped menu is a column-flow grid of
-# five rows (style.css .submenu--cols), so each group is a heading plus at most
-# four links or the next heading will not start its own column.
+# Three columns: MEP engineering design, MEP BIM modelling, coordination and
+# delivery. The grouped menu is a column-flow grid of six rows (style.css
+# .submenu--cols), so each group must be a heading plus exactly five links or
+# the next heading will not start its own column.
 SERVICES_MENU = [
-    (None, "MEP BIM disciplines", None, None),
+    (None, "MEP engineering design", None, None),
+    ("services/mep-design-services.html", "MEP engineering design",
+     "HVAC, plumbing, electrical and fire design, calculated and coordinated.", "live"),
+    ("services/hvac-design-services.html", "HVAC design",
+     "Load calculations, ventilation, ductwork and plant.", "live"),
+    ("services/plumbing-design-services.html", "Plumbing design",
+     "Water supply, drainage and pump sizing.", "live"),
+    ("services/electrical-design-services.html", "Electrical design",
+     "Load assessment, distribution, SLDs and lighting.", "live"),
+    ("services/fire-protection-design-services.html", "Fire protection design",
+     "Sprinkler and hydrant design with hydraulic calcs.", "live"),
+    (None, "MEP BIM modelling", None, None),
     ("services/plumbing-public-health-bim.html", "Plumbing BIM",
      "Water supply, drainage, stormwater and pump rooms.", "live"),
     ("services/hvac-bim-services.html", "HVAC BIM",
@@ -67,16 +84,15 @@ SERVICES_MENU = [
      "Sprinkler, hydrant, wet riser and fire pump-room systems.", "live"),
     ("services/electrical-bim-services.html", "Electrical BIM",
      "Lighting, power, containment and panel rooms.", "live"),
-    (None, "BIM services", None, None),
+    ("services/revit-services.html", "Revit modelling &amp; model management",
+     "CAD/PDF to Revit, families, templates and model audits.", "live"),
+    (None, "Coordination &amp; delivery", None, None),
     ("services/bim-coordination-clash-detection.html", "BIM coordination &amp; clash detection",
      "Federated models, clash reports and issues tracked to closure.", "live"),
     ("services/bim-modelling-documentation.html", "MEP shop drawings &amp; documentation",
      "Installation drawings, sections, risers and builders' work.", "live"),
     ("services/quantity-takeoff-boq.html", "Quantity takeoff &amp; BOQ",
      "Model-based quantities, schedules and BOQs.", "live"),
-    ("services/revit-services.html", "Revit modelling &amp; model management",
-     "CAD/PDF to Revit, families, templates and model audits.", "live"),
-    (None, "Handover", None, None),
     ("services/as-built-bim-services.html", "As-built &amp; existing-building BIM",
      "Record models, asset registers and handover.", "live"),
     ("engineering.html", "All services",
@@ -109,6 +125,11 @@ NAV = [
 ]
 
 
+VERIFY_META = "".join(
+    f'\n<meta name="{n}" content="{v}">' for n, v in
+    (("google-site-verification", GOOGLE_SITE_VERIFICATION), ("msvalidate.01", BING_SITE_VERIFICATION)) if v)
+
+
 def head(title, desc, slug, extra=""):
     canon = f"{SITE}/" if slug == "index" else f"{SITE}/{slug}.html"
     return f"""<!DOCTYPE html>
@@ -120,7 +141,7 @@ def head(title, desc, slug, extra=""):
 <meta name="description" content="{desc}">
 <meta name="theme-color" content="{THEME}">
 <meta name="color-scheme" content="light">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow">{VERIFY_META}
 <link rel="canonical" href="{canon}">
 
 <meta property="og:type" content="website">
@@ -833,6 +854,19 @@ CASE_ANATOMY = f"""
 # the method and never stated the business.
 
 SERVICE_GROUPS = [
+    ("MEP engineering design", "design",
+     "Our engineers design the building services: loads, sizing, schematics and coordinated "
+     "design drawings, within the design responsibility agreed for the project.",
+     [("services/mep-design-services.html", "MEP engineering design",
+       "All four disciplines designed together."),
+      ("services/hvac-design-services.html", "HVAC design",
+       "Loads, ventilation, ductwork and plant selection."),
+      ("services/plumbing-design-services.html", "Plumbing design",
+       "Water supply, drainage and pump sizing."),
+      ("services/electrical-design-services.html", "Electrical design",
+       "Load assessment, distribution and lighting."),
+      ("services/fire-protection-design-services.html", "Fire protection design",
+       "Sprinkler and hydrant design with hydraulics.")]),
     ("MEP BIM disciplines", "mep",
      "Revit models of the building services: water and drainage, heating and cooling, "
      "fire protection, and power and lighting.",
@@ -1911,6 +1945,13 @@ DIGITAL_TWIN = f"""
 # One row per service line in the BIMRACE service catalogue. The anchor is the
 # fragment other pages link to; the slug is the service page the row points at.
 CAPS = [
+    ("design", "00", "MEP Engineering Design", "live", "mep-design-services",
+     "HVAC, plumbing, electrical and fire protection design by our qualified engineers — "
+     "calculations, schematics and coordinated design drawings — within the design responsibility "
+     "written into the appointment (catalogue package PKG-05).",
+     ["Heating and cooling loads", "Ventilation and smoke design input", "Water demand and drainage sizing",
+      "Electrical load assessment and SLDs", "Lighting design", "Sprinkler hydraulic calculations",
+      "Design basis reports", "Tender and construction support"]),
     ("plumbing", "01", "Plumbing BIM", "live", "plumbing-public-health-bim",
      "Water supply, drainage and plumbing plant modelled in Revit from your design information, "
      "with true falls, risers, schedules and shop drawings.",
@@ -1988,21 +2029,21 @@ def caps_block():
 
 ENGINEERING = f"""
 {phero([("Home", "index.html"), ("Engineering", None)],
-       "MEP BIM services for building projects",
-       "Revit-based MEP modelling, coordination, documentation and quantity takeoff, defined by "
-       "what is produced and issued rather than by which software is opened.",
-       [("Service lines", "09"), ("Disciplines", "Plumbing · HVAC · FP · Electrical"),
+       "MEP design and BIM services for building projects",
+       "MEP engineering design, Revit modelling, coordination, documentation and quantity takeoff, "
+       "defined by what is produced and issued rather than by which software is opened.",
+       [("Services", "14"), ("Disciplines", "Plumbing · HVAC · FP · Electrical"),
         ("Platform", "Revit · Navisworks · IFC"), ("Delivery", "India studio, remote international")])}
 
 <section class="section section--flush">
   <div class="shell">
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">Service architecture</p>
-      <h2 class="sec-title">Nine service lines in three groups</h2>
-      <p class="sec-lede">The four MEP disciplines, the coordination and documentation that sit
-      across them, and the quantities and handover information that come out of the model.
-      Engineering design and calculations are provided only where they are included in the agreed
-      scope and supported by appropriately qualified personnel.</p>
+      <h2 class="sec-title">Design, model, coordinate, hand over</h2>
+      <p class="sec-lede">MEP engineering design by our qualified engineers, Revit modelling of the
+      four MEP disciplines, the coordination and documentation that sit across them, and the
+      quantities and handover information that come out of the model. Design responsibility is
+      always written into the appointment.</p>
     </header>
 {matrix_block()}
   </div>
@@ -3069,7 +3110,9 @@ import _mcp                                               # noqa: E402
 
 # Footer link inventory — built from the same lists that build the pages, so
 # the footer cannot point at a page that does not exist or omit one that does.
-SERVICES_FOOT = [(f"services/{s['slug']}.html", s["nav"]) for s in SERVICE_PAGES[:6]] + \
+_FOOT_SLUGS = ["mep-design-services", "hvac-design-services", "plumbing-design-services",
+               "electrical-design-services", "bim-coordination-clash-detection", "revit-services"]
+SERVICES_FOOT = [(f"services/{x}.html", SERVICE_BY_SLUG[x]["nav"]) for x in _FOOT_SLUGS] + \
                 [("engineering.html", "All services")]
 INDUSTRIES_FOOT = [(f"industries/{i['slug']}.html", i["nav"]) for i in INDUSTRY_PAGES]
 LOCATIONS_FOOT = [(f"locations/{l['slug']}.html", l["nav"]) for l in LOCATION_PAGES] + \
@@ -3852,6 +3895,8 @@ ORG_LD = '<script type="application/ld+json">' + json.dumps({
     "slogan": "MEP engineering and BIM, delivered as one.",
     "address": {"@type": "PostalAddress", "addressCountry": "IN"},
     "founder": {"@type": "Person", "name": "Somnath Baste", "jobTitle": "Founder"},
+    "areaServed": ["India", "United States", "United Kingdom", "United Arab Emirates",
+                   "Saudi Arabia", "Australia", "Canada", "Europe"],
     "knowsAbout": [
         "MEP Engineering", "HVAC Design", "Electrical Design",
         "Plumbing and Public Health Design", "Fire Protection Design",
@@ -3997,9 +4042,9 @@ LOCATION_STRIP = f"""
 </section>"""
 
 page("engineering",
-     "MEP BIM Services | Modelling, Coordination &amp; QTO | BIMRACE",
-     "Plumbing, HVAC, fire protection and electrical BIM, BIM coordination and clash detection, "
-     "MEP shop drawings, quantity takeoff and BOQ, Revit modelling and as-built BIM.",
+     "MEP Design &amp; BIM Services | Engineering, Modelling, QTO | BIMRACE",
+     "MEP engineering design (HVAC, plumbing, electrical, fire), MEP BIM modelling, coordination "
+     "and clash detection, shop drawings, quantity takeoff and as-built BIM.",
      ENGINEERING + SERVICE_HUB + LOCATION_STRIP, "engineering.html",
      extra=breadcrumb_ld([("Home", ""), ("Services", "engineering.html")]) + SERVICE_LD)
 
