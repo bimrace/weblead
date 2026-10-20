@@ -253,8 +253,17 @@ if set(indexable) != sitemap_paths:
 import hashlib
 SITE_DIR = ROOT.parent / "site"
 if SITE_DIR.exists():
+    # Text files are compared with line endings normalised: site/ is built on
+    # Windows (CRLF) but CI rebuilds on Linux (LF), and the content is what
+    # matters. Binary files are still compared byte for byte.
+    TEXT = {".html", ".xml", ".txt", ".css", ".js", ".json", ".yml", ".toml",
+            ".svg", ".webmanifest", ".md"}
+
     def digest(p):
-        return hashlib.sha256(p.read_bytes()).hexdigest()
+        data = p.read_bytes()
+        if p.suffix.lower() in TEXT:
+            data = data.replace(b"\r\n", b"\n")
+        return hashlib.sha256(data).hexdigest()
     ignore = {"config.js"}          # environment-specific, generated at deploy
     stale = []
     for f in DIST.rglob("*"):
