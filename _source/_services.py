@@ -1110,6 +1110,45 @@ AI_USE = {
          "and checked before handover."),
     ],
 }
+# MEP engineering design (catalogue PKG-05) leads the list: it is the
+# highest-value appointment and the one most searched for.
+from _services_design import DESIGN_SERVICES                            # noqa: E402
+
+AI_USE.update({
+    "mep-design-services": [
+        ("AI-assisted brief review", "live", "Architectural drawings, room data and client "
+         "requirements read to draft the design basis and list missing inputs for engineer review."),
+        ("AI-drafted design reports", "live", "Design basis reports and calculation summaries drafted "
+         "from engineering data, then checked and signed by the design engineer."),
+    ],
+    "hvac-design-services": [
+        ("AI-assisted load input extraction", "live", "Room areas, uses and occupancies extracted "
+         "from the architectural model as calculation inputs, verified by the engineer."),
+        ("AI design checks", "live", "Duct and pipe runs screened for velocity and pressure outliers "
+         "before the engineer's review."),
+    ],
+    "plumbing-design-services": [
+        ("AI fixture schedule extraction", "live", "Fixture counts and locations extracted from "
+         "architectural layouts as the basis for loading-unit calculations."),
+        ("AI design checks", "live", "Drainage falls and pipe sizes screened against the design "
+         "criteria before the engineer's review."),
+    ],
+    "electrical-design-services": [
+        ("AI load data extraction", "live", "Mechanical and plumbing equipment loads collected from "
+         "the federated model into the load assessment."),
+        ("AI schedule checking", "live", "Panel schedules compared with modelled circuits, "
+         "mismatches drafted as findings."),
+    ],
+    "fire-protection-design-services": [
+        ("AI-assisted strategy reading", "live", "Fire strategy and code clauses summarised into "
+         "design criteria for the engineer to confirm."),
+        ("AI coverage screening", "live", "Head layouts screened for spacing and obstruction "
+         "before the engineer's review."),
+    ],
+})
+
+SERVICES = DESIGN_SERVICES + SERVICES
+
 for _s in SERVICES:
     _s["autos"] = AI_USE[_s["slug"]] + _s["autos"]
 
