@@ -317,9 +317,9 @@ def body(B, phero, faq_block, related_block, faq_ld):
 {faq_block(FAQS, title="MCP and Revit — the questions worth asking",
            lede="Including the one about whether this is real, which is answered first.")}
 {related_block("Where this connects to work that already exists", [
-  ("services/bim-automation-services.html", "BIM automation services",
-   "The live routines the protocol layer would sit above."),
-  ("services/revit-services.html", "Revit services",
+  ("technology.html", "BIM standards &amp; QA",
+   "The live model checking the protocol layer would sit above."),
+  ("services/revit-services.html", "Revit modelling",
    "Templates, families and the parameter schema that make a model answerable at all."),
   ("automation.html", "AI and automation",
    "The eight agent workflows, their status, and where the engineer signs."),

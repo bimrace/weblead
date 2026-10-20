@@ -47,6 +47,42 @@
   force = true
 
 [[redirects]]
+  from = "/services/mep-engineering-services.html"
+  to = "/engineering.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services/bim-automation-services.html"
+  to = "/engineering.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services/construction-support-bim.html"
+  to = "/services/bim-modelling-documentation.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services/mep-engineering-services"
+  to = "/engineering.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services/bim-automation-services"
+  to = "/engineering.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services/construction-support-bim"
+  to = "/services/bim-modelling-documentation.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/_source/*"
   to = "/404.html"
   status = 404

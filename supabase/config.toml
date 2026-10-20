@@ -1,14 +1,14 @@
-project_id = "gtsrvvwcsdsfajwkdzun"
+project_id = "aknvdryanbtqqadssboc"
 
 [api]
 enabled = true
-schemas = ["public", "crm"]
+schemas = ["public", "graphql_public", "crm"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
 port = 54322
-major_version = 16
+major_version = 17
 
 [storage]
 enabled = true

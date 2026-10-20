@@ -890,7 +890,7 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
    work is this" before the eye reaches the individual services. Columns flow
    down, so each group heading starts its own column. */
 .submenu--cols{min-width:780px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  grid-auto-flow:column;grid-template-rows:repeat(6,auto);align-content:start;padding:14px 7px 10px}
+  grid-auto-flow:column;grid-template-rows:repeat(5,auto);align-content:start;padding:14px 7px 10px}
 .submenu__h{padding:4px 12px 8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--text-4)}
 .submenu__h:not(:first-child){margin-top:0}
@@ -1096,3 +1096,20 @@ hr.rule{height:1px;background:var(--line);border:0;margin:0}
   .faq__i,.argu{break-inside:avoid}
   .form__more > .form__more-in{display:grid !important}
 }
+
+/* ------------------------------------------ 40 sector section illustration --
+   Original inline SVG building sections on the public/government and
+   transportation sector pages. Strokes use the discipline hues from the token
+   set, so the drawing reads like a coordination section rather than a picture. */
+.sectfig{margin-top:var(--s3);border:1px solid var(--line);background:var(--surface-1);padding:18px 18px 12px}
+.sectfig svg{display:block;width:100%;height:auto}
+.sectfig figcaption{margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-4)}
+.sf-st{fill:none;stroke:var(--text-3);stroke-width:1.2}
+.sf-slab{fill:var(--surface-2);stroke:var(--line-3);stroke-width:.8}
+.sf-mech{fill:var(--sig-wash);stroke:var(--mech);stroke-width:1.2}
+.sf-plumb{fill:none;stroke:var(--plumb);stroke-width:1.2}
+.sf-elec{fill:none;stroke:var(--elec);stroke-width:2;stroke-dasharray:2 3}
+.sf-fire{fill:none;stroke:var(--risk);stroke-width:1.1}
+.sf-zone{fill:none;stroke:var(--line-3);stroke-width:.8;stroke-dasharray:4 4}
+.sf-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;fill:var(--text-4)}

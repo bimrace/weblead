@@ -110,8 +110,7 @@ LOCATIONS = [
     "built for your standards and handed over documented."),
  ],
  "sectors": ["commercial", "healthcare", "data-centres", "industrial"],
- "services": ["mep-engineering-services", "bim-coordination-clash-detection",
-              "construction-support-bim", "bim-automation-services"],
+ "services": ["hvac-bim-services", "bim-coordination-clash-detection", "bim-modelling-documentation", "quantity-takeoff-boq"],
  "faqs": [
    ("Can BIMRACE stamp drawings for a US project?",
     "No. No BIMRACE engineer holds a PE licence in any US state. We produce engineering design and "
@@ -211,8 +210,7 @@ LOCATIONS = [
     "and documentation pipelines."),
  ],
  "sectors": ["healthcare", "education", "residential", "commercial"],
- "services": ["mep-engineering-services", "bim-coordination-clash-detection",
-              "bim-modelling-documentation", "bim-automation-services"],
+ "services": ["hvac-bim-services", "bim-coordination-clash-detection", "bim-modelling-documentation", "quantity-takeoff-boq"],
  "faqs": [
    ("Are you certified to ISO 19650?",
     "No. We structure delivery to align with ISO 19650 principles on every appointment, which is a "
@@ -308,8 +306,7 @@ LOCATIONS = [
     "running high-volume production."),
  ],
  "sectors": ["hospitality", "commercial", "residential", "retail"],
- "services": ["mep-engineering-services", "hvac-bim-services",
-              "construction-support-bim", "bim-coordination-clash-detection"],
+ "services": ["plumbing-public-health-bim", "hvac-bim-services", "bim-modelling-documentation", "bim-coordination-clash-detection"],
  "faqs": [
    ("Can BIMRACE submit drawings to Dubai Municipality or Civil Defence?",
     "No. Submissions are made by a licensed local consultant. BIMRACE has no UAE trade licence and "
@@ -406,8 +403,7 @@ LOCATIONS = [
     "delivery teams whose process has stopped scaling."),
  ],
  "sectors": ["hospitality", "commercial", "residential", "industrial"],
- "services": ["mep-engineering-services", "bim-automation-services",
-              "bim-coordination-clash-detection", "bim-modelling-documentation"],
+ "services": ["hvac-bim-services", "quantity-takeoff-boq", "bim-coordination-clash-detection", "bim-modelling-documentation"],
  "faqs": [
    ("Can BIMRACE be the engineering office of record in Saudi Arabia?",
     "No. BIMRACE is not registered with the Saudi Council of Engineers and holds no commercial "
@@ -501,8 +497,7 @@ LOCATIONS = [
     "routines and documentation pipelines."),
  ],
  "sectors": ["commercial", "education", "healthcare", "residential"],
- "services": ["mep-engineering-services", "bim-modelling-documentation",
-              "bim-coordination-clash-detection", "bim-automation-services"],
+ "services": ["hvac-bim-services", "bim-modelling-documentation", "bim-coordination-clash-detection", "quantity-takeoff-boq"],
  "faqs": [
    ("Can BIMRACE certify work for an Australian project?",
     "No. No BIMRACE engineer holds Australian professional registration under any state or "
@@ -596,8 +591,7 @@ LOCATIONS = [
     "for practices moving to information-first delivery."),
  ],
  "sectors": ["healthcare", "education", "commercial", "residential"],
- "services": ["mep-engineering-services", "bim-coordination-clash-detection",
-              "bim-modelling-documentation", "bim-automation-services"],
+ "services": ["hvac-bim-services", "bim-coordination-clash-detection", "bim-modelling-documentation", "quantity-takeoff-boq"],
  "faqs": [
    ("Can BIMRACE seal drawings for a Canadian project?",
     "No. No BIMRACE engineer holds P.Eng licensure with any provincial or territorial association. "
@@ -692,8 +686,7 @@ LOCATIONS = [
     "to carry, not just for whether it opens."),
  ],
  "sectors": ["commercial", "healthcare", "residential", "industrial"],
- "services": ["mep-engineering-services", "bim-modelling-documentation",
-              "bim-coordination-clash-detection", "bim-automation-services"],
+ "services": ["hvac-bim-services", "bim-modelling-documentation", "bim-coordination-clash-detection", "quantity-takeoff-boq"],
  "faqs": [
    ("Do you work to EN standards or to national standards?",
     "To the national annex and the national standards the project names. An EN cited without its "

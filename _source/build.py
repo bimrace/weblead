@@ -14,6 +14,7 @@ site/ (or run `python build.py --install`).
     platform.html#status so a reader can hold us to it.
 """
 import datetime, json, pathlib, re, shutil, sys
+import html as _html
 
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "dist"
@@ -52,36 +53,34 @@ def B(kind, label=None):
 # has to reach it from the top bar without reading anything else first, so the
 # service menu lists the disciplines under their ordinary names. An entry with no
 # href renders as a group heading rather than a link.
+# Follows the BIMRACE service catalogue: four MEP disciplines, the BIM services
+# that sit across them, then handover. The grouped menu is a column-flow grid of
+# five rows (style.css .submenu--cols), so each group is a heading plus at most
+# four links or the next heading will not start its own column.
 SERVICES_MENU = [
-    (None, "MEP engineering", None, None),
-    ("services/mep-engineering-services.html", "MEP engineering",
-     "All four disciplines designed as one connected system.", "live"),
-    ("services/hvac-bim-services.html", "HVAC design",
-     "Heating, ventilation and air-conditioning systems, ductwork and equipment.", "live"),
-    ("services/electrical-bim-services.html", "Electrical design",
-     "Power, lighting, containment and LV distribution.", "live"),
-    ("services/plumbing-public-health-bim.html", "Plumbing &amp; public health",
-     "Water supply, drainage and public health systems.", "live"),
-    ("services/fire-protection-bim-services.html", "Fire protection",
-     "Sprinkler, detection and suppression systems.", "live"),
+    (None, "MEP BIM disciplines", None, None),
+    ("services/plumbing-public-health-bim.html", "Plumbing BIM",
+     "Water supply, drainage, stormwater and pump rooms.", "live"),
+    ("services/hvac-bim-services.html", "HVAC BIM",
+     "Ductwork, chilled water, VRF, ventilation and plant rooms.", "live"),
+    ("services/fire-protection-bim-services.html", "Fire protection BIM",
+     "Sprinkler, hydrant, wet riser and fire pump-room systems.", "live"),
+    ("services/electrical-bim-services.html", "Electrical BIM",
+     "Lighting, power, containment and panel rooms.", "live"),
     (None, "BIM services", None, None),
-    ("services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
-     "Discipline models, with drawings and schedules taken from the model.", "live"),
-    ("services/revit-services.html", "Revit MEP",
-     "Templates, families, MEP authoring and parameter schemas.", "live"),
-    ("services/bim-coordination-clash-detection.html", "MEP coordination &amp; clash detection",
-     "Federated models, clearance checks and issues tracked to closure.", "live"),
-    ("services/construction-support-bim.html", "Construction support",
-     "Shop drawings, builders work and as-built models.", "live"),
-    (None, "Digital engineering", None, None),
-    ("services/bim-automation-services.html", "BIM automation",
-     "Automated model checking, quantities and documentation.", "live"),
-    ("automation.html", "AI-assisted workflows",
-     "Where automation drafts, and where the engineer signs.", "dev"),
-    ("technology/mcp-for-revit.html", "MCP for Revit",
-     "Connecting AI assistants to model data through a governed protocol.", "road"),
+    ("services/bim-coordination-clash-detection.html", "BIM coordination &amp; clash detection",
+     "Federated models, clash reports and issues tracked to closure.", "live"),
+    ("services/bim-modelling-documentation.html", "MEP shop drawings &amp; documentation",
+     "Installation drawings, sections, risers and builders' work.", "live"),
+    ("services/quantity-takeoff-boq.html", "Quantity takeoff &amp; BOQ",
+     "Model-based quantities, schedules and BOQs.", "live"),
+    ("services/revit-services.html", "Revit modelling &amp; model management",
+     "CAD/PDF to Revit, families, templates and model audits.", "live"),
+    (None, "Handover", None, None),
+    ("services/as-built-bim-services.html", "As-built &amp; existing-building BIM",
+     "Record models, asset registers and handover.", "live"),
     ("engineering.html", "All services",
-     "Every service group and deliverable in one place.", None),
+     "Every service line and deliverable in one place.", None),
 ]
 
 TECHNOLOGY_MENU = [
@@ -320,7 +319,7 @@ def page(slug, title, desc, body, active, cta=True, extra="", index=True, cta_bl
     return slug
 
 
-def phero(crumbs, h1, lede, meta=None):
+def phero(crumbs, h1, lede, meta=None, actions=None):
     trail = '\n'.join(
         f'        <a href="{h}">{t}</a><span aria-hidden="true">/</span>' if h
         else f'        <span aria-current="page">{t}</span>' for t, h in crumbs)
@@ -335,7 +334,7 @@ def phero(crumbs, h1, lede, meta=None):
 {trail}
       </nav>
       <h1>{h1}</h1>
-      <p class="phero__lede">{lede}</p>
+      <p class="phero__lede">{lede}</p>{actions or ""}
     </div>
     <div>{m}</div>
   </div>
@@ -350,6 +349,10 @@ def breadcrumb_ld(items):
              "item": f"{SITE}/{u}" if u else f"{SITE}/"}
             for i, (n, u) in enumerate(items)]
     }, indent=2) + '</script>\n')
+
+
+def esc(s):
+    return _html.escape(s, quote=False)
 
 
 def strip_tags(s):
@@ -493,10 +496,11 @@ STACK_LAYERS = [
       ("Electrical", "elec"), ("Public health", "plumb"), ("Hydraulic", "plumb"),
       ("Loads", ""), ("Clearances", "")]),
 
-    ("03", "AI ENGINE", "dev", "Reading the model and reasoning about it",
+    ("03", "AI ENGINE", "live", "Reading the model and reasoning about it",
      "Extraction of elements, parameters, systems and relationships as structured data, then "
-     "pattern and anomaly detection over it. In development and used internally on our own "
-     "delivery. It proposes; it does not decide.",
+     "pattern and anomaly detection over it. Used across our delivery workflow today — input "
+     "review, modelling, coordination, QA, quantities and documentation. It proposes; an engineer "
+     "decides.",
      [("Model understanding", "mech"), ("Pattern detection", "mech"), ("Rule reasoning", ""),
       ("Anomaly detection", ""), ("Risk classification", ""), ("Prioritisation", "")]),
 
@@ -511,8 +515,8 @@ STACK_LAYERS = [
      "Coordinated models, drawings, schedules, quantities and reports — issued through a common "
      "data environment with the correct status codes, signed by a named engineer who is accountable "
      "for them.",
-     [("Coordinated BIM", "mech"), ("Calculations", ""), ("Drawings", ""), ("Schedules", ""),
-      ("BOQ", ""), ("QA reports", ""), ("Compliance", ""), ("Project data", "")]),
+     [("Coordinated BIM", "mech"), ("Drawings", ""), ("Schedules", ""), ("Quantities", ""),
+      ("BOQ", ""), ("Clash reports", ""), ("QA reports", ""), ("Handover data", "")]),
 ]
 
 
@@ -537,13 +541,13 @@ def stack_block(compact=False):
 
 
 AGENTS = [
-    ("BIM Analyst", "dev",
+    ("BIM Analyst", "live",
      "Reads a model and answers structured questions about what is in it — element counts by "
      "system, parameter completeness, where a given family is used and how systems connect.",
      "Federated model, project parameter schema",
      "Resolve elements to systems, then systems to disciplines",
      "Structured model inventory with element IDs"),
-    ("Coordination", "dev",
+    ("Coordination", "live",
      "Tests the federated model against clearance, access and zoning rules, then classifies what it "
      "finds by discipline, severity and who has to move.",
      "Federated model, clearance and zoning rule set",
@@ -555,19 +559,19 @@ AGENTS = [
      "System parameters, design criteria, equipment schedule",
      "Apply sizing and load rules to the as-modelled network",
      "Calculation sheet reconciled against the model"),
-    ("QA / QC", "dev",
+    ("QA / QC", "live",
      "Runs the project rule set over the model before issue — naming, classification, parameter "
      "completeness, view and sheet organisation, status codes.",
      "Model, project rule set, level of information need",
      "Test every rule, then cluster failures to find the root cause",
      "QA report with an element ID against every finding"),
-    ("Documentation", "dev",
+    ("Documentation", "live",
      "Handles the repetitive parts of drawing and schedule production that are fully determined by "
      "the model, so engineers spend their time on the parts that are not.",
      "Model, sheet standard, drawing register",
      "Derive views and schedules from model state",
      "Draft sheets and schedules for engineer review"),
-    ("Quantity", "dev",
+    ("Quantity", "live",
      "Extracts and classifies quantities directly from model geometry and parameters, with the "
      "measurement rule visible for each line.",
      "Model, classification system, measurement rules",
@@ -639,8 +643,8 @@ FLOWS = [
      "Issue list grouped by cause and responsible discipline, with clearance and access failures "
      "separated from true hard clashes."),
     ("03", "Engineering calculations", "live",
-     "Sizing and load calculations driven from model parameters rather than re-keyed into a "
-     "spreadsheet that then drifts from the model.",
+     "Where design responsibility is in scope, sizing and load calculations driven from model "
+     "parameters rather than re-keyed into a spreadsheet that then drifts from the model.",
      ["Read", "Calculate", "Validate", "Report"],
      "Calculation output reconciled against the as-modelled network, so the two cannot silently "
      "disagree."),
@@ -679,27 +683,27 @@ def flows_block():
 
 
 MATRIX = [
-    ("eng", "01", "Engineering", "Building services engineering with real discipline depth. This is "
-     "the layer that makes the rest defensible.", [
-        ("MEP engineering", "live"), ("HVAC and ductwork", "live"),
-        ("Public health and drainage", "live"), ("Fire protection", "live"),
-        ("Electrical distribution", "live"), ("Engineering calculations", "live"),
-        ("Equipment selection", "live"), ("System analysis", "live"),
-     ], "engineering.html#mep"),
-    ("bim", "02", "BIM", "Model authoring, coordination and documentation — structured so the data "
-     "inside is usable, not only viewable.", [
-        ("BIM modelling", "live"), ("BIM coordination", "live"),
-        ("Clash detection", "live"), ("Model QA / QC", "live"),
-        ("Documentation", "live"), ("Quantity extraction", "live"),
-        ("Revit and IFC exchange", "live"), ("CDE and delivery", "live"),
-     ], "engineering.html#modelling"),
-    ("int", "03", "Intelligence", "The layer we are building. Automation is a service category "
-     "here, not a footnote on a modelling proposal.", [
-        ("Design automation", "dev"), ("Engineering automation", "live"),
-        ("Model intelligence", "dev"), ("Automated QA rule sets", "live"),
-        ("AI engineering agents", "dev"), ("Generative workflows", "road"),
-        ("Digital twin", "road"), ("Predictive engineering", "road"),
-     ], "automation.html"),
+    ("eng", "01", "MEP BIM disciplines", "Revit modelling of the four core building-services "
+     "disciplines, from consultant design information.", [
+        ("Plumbing BIM", "live"), ("HVAC BIM", "live"),
+        ("Fire protection BIM", "live"), ("Electrical BIM", "live"),
+        ("Risers and schematics", "live"), ("Equipment schedules", "live"),
+        ("Plant and equipment rooms", "live"), ("Calculations, where scoped", "live"),
+     ], "engineering.html#plumbing"),
+    ("bim", "02", "Coordination &amp; documentation", "Federated models, clash detection and the "
+     "drawings derived from the coordinated result.", [
+        ("BIM coordination", "live"), ("Clash detection", "live"),
+        ("Clash reports and issue logs", "live"), ("Model QA / QC", "live"),
+        ("MEP shop drawings", "live"), ("Builders' work drawings", "live"),
+        ("Revit modelling", "live"), ("IFC and model exchange", "live"),
+     ], "engineering.html#coordination"),
+    ("int", "03", "Quantities &amp; handover", "Model-based quantities for cost teams and record "
+     "information for building owners.", [
+        ("Quantity takeoff", "live"), ("BOQ preparation", "live"),
+        ("Revision comparison", "live"), ("Asset registers", "live"),
+        ("As-built BIM", "live"), ("Existing-building models", "live"),
+        ("Scan-to-BIM", "road"), ("4D sequencing", "road"),
+     ], "engineering.html#quantities"),
 ]
 
 
@@ -726,12 +730,12 @@ MATURITY = [
      "Standard practice"),
     ("02", "BIM automation", "on", "Rules and scripts take over repetitive production and checking.",
      "Where we deliver"),
-    ("03", "AI-assisted engineering", "part",
+    ("03", "AI-assisted engineering", "on",
      "Model data is read and reasoned over to support engineering decisions.",
-     "In development"),
+     "Where we deliver"),
     ("04", "AI engineering agents", "part",
      "Defined workflows run end to end, drafting output for engineering approval.",
-     "Partially, internally"),
+     "Five of eight in use"),
     ("05", "Engineering intelligence", "", "BIM, AI, automation and project data connected as one "
      "system across a portfolio.", "Direction, not a claim"),
 ]
@@ -828,37 +832,33 @@ CASE_ANATOMY = f"""
 # the method and never stated the business.
 
 SERVICE_GROUPS = [
-    ("MEP engineering", "mep",
-     "We design the building services: heating and cooling, power and lighting, "
-     "water and drainage, and fire protection.",
-     [("services/hvac-bim-services.html", "HVAC design",
-       "Heating, ventilation and air-conditioning, ductwork and plant."),
-      ("services/electrical-bim-services.html", "Electrical design",
-       "Power, lighting, containment and LV distribution."),
-      ("services/plumbing-public-health-bim.html", "Plumbing &amp; public health",
-       "Water supply, drainage and public health systems."),
-      ("services/fire-protection-bim-services.html", "Fire protection",
-       "Sprinkler, detection and suppression systems.")]),
-    ("BIM services", "bim",
-     "We build and coordinate the models those systems live in, and produce the "
-     "drawings and schedules from them.",
-     [("services/bim-modelling-documentation.html", "BIM modelling &amp; documentation",
-       "Discipline models, drawings and schedules."),
-      ("services/revit-services.html", "Revit MEP",
-       "Templates, families, authoring and parameter schemas."),
-      ("services/bim-coordination-clash-detection.html", "MEP coordination &amp; clash detection",
-       "Federated models, clearance checks, issues to closure."),
-      ("services/construction-support-bim.html", "Construction support",
-       "Shop drawings, builders work and as-built models.")]),
-    ("Digital engineering", "digital",
-     "Where it saves an engineer time, we automate the repetitive parts of the "
-     "work above. An engineer still signs the result.",
-     [("services/bim-automation-services.html", "BIM automation",
-       "Automated model checking, quantities and documentation."),
-      ("automation.html", "AI-assisted workflows",
-       "Analysis that drafts findings for an engineer to accept or reject."),
-      ("technology/mcp-for-revit.html", "MCP for Revit",
-       "Connecting AI assistants to model data through a governed protocol.")]),
+    ("MEP BIM disciplines", "mep",
+     "Revit models of the building services: water and drainage, heating and cooling, "
+     "fire protection, and power and lighting.",
+     [("services/plumbing-public-health-bim.html", "Plumbing BIM",
+       "Water supply, drainage, stormwater and pump rooms."),
+      ("services/hvac-bim-services.html", "HVAC BIM",
+       "Ductwork, chilled water, VRF, ventilation and plant rooms."),
+      ("services/fire-protection-bim-services.html", "Fire protection BIM",
+       "Sprinkler, hydrant, wet riser and fire pump-room systems."),
+      ("services/electrical-bim-services.html", "Electrical BIM",
+       "Lighting, power, containment and panel rooms.")]),
+    ("Coordination &amp; documentation", "bim",
+     "We coordinate those models with architecture and structure, and produce the "
+     "drawings that are built from.",
+     [("services/bim-coordination-clash-detection.html", "BIM coordination &amp; clash detection",
+       "Federated models, clash reports, issues to closure."),
+      ("services/bim-modelling-documentation.html", "MEP shop drawings &amp; documentation",
+       "Installation drawings, sections, risers and builders' work."),
+      ("services/revit-services.html", "Revit modelling &amp; model management",
+       "CAD/PDF to Revit, families, templates and audits.")]),
+    ("Quantities &amp; handover", "qty",
+     "Model-based quantities for cost and procurement teams, and record information "
+     "for the people who run the building.",
+     [("services/quantity-takeoff-boq.html", "Quantity takeoff &amp; BOQ",
+       "Takeoffs, schedules, BOQs and revision comparisons."),
+      ("services/as-built-bim-services.html", "As-built &amp; existing-building BIM",
+       "Record models, asset registers and handover.")]),
 ]
 
 
@@ -917,22 +917,24 @@ def audience_block():
     return '    <div class="auds">\n' + rows + "\n    </div>"
 
 
+# Follows the catalogue's handover checklist: what actually arrives, in the
+# order it is produced. Engineering design is a scoped extra, not step one.
 DELIVERS = [
-    ("Design", "MEP engineering design",
-     "Load calculations, system selection, sizing and layouts for mechanical, "
-     "electrical, public health and fire protection."),
-    ("Model", "BIM and Revit modelling",
-     "Discipline models authored to the level of detail the stage needs, with "
-     "the data in them rather than bolted on afterwards."),
-    ("Coordinate", "MEP coordination and clash detection",
-     "Federated models, clash and clearance checking, and a tracked route from "
-     "an issue being raised to it being closed."),
-    ("Document", "Drawings, schedules and reports",
-     "Deliverables generated from the coordinated model, so the drawing and the "
-     "model cannot tell you two different things."),
-    ("Optimise", "Automation and AI-assisted checking",
-     "Repetitive checking and take-off run automatically. An engineer reviews "
-     "and signs the output."),
+    ("Model", "Native Revit models",
+     "Plumbing, HVAC, fire protection and electrical models in editable .RVT, "
+     "authored to the agreed LOD/LOI, version and template."),
+    ("Coordinate", "Federated model and clash reports",
+     "Navisworks NWC/NWD models, clash matrix, issue lists with screenshots and "
+     "viewpoints, and BCF where the project platform supports it."),
+    ("Document", "Drawing packages and schedules",
+     "Shop drawings, plans, sections, risers and details as PDF and agreed DWG, "
+     "with equipment schedules taken from the model."),
+    ("Quantify", "Quantities and BOQ",
+     "Excel takeoffs and BOQs from approved design information, with measurement "
+     "rules, exclusions and revision comparisons stated."),
+    ("Hand over", "QA report, registers and handover note",
+     "Model QA/QC report, revision register, IFC/exchange files and a handover note "
+     "listing files, assumptions and anything left open. AI drafts; an engineer signs."),
 ]
 
 
@@ -995,6 +997,85 @@ def home_regions_block():
     return '        <div class="regs">\n' + "\n".join(rows) + "\n        </div>"
 
 
+# --------------------------------------------------------- AI workflow --
+# Where AI sits in delivery, stage by stage. Every stage ends with an engineer:
+# AI drafts, reads, groups and checks; it does not issue anything.
+AI_WORKFLOW = [
+    ("01", "Input review",
+     "AI reads drawing sets, specifications and models to list systems, missing information and "
+     "conflicts before modelling starts — so the query list exists on day one, not week three.",
+     ["Read", "Extract", "Flag gaps"]),
+    ("02", "Modelling",
+     "AI-assisted routines generate and populate repetitive content inside the agreed template — "
+     "parameters, tags, schedules, sheets and family data — while modellers focus on routing.",
+     ["Template", "Generate", "Populate"]),
+    ("03", "Coordination",
+     "AI groups clashes by cause and responsible discipline, ranks them by impact and drafts the "
+     "issue descriptions a coordinator confirms before they go to the team.",
+     ["Detect", "Group", "Prioritise"]),
+    ("04", "QA / QC",
+     "AI-assisted checking runs standards, naming, parameter completeness and clearance rules over "
+     "the whole model before every issue, and clusters failures by root cause.",
+     ["Check", "Cluster", "Report"]),
+    ("05", "Quantities",
+     "Quantities extracted, classified and reconciled across revisions, with anomalies and "
+     "unmeasurable elements flagged for review rather than silently counted.",
+     ["Measure", "Reconcile", "Compare"]),
+    ("06", "Documentation &amp; handover",
+     "Clash reports, issue logs, revision registers, asset registers and handover notes drafted "
+     "from model data — then checked and signed by a named engineer.",
+     ["Draft", "Review", "Sign"]),
+]
+
+
+def ai_workflow_block():
+    cards = []
+    for n, name, desc, seq in AI_WORKFLOW:
+        chips = ' <i>&rarr;</i> '.join(f"<span>{x}</span>" for x in seq)
+        cards.append(f"""      <article class="flow">
+        <div class="flow__top"><span class="flow__n">{n}</span>{B('live')}</div>
+        <h3>{name}</h3>
+        <p>{desc}</p>
+        <div class="flow__seq">{chips}</div>
+      </article>""")
+    return '    <div class="flows">\n' + "\n".join(cards) + "\n    </div>"
+
+
+# ------------------------------------------- catalogue packages / handover --
+from _catalogue import PACKAGES, HANDOVER                                # noqa: E402
+
+
+def packages_block():
+    rows = []
+    for p in PACKAGES:
+        core = p["qualification"].startswith("Core")
+        rows.append(f"""      <div class="spec__row">
+        <div class="spec__k">{p["code"]}<b>{esc(p["name"])}</b>{B("live", "Core") if core else B("road", "Scoped only")}</div>
+        <div class="spec__v">{esc(p["included"])}
+          <ul class="spec__list">
+            <li>Outputs: {esc(p["outputs"])}</li>
+            <li>Availability: {esc(p["qualification"])}</li>
+          </ul>
+        </div>
+      </div>""")
+    return '    <div class="spec">\n' + "\n".join(rows) + "\n    </div>"
+
+
+def handover_block():
+    rows = []
+    for h in HANDOVER:
+        rows.append(f"""      <div class="spec__row">
+        <div class="spec__k">Deliverable {h["no"]}<b>{esc(h["deliverable"])}</b></div>
+        <div class="spec__v">{esc(h["description"])}.
+          <ul class="spec__list">
+            <li>Included: {esc(h["inclusion"])}</li>
+            <li>Agreed at start: {esc(h["definition"])}</li>
+          </ul>
+        </div>
+      </div>""")
+    return '    <div class="spec">\n' + "\n".join(rows) + "\n    </div>"
+
+
 HOME = f"""
 <section class="hero">
   <div class="hero__bg" aria-hidden="true"></div>
@@ -1052,7 +1133,7 @@ HOME = f"""
   <div class="shell">
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">What you receive</p>
-      <h2 class="sec-title">Design &rarr; Model &rarr; Coordinate &rarr; Document</h2>
+      <h2 class="sec-title">Model &rarr; Coordinate &rarr; Document &rarr; Quantify &rarr; Hand over</h2>
       <p class="sec-lede">Five steps, in the order they happen on a project. Each one produces
       something you can hold us to.</p>
     </header>
@@ -1194,20 +1275,21 @@ HOME = f"""
 <section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Engineering + BIM + AI</p>
-      <h2 class="sec-title">Automation and AI support the engineering. They do not replace it.</h2>
-      <p class="sec-lede">BIMRACE is building internal workflows that connect engineering data, BIM
-      models and AI-assisted checking. They make the work faster and more consistent. The business
-      is still MEP engineering, BIM coordination and design delivery, and a named engineer is
+      <p class="eyebrow">AI in our workflow</p>
+      <h2 class="sec-title">AI works at every stage of delivery. An engineer signs every output.</h2>
+      <p class="sec-lede">AI is built into how BIMRACE works — reading project inputs, assisting
+      modelling, triaging clashes, checking models, extracting quantities and drafting
+      documentation. It makes the work faster and more consistent. A named engineer reviews and is
       accountable for every output. Each capability below is labelled with what it actually is
       today.</p>
     </header>
-    <div class="g4">
+{ai_workflow_block()}
+    <div class="g4" style="margin-top:28px">
       <article class="card"><h3>Automated model checking {B('live')}</h3>
         <p>Naming, parameters, clearances and sizing bands tested across the whole model rather than
         the parts someone had time to open.</p>
-        <a class="card__more" href="services/bim-automation-services.html">BIM automation</a></article>
-      <article class="card"><h3>AI-assisted analysis {B('dev')}</h3>
+        <a class="card__more" href="technology.html">BIM standards &amp; QA</a></article>
+      <article class="card"><h3>AI-assisted analysis {B('live')}</h3>
         <p>Model information read to flag coordination risks and anomalies for an engineer to
         evaluate. It drafts findings; it does not resolve them.</p>
         <a class="card__more" href="automation.html">AI &amp; automation</a></article>
@@ -1233,10 +1315,10 @@ HOME = f"""
 PLATFORM = f"""
 {phero([("Home", "index.html"), ("Platform", None)],
        "The BIMRACE intelligence stack",
-       "Five layers between an engineering question and an engineering answer. Three are delivered "
-       "today, one is in development, and this page publishes the difference along with the legend "
+       "Five layers between an engineering question and an engineering answer. All five are used "
+       "on our delivery today, and this page publishes what each one does along with the legend "
        "we use to describe it.",
-       [("Layers", "05"), ("Live today", "01 · 02 · 04 · 05"), ("In development", "03 — AI engine"),
+       [("Layers", "05"), ("Live today", "01 · 02 · 03 · 04 · 05"), ("In development", "Orchestration"),
         ("Roadmap", "Digital twin · Generative")])}
 
 <section class="section section--flush" id="status">
@@ -1304,10 +1386,10 @@ PLATFORM = f"""
       <div class="spec__row"><div class="spec__k">Component<b>Automation engine</b>{B('live')}</div>
         <div class="spec__v">Parametric and scripted routines for production, checking and data
         extraction. This layer predates the platform framing — it is how the work is done.</div></div>
-      <div class="spec__row"><div class="spec__k">Component<b>Model understanding and reasoning</b>{B('dev')}</div>
+      <div class="spec__row"><div class="spec__k">Component<b>Model understanding and reasoning</b>{B('live')}</div>
         <div class="spec__v">Extraction of elements, parameters, systems and relationships as
-        structured data, with pattern and anomaly detection over it. In development, used
-        internally, not released.</div></div>
+        structured data, with AI-assisted pattern and anomaly detection over it. Used on our
+        delivery; not a released product.</div></div>
       <div class="spec__row"><div class="spec__k">Component<b>Orchestration</b>{B('dev')}</div>
         <div class="spec__v">Routing a query to the right rules, calculations and routines, and
         recording what was done. Partially built; today a person sequences most of it.</div></div>
@@ -1536,7 +1618,7 @@ AUTOMATION = f"""
        "AI &rarr; Reason &rarr; Validate &rarr; Automate &rarr; Engineer approves",
        "What the intelligence layer actually does, which workflows it runs today, and exactly where "
        "a person has to sign before anything leaves the building.",
-       [("Live workflows", "05"), ("In development", "Agents · Design automation"),
+       [("Live workflows", "05"), ("Live agents", "05 of 08"),
         ("Roadmap", "NL query · Optimisation"), ("Autonomous", "None, by design")])}
 
 <section class="section section--flush">
@@ -1616,8 +1698,8 @@ AUTOMATION = f"""
         </div>
         <p class="tiny" style="margin-top:22px">The corresponding scripted run is shown in the
         console demonstration on the homepage. That console is simulated; this description is of the
-        workflow as designed. Model reading and rule application are in development and used
-        internally; the engineering review step is how we already work.</p>
+        workflow as designed. Model reading, rule application and the engineering review step are
+        how we already work on delivery.</p>
       </div>
     </div>
   </div>
@@ -1627,7 +1709,7 @@ AUTOMATION = f"""
   <div class="shell">
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">Engineering agents</p>
-      <h2 class="sec-title">Eight defined workflows, four of which exist</h2>
+      <h2 class="sec-title">Eight defined workflows, five of which run on our delivery</h2>
       <p class="sec-lede">An agent is a workflow with a named input, an explicit rule set, a
       reasoning step and an output an engineer signs. It is not a personality and it is not a chat
       window.</p>
@@ -1635,9 +1717,9 @@ AUTOMATION = f"""
 {CHAIN}
 {agents_block()}
     <div class="note note--sig" style="max-width:none">
-      <p><strong>Read the badges.</strong> Four of these are in development and used internally on
-      our own delivery. Four are roadmap — architecturally coherent, not built. None run
-      unattended, and none are offered for licence.</p>
+      <p><strong>Read the badges.</strong> Five of these are live on our delivery workflow. Three
+      are roadmap — architecturally coherent, not built. None run unattended, and none are offered
+      for licence.</p>
     </div>
   </div>
 </section>
@@ -1825,61 +1907,79 @@ DIGITAL_TWIN = f"""
 # ============================================================================
 #  ENGINEERING (replaces the old capabilities page)
 # ============================================================================
+# One row per service line in the BIMRACE service catalogue. The anchor is the
+# fragment other pages link to; the slug is the service page the row points at.
 CAPS = [
-    ("modelling", "01", "BIM Modelling &amp; Documentation", "live",
-     "Discipline models authored to an agreed level of information need, with drawings and schedules "
-     "derived from the model rather than drafted separately. Model setup, templates, shared "
-     "coordinates and naming conventions are established before authoring starts — which is what "
-     "makes the data usable later.",
-     ["Architectural modelling", "Structural modelling", "MEP modelling",
-      "General arrangement drawings", "Sections, elevations and details",
-      "Door, room and equipment schedules", "Family and content creation",
-      "Model templates and standards setup"]),
-    ("mep", "02", "MEP Engineering", "live",
-     "Building services modelled as connected systems, routed against the spatial and access "
-     "constraints they must satisfy. Sizing and performance data are held on the elements, so the "
-     "model can be interrogated rather than only viewed — this is the discipline depth the "
-     "intelligence layer depends on.",
-     ["HVAC and ductwork distribution", "Plant room layouts",
-      "Electrical distribution and containment", "Lighting and small power",
-      "Public health and drainage", "Domestic water services",
-      "Fire protection and sprinklers", "Equipment schedules and data"]),
-    ("coordination", "03", "BIM Coordination", "live",
-     "Federated models assembled from all contributing disciplines, with clashes tracked to closure "
-     "and each decision recorded. The output is a resolved model and an auditable issue history, "
-     "not a raw clash count — a number nobody can act on.",
-     ["Federated model assembly", "Clash detection and rule sets",
-      "Clash resolution and re-testing", "Coordination issue tracking",
-      "Services zoning strategy", "Clearance and maintenance access checks",
-      "Coordination reports", "Coordination workshop support"]),
-    ("automation", "04", "Design &amp; Engineering Automation", "live",
-     "Automation applied to repetitive production and checking, and model data managed as a "
-     "deliverable in its own right. This is a service category rather than an add-on: it is quoted, "
-     "scoped and delivered as work, and it is where the intelligence stack meets an appointment.",
-     ["Parametric and computational workflows", "Automated model checking routines",
-      "Parameter and data management", "Model auditing and health checks",
-      "Data export and reporting", "Common data environment structure",
-      "Naming and classification automation", "Digital delivery packaging"]),
-    ("construction", "05", "Construction Support", "live",
-     "Model-derived output produced for the people installing the work, at the detail and tolerance "
-     "installation actually requires rather than at the level a design model happens to hold.",
-     ["Shop and fabrication drawings", "Spool and prefabrication drawings",
-      "Builders work and penetration drawings", "Bracket and support layouts",
-      "As-built and record models", "Quantity take-off and schedules",
-      "Site query support", "Handover information packaging"]),
+    ("plumbing", "01", "Plumbing BIM", "live", "plumbing-public-health-bim",
+     "Water supply, drainage and plumbing plant modelled in Revit from your design information, "
+     "with true falls, risers, schedules and shop drawings.",
+     ["Cold and hot water supply", "Soil, waste and vent", "Stormwater and rainwater",
+      "Rainwater harvesting and greywater", "Pump rooms, tanks and sumps", "Riser diagrams",
+      "Fixture and equipment schedules", "Plumbing quantities and BOQs"]),
+    ("hvac", "02", "HVAC BIM", "live", "hvac-bim-services",
+     "Air and water-side HVAC systems and the plant that serves them, organised for ceiling-zone "
+     "coordination and installation drawings.",
+     ["Ductwork and air distribution", "Fresh air, exhaust and car-park ventilation",
+      "Smoke extraction ductwork", "Chilled and condenser water", "VRF/VRV and split systems",
+      "AHU, FCU and FAHU equipment", "Chiller and plant rooms", "HVAC quantities and BOQs"]),
+    ("fire-protection", "03", "Fire Protection BIM", "live", "fire-protection-bim-services",
+     "Fire suppression systems coordinated within ceiling zones. Fire alarm and detection are a "
+     "separate electrical/ELV scope.",
+     ["Sprinkler systems", "Fire hydrant networks", "Wet risers and standpipes",
+      "Hose reels and breeching inlets", "Fire pump rooms and tanks", "Clean-agent and kitchen hood",
+      "Valve and equipment schedules", "Fire protection BOQs"]),
+    ("electrical", "04", "Electrical BIM", "live", "electrical-bim-services",
+     "Lighting, power and containment modelled with panel rooms, risers and the schedules derived "
+     "from them.",
+     ["Lighting and emergency lighting", "Small power layouts", "Cable tray and containment",
+      "Panels and switch rooms", "Single-line documentation", "Earthing and lightning protection",
+      "ELV, fire alarm and security (separate scope)", "Electrical quantities and BOQs"]),
+    ("coordination", "05", "BIM Coordination &amp; Clash Detection", "live",
+     "bim-coordination-clash-detection",
+     "Architectural, structural and MEP models federated and checked, with clashes reported, "
+     "tracked and closed. Clash reports identify issues; they do not authorise design changes.",
+     ["Model federation", "Hard clash detection", "Soft clash and clearance checks",
+      "Clash matrix and reports", "Navisworks NWC/NWD", "Issue tracking and BCF",
+      "Clash resolution and revision", "Model QA/QC and audits"]),
+    ("documentation", "06", "MEP Shop Drawings &amp; Documentation", "live",
+     "bim-modelling-documentation",
+     "Drawings derived from the coordinated model and issued under revision control.",
+     ["General arrangement drawings", "MEP floor plans", "Installation layouts and details",
+      "Sections and risers", "Plant-room drawings", "Builders' work and openings",
+      "Shop drawing packages", "Drawing registers and DWG/IFC exports"]),
+    ("quantities", "07", "Quantity Takeoff &amp; BOQ", "live", "quantity-takeoff-boq",
+     "Model-based quantities with stated measurement rules. A takeoff is not a priced BOQ unless "
+     "pricing is agreed.",
+     ["Pipe, duct and insulation takeoffs", "Cable tray and conduit takeoffs",
+      "Equipment and fixture schedules", "Consolidated MEP workbook",
+      "BOQ from approved design", "Revision comparison", "Change and variation reports",
+      "Quantity validation"]),
+    ("revit", "08", "Revit Modelling &amp; Model Management", "live", "revit-services",
+     "Clean, well-structured Revit models — converted from your drawings, built on solid templates "
+     "and families, and maintained so every team can work in them.",
+     ["CAD and PDF to Revit", "Family creation", "Shared parameters", "View templates and sheets",
+      "Worksharing and linked models", "Model audit and cleanup", "IFC export",
+      "Model handover packaging"]),
+    ("as-built", "09", "As-Built &amp; Additional BIM Services", "live", "as-built-bim-services",
+     "Record and existing-building models from verified site information, asset registers and "
+     "handover. Scan-to-BIM, 4D and COBie are specialist, project-specific scopes.",
+     ["As-built BIM models", "Existing-building models", "Existing MEP documentation",
+      "Asset registers", "Handover packages", "Value-engineering coordination",
+      "Change impact reports", "BIM standards support"]),
 ]
 
 
 def caps_block():
     rows = []
-    for anchor, n, name, status, desc, items in CAPS:
+    for anchor, n, name, status, slug, desc, items in CAPS:
         lis = "\n".join(f"          <li>{i}</li>" for i in items)
         rows.append(f"""      <div class="spec__row" id="{anchor}">
-        <div class="spec__k">Capability {n}<b>{name}</b>{B(status)}</div>
+        <div class="spec__k">Service {n}<b>{name}</b>{B(status)}</div>
         <div class="spec__v">{desc}
           <ul class="spec__list">
 {lis}
           </ul>
+          <a class="card__more" href="services/{slug}.html">Service detail</a>
         </div>
       </div>""")
     return '    <div class="spec">\n' + "\n".join(rows) + "\n    </div>"
@@ -1887,20 +1987,21 @@ def caps_block():
 
 ENGINEERING = f"""
 {phero([("Home", "index.html"), ("Engineering", None)],
-       "Engineering depth is what makes the intelligence defensible",
-       "MEP engineering, BIM delivery and automation, defined by what is produced and issued rather "
-       "than by which software is opened. Every line carries its capability status.",
-       [("Categories", "Engineering · BIM · Intelligence"), ("Disciplines", "M · E · P · FP · S · A"),
-        ("Standard", "ISO 19650 aligned"), ("Delivery", "India studio, remote international")])}
+       "MEP BIM services for building projects",
+       "Revit-based MEP modelling, coordination, documentation and quantity takeoff, defined by "
+       "what is produced and issued rather than by which software is opened.",
+       [("Service lines", "09"), ("Disciplines", "Plumbing · HVAC · FP · Electrical"),
+        ("Platform", "Revit · Navisworks · IFC"), ("Delivery", "India studio, remote international")])}
 
 <section class="section section--flush">
   <div class="shell">
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">Service architecture</p>
-      <h2 class="sec-title">Three categories, not a list of twenty services</h2>
-      <p class="sec-lede">Automation sits alongside engineering and BIM as a category of its own,
-      because that is how it is scoped and priced here — not as a paragraph at the end of a
-      modelling proposal.</p>
+      <h2 class="sec-title">Nine service lines in three groups</h2>
+      <p class="sec-lede">The four MEP disciplines, the coordination and documentation that sit
+      across them, and the quantities and handover information that come out of the model.
+      Engineering design and calculations are provided only where they are included in the agreed
+      scope and supported by appropriately qualified personnel.</p>
     </header>
 {matrix_block()}
   </div>
@@ -1911,14 +2012,51 @@ ENGINEERING = f"""
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">Scope detail</p>
       <h2 class="sec-title">What is actually produced and issued</h2>
-      <p class="sec-lede">Every capability below lists its deliverables. Any of them can be
-      appointed on their own or combined; nothing here depends on buying the intelligence layer.</p>
+      <p class="sec-lede">Every service line below lists its main deliverables and links to its
+      full scope. Any of them can be appointed on their own or combined.</p>
     </header>
 {caps_block()}
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="ai">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">AI in our workflow</p>
+      <h2 class="sec-title">AI at every stage, an engineer at the end of each one</h2>
+      <p class="sec-lede">AI is part of how every service above is delivered — not a separate
+      product. It reads, drafts, groups and checks so the team spends its time on engineering
+      judgement. Nothing it produces is issued without a named engineer's review.</p>
+    </header>
+{ai_workflow_block()}
+  </div>
+</section>
+
+<section class="section section--raise" id="packages">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Service packages</p>
+      <h2 class="sec-title">How service lines are usually grouped into an appointment</h2>
+      <p class="sec-lede">From the BIMRACE service catalogue. Engineering design is offered only
+      with qualified resources and explicit design responsibility.</p>
+    </header>
+{packages_block()}
+  </div>
+</section>
+
+<section class="section" id="handover">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Handover checklist</p>
+      <h2 class="sec-title">The deliverables a project can receive, and what is agreed up front</h2>
+      <p class="sec-lede">Ten handover items from the service catalogue. Which ones apply is set in
+      the proposal; how each one is defined is agreed before work starts.</p>
+    </header>
+{handover_block()}
+  </div>
+</section>
+
+<section class="section section--raise">
   <div class="shell">
     <header class="sec-head">
       <p class="eyebrow">Appointment models</p>
@@ -1934,14 +2072,14 @@ ENGINEERING = f"""
       <article class="card"><p class="card__k">03</p><h3>Coordination appointment</h3>
         <p>Federation, clash resolution and coordination management across contributing disciplines,
         with the issue history as a deliverable in its own right.</p></article>
-      <article class="card"><p class="card__k">04</p><h3>Automation engagement</h3>
-        <p>A defined workflow automated for your team — a QA rule set, a quantity routine, a
-        documentation pipeline — delivered as tooling plus the engineering behind it.</p></article>
+      <article class="card"><p class="card__k">04</p><h3>Quantities &amp; handover</h3>
+        <p>Model-based quantity takeoffs and BOQs for cost and procurement teams, or record models
+        and asset registers for handover — scoped with measurement rules and verification stated.</p></article>
     </div>
   </div>
 </section>
 
-<section class="section section--raise">
+<section class="section">
   <div class="shell">
     <header class="sec-head">
       <p class="eyebrow">Tooling</p>
@@ -1956,6 +2094,10 @@ ENGINEERING = f"""
       <div class="spec__row"><div class="spec__k">Automation<b>Routines and checking</b></div>
         <div class="spec__v">Dynamo · scripted routines · custom checking and data tools built
         in-house</div></div>
+      <div class="spec__row"><div class="spec__k">AI<b>Review, checking and drafting</b></div>
+        <div class="spec__v">AI-assisted input review, clash grouping, model QA, quantity
+        reconciliation and report drafting, run inside our delivery workflow with engineer
+        review</div></div>
       <div class="spec__row"><div class="spec__k">Exchange<b>Interoperability</b></div>
         <div class="spec__v">IFC · COBie-style data exports · common data environments</div></div>
     </div>
@@ -1995,6 +2137,12 @@ INDS = [
     ("08", "Retail",
      "Landlord and tenant interfaces, rapid fit-out programmes, shopfront coordination.",
      "Short programmes reward automated documentation over manual production."),
+    ("09", "Public &amp; government",
+     "Civic offices, courts, libraries and public service centres with many stakeholders.",
+     "Traceable revisions and maintainable asset data matter as much as coordination."),
+    ("10", "Transportation buildings",
+     "Terminals, stations, depots and car parks — building services only, not infrastructure.",
+     "Large-volume ventilation and access for maintenance in buildings that never close."),
 ]
 
 INDUSTRIES = f"""
@@ -2003,7 +2151,7 @@ INDUSTRIES = f"""
        "Sectors differ less in the software used than in services density, clearance tolerance and "
        "validation expectation. These are the building types our discipline mix is set up for, and "
        "where automation earns its place.",
-       [("Sectors", "08"), ("Basis", "Discipline mix and workflow"),
+       [("Sectors", "10"), ("Basis", "Discipline mix and workflow"),
         ("Not claimed", "Sector-specific project history")])}
 
 <section class="section section--flush">
@@ -2198,8 +2346,8 @@ TECHNOLOGY = f"""
       <p class="eyebrow">Quality assurance</p>
       <h2 class="sec-title">What gets checked before anything is issued</h2>
       <p class="sec-lede">Six categories, run as rule sets rather than as a person opening views one
-      at a time. The routines are live; the reasoning layer that clusters failures by root cause is
-      in development.</p>
+      at a time. The routines are live, and AI-assisted reasoning clusters failures by root cause
+      for an engineer to review.</p>
     </header>
     <div class="g3">
       <article class="card"><p class="card__k">01</p><h3>Model health {B('live')}</h3>
@@ -2393,9 +2541,9 @@ ABOUT = f"""
       <div class="card">
         <p class="card__k">Not claimed</p>
         <h3>An AI product you can buy</h3>
-        <p>The intelligence layer is internal software in development. It is not a released product,
-        it is not licensable, and no feature or date on this site is a commitment. Everything marked
-        roadmap is not built.</p>
+        <p>The intelligence layer is internal software used on our own delivery. It is not a
+        released product, it is not licensable, and no feature or date on this site is a commitment.
+        Everything marked roadmap is not built.</p>
       </div>
       <div class="card">
         <p class="card__k">Not claimed</p>
@@ -2528,24 +2676,18 @@ INSIGHTS = f"""
 # ============================================================================
 #  CONTACT
 # ============================================================================
-CONTACT = f"""
-{phero([("Home", "index.html"), ("Contact", None)],
-       "Tell us about your project",
-       "Tell us the scope, or the workflow you are tired of doing by hand. You will get a technical "
-       "response from an engineer — approach, disciplines, deliverables, and an honest read on what "
-       "is realistically automatable.",
-       [("Reaches", "Somnath Baste, Founder"), ("Response", "Within two working days"),
-        ("NDA", "Signed before drawings are shared"), ("Not sent", "A brochure")])}
+# The service menu on the enquiry form is the service catalogue, so a page's
+# ?service= prefill always has a matching option (audit.py checks this).
+from _services import SERVICES as _FORM_SERVICES                      # noqa: E402
+SERVICE_OPTIONS = "\n".join(
+    f'            <option value="{s["prefill"]}">{s["nav"]}</option>' for s in _FORM_SERVICES)
 
-<section class="section section--flush">
-  <div class="shell split">
-    <div>
-      <p class="eyebrow">Project enquiry</p>
-      <h2 class="sec-title">Tell us about the project</h2>
-      <p class="sec-lede">The more specific the scope, the more useful the response. If you have a
-      drawing set, an EIR or a BEP, say so and we will ask for it under NDA.</p>
-
-      <!-- Field names are the contract with crm.enquiry_submissions. Do not
+def enquiry_form(sector=""):
+    """The one enquiry form. Used on the contact page and on sector pages, so the
+    field contract with crm.enquiry_submissions and lead-capture.js exists once.
+    A sector page pre-fills the Sector field; the visitor can still change it."""
+    sector_attr = f' value="{sector}"' if sector else ""
+    return f"""      <!-- Field names are the contract with crm.enquiry_submissions. Do not
            rename them without migrating the Supabase schema and lead-capture.js. -->
       <form class="form" id="enquiry-form" data-lead-form="project_enquiry" novalidate
             style="margin-top:var(--s4)">
@@ -2573,14 +2715,7 @@ CONTACT = f"""
         <div class="field"><label for="f-service">What do you need</label>
           <select id="f-service" name="lead_type">
             <option value="">Select&hellip;</option>
-            <option value="mep_bim">MEP engineering / MEP BIM</option>
-            <option value="bim_modelling">BIM modelling &amp; documentation</option>
-            <option value="bim_coordination">BIM coordination</option>
-            <option value="automation">Design &amp; engineering automation</option>
-            <option value="bim_consulting">Model QA, data &amp; ISO 19650</option>
-            <option value="bim_company_support">BIM company support (overflow / white-label)</option>
-            <option value="resource_support">Staff / resource support</option>
-            <option value="bim_training">Training</option>
+{SERVICE_OPTIONS}
             <option value="general">Not sure yet &mdash; want to discuss</option>
           </select></div>
 
@@ -2597,7 +2732,7 @@ CONTACT = f"""
           </select></div>
 
         <div class="field"><label for="f-sector">Sector</label>
-          <input id="f-sector" name="industry" type="text" placeholder="e.g. healthcare, data centre"></div>
+          <input id="f-sector" name="industry" type="text" placeholder="e.g. healthcare, data centre"{sector_attr}></div>
 
         <div class="field field--full"><label for="f-location">Project location</label>
           <input id="f-location" name="project_location" type="text" placeholder="City, country"></div>
@@ -2671,7 +2806,27 @@ CONTACT = f"""
         We respond within two working days. If it is urgent, call
         <a href="tel:{TEL}" style="color:var(--sig)">{PHONE}</a>.</p>
       </div>
-    </div>
+"""
+
+
+CONTACT = f"""
+{phero([("Home", "index.html"), ("Contact", None)],
+       "Tell us about your project",
+       "Tell us the scope, or the workflow you are tired of doing by hand. You will get a technical "
+       "response from an engineer — approach, disciplines, deliverables, and an honest read on what "
+       "is realistically automatable.",
+       [("Reaches", "Somnath Baste, Founder"), ("Response", "Within two working days"),
+        ("NDA", "Signed before drawings are shared"), ("Not sent", "A brochure")])}
+
+<section class="section section--flush">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Project enquiry</p>
+      <h2 class="sec-title">Tell us about the project</h2>
+      <p class="sec-lede">The more specific the scope, the more useful the response. If you have a
+      drawing set, an EIR or a BEP, say so and we will ask for it under NDA.</p>
+
+{enquiry_form()}    </div>
 
     <div>
       <div class="panel">
@@ -2810,7 +2965,7 @@ PROJECT_TEMPLATE = f"""
 # ============================================================================
 # Aliased on import: build.py already uses INDUSTRY_PAGES for the sector hub page
 # body, and a silent rebind would be a very confusing bug to find.
-from _services import SERVICES as SERVICE_PAGES, SERVICE_BY_SLUG        # noqa: E402
+from _services import SERVICES as SERVICE_PAGES, SERVICE_BY_SLUG, catalogue_items, RETIRED  # noqa: E402
 from _industries import INDUSTRIES as INDUSTRY_PAGES, INDUSTRY_BY_SLUG  # noqa: E402
 from _locations import LOCATIONS as LOCATION_PAGES, LOCATION_BY_SLUG    # noqa: E402
 import _mcp                                               # noqa: E402
@@ -2844,9 +2999,27 @@ def spec_rows(rows, kicker="Deliverable"):
       </div>""" for n, d in rows)
 
 
+def catalogue_rows(items):
+    """Catalogue scope items: code as the kicker, typical output as the value.
+    Design-scope and specialist items say so on the row itself, not in a footnote."""
+    out = []
+    for i in items:
+        flags = ""
+        if i["design_scope"]:
+            flags = (" <em>Engineering design scope &mdash; only where design responsibility is "
+                     "explicitly agreed and supported by qualified engineers.</em>")
+        elif i["phase"].startswith("Later"):
+            flags = " <em>Specialist, project-specific scope &mdash; confirmed before we commit.</em>"
+        out.append(f"""      <div class="spec__row">
+        <div class="spec__k">{i["code"]}<b>{esc(i["name"])}</b></div>
+        <div class="spec__v">{esc(i["output"])}.{flags}</div>
+      </div>""")
+    return "\n".join(out)
+
+
 def badged_rows(rows, kicker="Automation"):
     return "\n".join(f"""      <div class="spec__row">
-        <div class="spec__k">{kicker}<b>{n}</b>{B(s)}</div>
+        <div class="spec__k">{"AI" if n.startswith("AI") else kicker}<b>{n}</b>{B(s)}</div>
         <div class="spec__v">{d}</div>
       </div>""" for n, s, d in rows)
 
@@ -2909,6 +3082,15 @@ def service_page(s):
     <div class="spec">
 {spec_rows(s["delivers"])}
     </div>
+    <header class="sec-head sec-head--wide" id="catalogue" style="margin-top:56px">
+      <p class="eyebrow">Catalogue scope</p>
+      <h3 class="sec-title">Every scope item, with its typical output</h3>
+      <p class="sec-lede">The full list from the BIMRACE service catalogue. Each item can be
+      included or excluded in a proposal; the code is the one used in our scope documents.</p>
+    </header>
+    <div class="spec">
+{catalogue_rows(catalogue_items(s))}
+    </div>
   </div>
 </section>
 
@@ -2939,10 +3121,10 @@ def service_page(s):
       <a class="btn btn--ghost" style="margin-top:30px" href="contact.html?service={s['prefill']}">Send us what you have</a>
     </div>
     <div>
-      <p class="eyebrow">Automation</p>
-      <h2 class="sec-title">Where automation applies to this work</h2>
-      <p class="sec-lede">Every line carries its real status. Three of the four states on this site
-      mean "not yet", and we use them.</p>
+      <p class="eyebrow">AI &amp; automation</p>
+      <h2 class="sec-title">Where AI and automation apply to this work</h2>
+      <p class="sec-lede">AI is used throughout our delivery workflow, and an engineer reviews every
+      output. Every line carries its real status.</p>
       <div class="spec" style="margin-top:22px">
 {badged_rows(s["autos"])}
       </div>
@@ -2987,6 +3169,131 @@ def service_page(s):
 
 
 # -------------------------------------------------------------- industry --
+# ------------------------------------------------- optional sector blocks --
+# The original eight sector pages define none of these keys and render exactly
+# as before. Sector pages that need building types, deliverables, a process, a
+# scope boundary and an on-page enquiry form (public & government,
+# transportation) opt in by defining them in _industries.py.
+def sector_actions(i):
+    if not i.get("form"):
+        return None
+    return """
+      <div class="hero__actions" style="margin-top:28px">
+        <a class="btn btn--primary btn--lg" href="#enquiry">Request a Project Quote</a>
+        <a class="btn btn--ghost btn--lg" href="#services">See relevant services</a>
+      </div>"""
+
+
+def sector_types_block(i):
+    if not i.get("types"):
+        return ""
+    fig = i.get("figure")
+    fig_html = f"""
+      <figure class="sectfig">
+        {fig[0]}
+        <figcaption>{fig[1]}</figcaption>
+      </figure>""" if fig else ""
+    return f"""
+<section class="section section--raise">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Building types</p>
+      <h2 class="sec-title">{i.get("types_title", "Typical building types")}</h2>
+      <p class="sec-lede">{i.get("types_lede", "")}</p>{fig_html}
+    </div>
+    <div class="spec">
+{spec_rows(i["types"], kicker="Building type")}
+    </div>
+  </div>
+</section>
+"""
+
+
+def sector_delivers_block(i):
+    if not i.get("delivers"):
+        return ""
+    return f"""
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Typical deliverables</p>
+      <h2 class="sec-title">What a project in this sector usually receives</h2>
+      <p class="sec-lede">The exact list is set in the proposal. Every item comes from the BIMRACE
+      service catalogue and handover checklist.</p>
+    </header>
+    <div class="spec">
+{spec_rows(i["delivers"])}
+    </div>
+  </div>
+</section>
+
+<section class="section section--raise">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">How an engagement runs</p>
+      <h2 class="sec-title">Five steps from enquiry to handover</h2>
+      <p class="sec-lede">The same sequence on every project, so you know at each point what you
+      will receive next and what we need from you.</p>
+    </header>
+    <div class="flows">
+{step_cards(i["process"])}
+    </div>
+  </div>
+</section>
+"""
+
+
+def sector_excludes_block(i):
+    if not i.get("excludes"):
+        return ""
+    return f"""
+<section class="section">
+  <div class="shell">
+    <header class="sec-head sec-head--wide">
+      <p class="eyebrow">Scope boundary</p>
+      <h2 class="sec-title">{i.get("excludes_title", "What these appointments do not include")}</h2>
+      <p class="sec-lede">Stated at enquiry stage, because a boundary discovered in month three is a
+      dispute and the same boundary stated now is just information.</p>
+    </header>
+    <div class="note" style="max-width:none">
+      <ul class="spec__list">
+{bullets(i["excludes"])}
+      </ul>
+    </div>
+  </div>
+</section>
+"""
+
+
+def sector_form_block(i):
+    if not i.get("form"):
+        return ""
+    return f"""
+<section class="section section--raise" id="enquiry">
+  <div class="shell split">
+    <div>
+      <p class="eyebrow">Request a project quote</p>
+      <h2 class="sec-title">Tell us about your {strip_tags(i["nav"]).lower()} project</h2>
+      <p class="sec-lede">Scope, stage, disciplines and the drawings or models you have. The Sector
+      field is already filled in; change it if it does not fit.</p>
+{enquiry_form(sector=strip_tags(i["nav"]))}
+    </div>
+    <div>
+      <div class="note" style="max-width:none">
+        <p><strong>What happens next.</strong> Your enquiry is logged in our CRM and reaches an
+        engineer, not a sales queue. You get a technical reply within two working days on approach,
+        disciplines, deliverables and what is in or out of scope.</p>
+      </div>
+      <div class="note" style="margin-top:18px;max-width:none">
+        <p><strong>Drawings and models.</strong> Please do not attach confidential project files to
+        this form. We sign an NDA and arrange a secure transfer before anything is shared.</p>
+      </div>
+    </div>
+  </div>
+</section>
+"""
+
+
 def industry_page(i):
     slug = i["slug"]
     url = f"industries/{slug}.html"
@@ -2995,13 +3302,13 @@ def industry_page(i):
         for x in i["services"])
     body = f"""
 {phero([("Home", "index.html"), ("Industries", "industries.html"), (strip_tags(i["nav"]), None)],
-       i["h1"], i["lede"], i["meta"])}
-
+       i["h1"], i["lede"], i["meta"], actions=sector_actions(i))}
+{sector_types_block(i)}
 <section class="section section--flush">
   <div class="shell">
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">{i["eyebrow"]}</p>
-      <h2 class="sec-title">What makes coordination hard in this sector</h2>
+      <h2 class="sec-title">{i.get("profile_title", "What makes coordination hard in this sector")}</h2>
     </header>
     <div class="argu__set">
 {prose(i["profile"])}
@@ -3012,20 +3319,20 @@ def industry_page(i):
 <section class="section section--raise">
   <div class="shell">
     <header class="sec-head sec-head--wide">
-      <p class="eyebrow">Difficulty drivers</p>
-      <h2 class="sec-title">Where the effort actually goes</h2>
-      <p class="sec-lede">Services density and constraint tightness set coordination effort far more
-      than floor area does. These are the drivers that dominate here.</p>
+      <p class="eyebrow">{i.get("drivers_eyebrow", "Difficulty drivers")}</p>
+      <h2 class="sec-title">{i.get("drivers_title", "Where the effort actually goes")}</h2>
+      <p class="sec-lede">{i.get("drivers_lede", "Services density and constraint tightness set "
+      "coordination effort far more than floor area does. These are the drivers that dominate here.")}</p>
     </header>
     <div class="spec">
-{spec_rows(i["drivers"], kicker="Driver")}
+{spec_rows(i["drivers"], kicker=i.get("drivers_kicker", "Driver"))}
     </div>
     <div class="note" style="max-width:none">
       <p><strong>Leading discipline.</strong> {i["lead_disc"]}</p>
     </div>
   </div>
 </section>
-
+{sector_delivers_block(i)}
 <section class="section">
   <div class="shell split">
     <div>
@@ -3038,8 +3345,8 @@ def industry_page(i):
       </ul>
     </div>
     <div>
-      <p class="eyebrow">Automation</p>
-      <h2 class="sec-title">Where automation earns its place here</h2>
+      <p class="eyebrow">{"AI &amp; automation" if i.get("form") else "Automation"}</p>
+      <h2 class="sec-title">{"Where AI and automation earn their place here" if i.get("form") else "Where automation earns its place here"}</h2>
       <p class="sec-lede">Not everywhere, and not equally. Each line carries its real status.</p>
       <div class="spec" style="margin-top:22px">
 {badged_rows(i["autos"], kicker="Applies")}
@@ -3048,7 +3355,7 @@ def industry_page(i):
   </div>
 </section>
 
-<section class="section section--raise">
+<section class="section section--raise" id="services">
   <div class="shell split">
     <div>
       <p class="eyebrow">Services</p>
@@ -3072,15 +3379,16 @@ def industry_page(i):
     </div>
   </div>
 </section>
+{sector_excludes_block(i)}
 {faq_block(i["faqs"])}
 {related_block("Where this connects",
                rel_for(service_slugs=i["services"][:3],
                        extra=[("industries.html", "All sectors",
-                               "Where coordination difficulty sits across the eight building types "
-                               "our discipline mix suits."),
+                               f"Where coordination difficulty sits across the {len(INDUSTRY_PAGES)} "
+                               "building types our discipline mix suits."),
                               ("locations.html", "International delivery",
                                "How remote delivery is actually run, market by market.")]))}
-"""
+{sector_form_block(i)}"""
     ld = (breadcrumb_ld([("Home", ""), ("Industries", "industries.html"),
                          (strip_tags(i["nav"]), url)]) + faq_ld(i["faqs"]))
     page(f"industries/{slug}", i["title"], i["desc"], body, "industries.html", extra=ld,
@@ -3442,23 +3750,9 @@ SERVICE_LD = '<script type="application/ld+json">' + json.dumps({
          "item": {"@type": "Service", "name": n, "description": d,
                   "provider": {"@type": "Organization", "name": "BIMRACE"},
                   "url": f"{SITE}/{u}"}}
-        for i, (n, d, u) in enumerate([
-            ("MEP Engineering",
-             "Mechanical, electrical, public health and fire protection engineering modelled as "
-             "connected systems.", "engineering.html#mep"),
-            ("BIM Modelling and Documentation",
-             "Discipline models authored to an agreed level of information need, with model-derived "
-             "drawings and schedules.", "engineering.html#modelling"),
-            ("BIM Coordination",
-             "Federated models, clash detection, clearance and access checking, with decisions "
-             "tracked to closure.", "engineering.html#coordination"),
-            ("Design and Engineering Automation",
-             "Parametric and scripted automation of model production, checking, documentation and "
-             "quantity extraction.", "engineering.html#automation"),
-            ("Construction Support",
-             "Shop and fabrication drawings, builders work, as-built models and quantity take-off.",
-             "engineering.html#construction"),
-        ])]
+        for i, (n, d, u) in enumerate(
+            (strip_tags(sv["h1"]), sv["desc"], f"services/{sv['slug']}.html")
+            for sv in SERVICE_PAGES)]
 }, indent=2) + '</script>\n'
 
 FAQ_LD = '<script type="application/ld+json">' + json.dumps({
@@ -3466,7 +3760,7 @@ FAQ_LD = '<script type="application/ld+json">' + json.dumps({
     "mainEntity": [
         {"@type": "Question", "name": "Is the BIMRACE AI platform available to buy?",
          "acceptedAnswer": {"@type": "Answer", "text":
-          "No. The intelligence layer is internal software in development, used on our own delivery. "
+          "No. The intelligence layer is internal software used across our own delivery workflow. "
           "It is not a released product and is not offered for licence. Capabilities on the website "
           "are labelled live, in development or roadmap."}},
         {"@type": "Question", "name": "Does BIMRACE automation change models without review?",
@@ -3582,9 +3876,9 @@ LOCATION_STRIP = f"""
 </section>"""
 
 page("engineering",
-     "MEP Engineering &amp; BIM Delivery Services | BIMRACE",
-     "MEP engineering, BIM modelling, coordination, design automation and construction support "
-     "— defined by deliverable, with capability status against every line.",
+     "MEP BIM Services | Modelling, Coordination &amp; QTO | BIMRACE",
+     "Plumbing, HVAC, fire protection and electrical BIM, BIM coordination and clash detection, "
+     "MEP shop drawings, quantity takeoff and BOQ, Revit modelling and as-built BIM.",
      ENGINEERING + SERVICE_HUB + LOCATION_STRIP, "engineering.html",
      extra=breadcrumb_ld([("Home", ""), ("Services", "engineering.html")]) + SERVICE_LD)
 
@@ -3619,7 +3913,7 @@ page("technology/mcp-for-revit",
          "are further away than they are being presented as.",
          primary=("contact.html", "Discuss your project"),
          secondary=("automation.html", "See the automation workflows"),
-         prefill="automation"))
+         prefill="general"))
 
 page("projects",
      "Projects | Case Study Structure &amp; Rules | BIMRACE",
@@ -3763,6 +4057,9 @@ REDIRECT_RULES = [
     ("/industries/", "/industries.html", 301),
     ("/locations/", "/locations.html", 301),
     ("/technology/", "/technology.html", 301),
+    # Service pages retired when the service list was aligned to the catalogue.
+    *[(f"/services/{old}.html", f"/{new}", 301) for old, new in RETIRED.items()],
+    *[(f"/services/{old}", f"/{new}", 301) for old, new in RETIRED.items()],
 ]
 
 SECURITY_HEADERS = [

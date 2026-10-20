@@ -26,8 +26,11 @@ the RLS policies in migration `0003`.
 ```
 _source/             THE SITE SOURCE — edit here, never in site/
   build.py           generator: head, nav, footer, page registry, sitemap, robots
-  _services.py       10 service page contents
-  _industries.py     8 sector page contents
+  _services.py       9 service page contents — follows the service catalogue (Excel)
+  _catalogue.py      GENERATED from the catalogue workbook — do not hand-edit
+  generate_catalogue.py  regenerate _catalogue.py (needs openpyxl; build.py does not)
+  _industries.py     8 original sector page contents
+  _industries_public_transport.py  public & government and transportation sector pages
   _locations.py      7 market page contents
   _mcp.py            the MCP for Revit page
   _legal.py          privacy, terms, cookies
@@ -38,7 +41,7 @@ _source/             THE SITE SOURCE — edit here, never in site/
   audit_css.py       unstyled classes and dead CSS
   audit_js.py        JavaScript smoke test
 supabase/
-  migrations/     0001–0005, apply in order
+  migrations/     0001–0007, apply in order
   functions/      lead-intake Edge Function (optional hardening layer)
   tests/          security_and_lifecycle.sql — 33 assertions
   config.toml
@@ -53,6 +56,48 @@ docs/
 ```
 
 ---
+
+## Services follow the catalogue
+
+The nine service pages, the Services menu, the services hub (`engineering.html`)
+and the enquiry form's "What do you need" list all follow
+`BIMRACE_Building_Sector_Service_Catalogue.xlsx`. After editing the workbook:
+
+```bash
+cd _source
+python generate_catalogue.py "C:/path/to/BIMRACE_Building_Sector_Service_Catalogue.xlsx"
+python build.py --install
+```
+
+Retired service URLs (`mep-engineering-services`, `bim-automation-services`,
+`construction-support-bim`) 301 to their replacements via `RETIRED` in
+`_services.py`. The form's option values are `crm.leads.lead_type` codes;
+migration `0006` registers them for scoring and routing.
+
+## Sector coverage
+
+Ten sector pages under `/industries/`, matching the catalogue's Building Types sheet:
+
+| Sector | URL | Catalogue availability |
+|---|---|---|
+| Commercial & offices | `/industries/commercial.html` | Phase 1 |
+| Residential & mixed use | `/industries/residential.html` | Phase 1 |
+| Healthcare | `/industries/healthcare.html` | Phase 1 / project-specific |
+| Hospitality | `/industries/hospitality.html` | Phase 1 |
+| Retail | `/industries/retail.html` | Phase 1 |
+| Education (institutional) | `/industries/education.html` | Phase 1 |
+| **Public & government** | `/industries/public-government.html` | Phase 1 |
+| Industrial & warehousing | `/industries/industrial.html` | Conditional |
+| **Transportation buildings** | `/industries/transportation.html` | Conditional — building services only |
+| Data centres | `/industries/data-centres.html` | Conditional |
+
+The public & government and transportation pages use optional sector blocks in
+`build.py` (building types with an illustrative SVG section, priorities, typical
+deliverables, a five-step process, an explicit scope boundary and an on-page
+enquiry form). The form is the shared `enquiry_form()` used by the contact page,
+with the Sector field pre-filled, so submissions go through the same
+`lead-intake` Edge Function into `crm.enquiry_submissions`. Sector pages that do
+not define those keys render exactly as before.
 
 ## Building the site
 
@@ -103,7 +148,7 @@ supabase db push
 
 **Or paste each file into the SQL editor, in order:**
 `0001_core_schema` → `0002_functions_triggers` → `0003_rls_policies` →
-`0004_seed_reference_data` → `0005_storage_policies`
+`0004_seed_reference_data` → `0005_storage_policies` → `0006_catalogue_service_lines` → `0007_harden_function_access`
 
 Then expose the schema to the API: **Settings → API → Exposed schemas** — add `crm`.
 
@@ -164,9 +209,23 @@ The repository includes `amplify.yml` for the `main` branch. In the Amplify app,
 add these environment variables before enabling auto-builds:
 
 ```text
-SUPABASE_URL=https://gtsrvvwcsdsfajwkdzun.supabase.co
-SUPABASE_ANON_KEY=YOUR_ANON_PUBLISHABLE_KEY
+SUPABASE_URL=https://aknvdryanbtqqadssboc.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_RPzPdpDEi0tBavMYUuL7gw_1cLafQkK
+USE_EDGE_FUNCTION=true
 ```
+
+### Live backend status (project `aknvdryanbtqqadssboc`)
+
+- Migrations 0001–0007 applied (`npx supabase db push --linked`).
+- `crm` schema exposed to the API (`supabase/config.toml` → `npx supabase config push`).
+- `lead-intake` Edge Function deployed with `--no-verify-jwt`; `IP_SALT` secret set.
+  Its CORS headers now allow `authorization`, which the form sends — without that,
+  browsers blocked every submission through the function.
+- Verified end to end: browser form → Edge Function → `crm.enquiry_submissions`
+  → trigger → scored lead. Anonymous reads of leads are refused.
+- Remaining: create your CRM admin user (section 1, "Create your first user"),
+  and optionally set `ALLOWED_ORIGIN=https://bimrace.com` and `TURNSTILE_SECRET`
+  with `npx supabase secrets set` before launch.
 
 Each build generates the ignored `site/config.js` from those values. The anon key
 is safe for browser use; never add the Supabase service role key to Amplify

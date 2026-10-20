@@ -19,7 +19,9 @@ const hits = new Map<string, number[]>();
 
 const cors = {
   "Access-Control-Allow-Origin": Deno.env.get("ALLOWED_ORIGIN") ?? "*",
-  "Access-Control-Allow-Headers": "content-type",
+  // lead-capture.js sends Authorization (the publishable key); browsers refuse
+  // the request unless the preflight explicitly allows that header.
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 

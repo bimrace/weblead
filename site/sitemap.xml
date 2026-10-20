@@ -2,170 +2,174 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bimrace.com/</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/platform.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/intelligence.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/automation.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/digital-twin.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/engineering.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries.html</loc>
-    <lastmod>2026-09-11</lastmod>
-  </url>
-  <url>
-    <loc>https://bimrace.com/services/mep-engineering-services.html</loc>
-    <lastmod>2026-09-11</lastmod>
-  </url>
-  <url>
-    <loc>https://bimrace.com/services/hvac-bim-services.html</loc>
-    <lastmod>2026-09-11</lastmod>
-  </url>
-  <url>
-    <loc>https://bimrace.com/services/electrical-bim-services.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/services/plumbing-public-health-bim.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/hvac-bim-services.html</loc>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/services/fire-protection-bim-services.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/electrical-bim-services.html</loc>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/services/bim-coordination-clash-detection.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/services/bim-modelling-documentation.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/services/quantity-takeoff-boq.html</loc>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/services/revit-services.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
-    <loc>https://bimrace.com/services/bim-automation-services.html</loc>
-    <lastmod>2026-09-11</lastmod>
-  </url>
-  <url>
-    <loc>https://bimrace.com/services/construction-support-bim.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <loc>https://bimrace.com/services/as-built-bim-services.html</loc>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/commercial.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/residential.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/healthcare.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/data-centres.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/industrial.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/hospitality.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/education.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/industries/retail.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/public-government.html</loc>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://bimrace.com/industries/transportation.html</loc>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/usa.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/uk.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/uae.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/saudi-arabia.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/australia.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/canada.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/locations/europe.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/technology/mcp-for-revit.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/projects.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/technology.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/insights.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/about.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/contact.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/privacy.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/terms.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://bimrace.com/cookies.html</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
 </urlset>

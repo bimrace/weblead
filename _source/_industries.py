@@ -95,8 +95,7 @@ INDUSTRIES = [
     "evidence rather than a description, ask at enquiry stage and we will screen-share live "
     "workflows and QA output under NDA."),
  ],
- "services": ["mep-engineering-services", "bim-coordination-clash-detection",
-              "bim-automation-services", "electrical-bim-services"],
+ "services": ["hvac-bim-services", "bim-coordination-clash-detection", "quantity-takeoff-boq", "electrical-bim-services"],
 },
 
 {
@@ -171,8 +170,7 @@ INDUSTRIES = [
     "engineering attention on a mixed-use project — it is where every discipline's hardest "
     "constraint arrives simultaneously."),
  ],
- "services": ["plumbing-public-health-bim", "bim-modelling-documentation",
-              "bim-automation-services", "mep-engineering-services"],
+ "services": ["plumbing-public-health-bim", "bim-modelling-documentation", "quantity-takeoff-boq", "hvac-bim-services"],
 },
 
 {
@@ -253,8 +251,7 @@ INDUSTRIES = [
     "medical gas design, certification and commissioning sit with an appropriately accredited "
     "specialist, and we would say so rather than absorb that scope."),
  ],
- "services": ["mep-engineering-services", "bim-coordination-clash-detection",
-              "fire-protection-bim-services", "plumbing-public-health-bim"],
+ "services": ["hvac-bim-services", "bim-coordination-clash-detection", "fire-protection-bim-services", "plumbing-public-health-bim"],
 },
 
 {
@@ -330,8 +327,7 @@ INDUSTRIES = [
     "project history until a client releases it. For evidence at enquiry stage, ask for a working "
     "session under NDA."),
  ],
- "services": ["electrical-bim-services", "hvac-bim-services",
-              "bim-automation-services", "bim-coordination-clash-detection"],
+ "services": ["electrical-bim-services", "hvac-bim-services", "quantity-takeoff-boq", "bim-coordination-clash-detection"],
 },
 
 {
@@ -402,8 +398,7 @@ INDUSTRIES = [
     "be that the modelling effort exceeds the coordination benefit. Where there is high-hazard fire "
     "protection, process services or significant prefabrication, the answer changes completely."),
  ],
- "services": ["fire-protection-bim-services", "construction-support-bim",
-              "bim-coordination-clash-detection", "mep-engineering-services"],
+ "services": ["fire-protection-bim-services", "bim-modelling-documentation", "bim-coordination-clash-detection", "hvac-bim-services"],
 },
 
 {
@@ -474,8 +469,7 @@ INDUSTRIES = [
     "The access requirement is the part most often omitted and the part that causes the "
     "operational problem."),
  ],
- "services": ["hvac-bim-services", "fire-protection-bim-services",
-              "bim-modelling-documentation", "mep-engineering-services"],
+ "services": ["hvac-bim-services", "fire-protection-bim-services", "bim-modelling-documentation", "plumbing-public-health-bim"],
 },
 
 {
@@ -552,8 +546,7 @@ INDUSTRIES = [
     "provision. Detailed dynamic thermal or CFD analysis sits with a specialist and we would say so "
     "rather than absorb the scope."),
  ],
- "services": ["hvac-bim-services", "bim-modelling-documentation",
-              "mep-engineering-services", "bim-automation-services"],
+ "services": ["hvac-bim-services", "bim-modelling-documentation", "plumbing-public-health-bim", "quantity-takeoff-boq"],
 },
 
 {
@@ -628,9 +621,13 @@ INDUSTRIES = [
     "It frequently is. We capture the actual condition, record it against the model and report the "
     "difference. That record is worth more to the next fit-out than the demise drawing was."),
  ],
- "services": ["bim-modelling-documentation", "bim-automation-services",
-              "mep-engineering-services", "electrical-bim-services"],
+ "services": ["bim-modelling-documentation", "quantity-takeoff-boq", "hvac-bim-services", "electrical-bim-services"],
 },
 ]
+
+# Public & government and transportation carry extra blocks (building types,
+# deliverables, process, scope boundary, on-page enquiry form); see that module.
+from _industries_public_transport import PAGES as _EXTENDED_PAGES       # noqa: E402
+INDUSTRIES += _EXTENDED_PAGES
 
 INDUSTRY_BY_SLUG = {i["slug"]: i for i in INDUSTRIES}

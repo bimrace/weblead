@@ -105,22 +105,19 @@
       <li class="has-menu" data-open="false">
         <button type="button" aria-expanded="false" aria-controls="menu-servic">Services<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
         <ul class="submenu submenu--cols" id="menu-servic">
-          <li class="submenu__h">MEP engineering</li>
-          <li><a href="/services/mep-engineering-services.html"><span class="t">MEP engineering <span class="b b--live">Live</span></span><span class="d">All four disciplines designed as one connected system.</span></a></li>
-          <li><a href="/services/hvac-bim-services.html"><span class="t">HVAC design <span class="b b--live">Live</span></span><span class="d">Heating, ventilation and air-conditioning systems, ductwork and equipment.</span></a></li>
-          <li><a href="/services/electrical-bim-services.html"><span class="t">Electrical design <span class="b b--live">Live</span></span><span class="d">Power, lighting, containment and LV distribution.</span></a></li>
-          <li><a href="/services/plumbing-public-health-bim.html"><span class="t">Plumbing &amp; public health <span class="b b--live">Live</span></span><span class="d">Water supply, drainage and public health systems.</span></a></li>
-          <li><a href="/services/fire-protection-bim-services.html"><span class="t">Fire protection <span class="b b--live">Live</span></span><span class="d">Sprinkler, detection and suppression systems.</span></a></li>
+          <li class="submenu__h">MEP BIM disciplines</li>
+          <li><a href="/services/plumbing-public-health-bim.html"><span class="t">Plumbing BIM <span class="b b--live">Live</span></span><span class="d">Water supply, drainage, stormwater and pump rooms.</span></a></li>
+          <li><a href="/services/hvac-bim-services.html"><span class="t">HVAC BIM <span class="b b--live">Live</span></span><span class="d">Ductwork, chilled water, VRF, ventilation and plant rooms.</span></a></li>
+          <li><a href="/services/fire-protection-bim-services.html"><span class="t">Fire protection BIM <span class="b b--live">Live</span></span><span class="d">Sprinkler, hydrant, wet riser and fire pump-room systems.</span></a></li>
+          <li><a href="/services/electrical-bim-services.html"><span class="t">Electrical BIM <span class="b b--live">Live</span></span><span class="d">Lighting, power, containment and panel rooms.</span></a></li>
           <li class="submenu__h">BIM services</li>
-          <li><a href="/services/bim-modelling-documentation.html"><span class="t">BIM modelling &amp; documentation <span class="b b--live">Live</span></span><span class="d">Discipline models, with drawings and schedules taken from the model.</span></a></li>
-          <li><a href="/services/revit-services.html"><span class="t">Revit MEP <span class="b b--live">Live</span></span><span class="d">Templates, families, MEP authoring and parameter schemas.</span></a></li>
-          <li><a href="/services/bim-coordination-clash-detection.html"><span class="t">MEP coordination &amp; clash detection <span class="b b--live">Live</span></span><span class="d">Federated models, clearance checks and issues tracked to closure.</span></a></li>
-          <li><a href="/services/construction-support-bim.html"><span class="t">Construction support <span class="b b--live">Live</span></span><span class="d">Shop drawings, builders work and as-built models.</span></a></li>
-          <li class="submenu__h">Digital engineering</li>
-          <li><a href="/services/bim-automation-services.html"><span class="t">BIM automation <span class="b b--live">Live</span></span><span class="d">Automated model checking, quantities and documentation.</span></a></li>
-          <li><a href="/automation.html"><span class="t">AI-assisted workflows <span class="b b--dev">In development</span></span><span class="d">Where automation drafts, and where the engineer signs.</span></a></li>
-          <li><a href="/technology/mcp-for-revit.html"><span class="t">MCP for Revit <span class="b b--road">Roadmap</span></span><span class="d">Connecting AI assistants to model data through a governed protocol.</span></a></li>
-          <li><a href="/engineering.html"><span class="t">All services</span><span class="d">Every service group and deliverable in one place.</span></a></li>
+          <li><a href="/services/bim-coordination-clash-detection.html"><span class="t">BIM coordination &amp; clash detection <span class="b b--live">Live</span></span><span class="d">Federated models, clash reports and issues tracked to closure.</span></a></li>
+          <li><a href="/services/bim-modelling-documentation.html"><span class="t">MEP shop drawings &amp; documentation <span class="b b--live">Live</span></span><span class="d">Installation drawings, sections, risers and builders' work.</span></a></li>
+          <li><a href="/services/quantity-takeoff-boq.html"><span class="t">Quantity takeoff &amp; BOQ <span class="b b--live">Live</span></span><span class="d">Model-based quantities, schedules and BOQs.</span></a></li>
+          <li><a href="/services/revit-services.html"><span class="t">Revit modelling &amp; model management <span class="b b--live">Live</span></span><span class="d">CAD/PDF to Revit, families, templates and model audits.</span></a></li>
+          <li class="submenu__h">Handover</li>
+          <li><a href="/services/as-built-bim-services.html"><span class="t">As-built &amp; existing-building BIM <span class="b b--live">Live</span></span><span class="d">Record models, asset registers and handover.</span></a></li>
+          <li><a href="/engineering.html"><span class="t">All services</span><span class="d">Every service line and deliverable in one place.</span></a></li>
         </ul>
       </li>
       <li><a href="/industries.html" aria-current="page">Industries</a></li>
@@ -189,8 +186,7 @@
     <header class="sec-head sec-head--wide">
       <p class="eyebrow">Difficulty drivers</p>
       <h2 class="sec-title">Where the effort actually goes</h2>
-      <p class="sec-lede">Services density and constraint tightness set coordination effort far more
-      than floor area does. These are the drivers that dominate here.</p>
+      <p class="sec-lede">Services density and constraint tightness set coordination effort far more than floor area does. These are the drivers that dominate here.</p>
     </header>
     <div class="spec">
       <div class="spec__row">
@@ -260,16 +256,16 @@
   </div>
 </section>
 
-<section class="section section--raise">
+<section class="section section--raise" id="services">
   <div class="shell split">
     <div>
       <p class="eyebrow">Services</p>
       <h2 class="sec-title">The capabilities that matter most here</h2>
       <ul class="spec__list" style="margin-top:22px">
         <li><a href="/services/fire-protection-bim-services.html">Fire protection BIM</a></li>
-        <li><a href="/services/construction-support-bim.html">Construction support</a></li>
+        <li><a href="/services/bim-modelling-documentation.html">MEP shop drawings & documentation</a></li>
         <li><a href="/services/bim-coordination-clash-detection.html">BIM coordination & clash detection</a></li>
-        <li><a href="/services/mep-engineering-services.html">MEP engineering</a></li>
+        <li><a href="/services/hvac-bim-services.html">HVAC BIM</a></li>
       </ul>
       <a class="btn btn--ghost" style="margin-top:30px" href="/engineering.html">All engineering services</a>
     </div>
@@ -287,6 +283,7 @@
     </div>
   </div>
 </section>
+
 
 <section class="section section--raise">
   <div class="shell">
@@ -319,9 +316,9 @@
     </header>
     <div class="rel">
       <a class="rel__i" href="/services/fire-protection-bim-services.html"><span class="rel__t">Fire protection BIM</span><span class="rel__d">The discipline whose coordination failures are the most consequential and the most geometric — coverage …</span></a>
-      <a class="rel__i" href="/services/construction-support-bim.html"><span class="rel__t">Construction support</span><span class="rel__d">Output produced for the people installing the work, at the detail and tolerance installation actually re…</span></a>
+      <a class="rel__i" href="/services/bim-modelling-documentation.html"><span class="rel__t">MEP shop drawings & documentation</span><span class="rel__d">Drawings are a view of the coordinated model, not a parallel deliverable — which is the only way a chang…</span></a>
       <a class="rel__i" href="/services/bim-coordination-clash-detection.html"><span class="rel__t">BIM coordination & clash detection</span><span class="rel__d">Clash detection produces a number. Coordination produces a decision — what actually conflicts, why, whos…</span></a>
-      <a class="rel__i" href="/industries.html"><span class="rel__t">All sectors</span><span class="rel__d">Where coordination difficulty sits across the eight building types our discipline mix suits.</span></a>
+      <a class="rel__i" href="/industries.html"><span class="rel__t">All sectors</span><span class="rel__d">Where coordination difficulty sits across the 10 building types our discipline mix suits.</span></a>
       <a class="rel__i" href="/locations.html"><span class="rel__t">International delivery</span><span class="rel__d">How remote delivery is actually run, market by market.</span></a>
     </div>
   </div>
@@ -365,12 +362,12 @@
       </div>
       <div class="foot__cols">
         <nav class="foot__col" aria-labelledby="f-svc"><h2 id="f-svc">Services</h2><ul>
-          <li><a href="/services/mep-engineering-services.html">MEP engineering</a></li>
-          <li><a href="/services/hvac-bim-services.html">HVAC design &amp; BIM</a></li>
-          <li><a href="/services/electrical-bim-services.html">Electrical design &amp; BIM</a></li>
-          <li><a href="/services/plumbing-public-health-bim.html">Public health &amp; drainage</a></li>
+          <li><a href="/services/plumbing-public-health-bim.html">Plumbing BIM</a></li>
+          <li><a href="/services/hvac-bim-services.html">HVAC BIM</a></li>
           <li><a href="/services/fire-protection-bim-services.html">Fire protection BIM</a></li>
+          <li><a href="/services/electrical-bim-services.html">Electrical BIM</a></li>
           <li><a href="/services/bim-coordination-clash-detection.html">BIM coordination &amp; clash detection</a></li>
+          <li><a href="/services/bim-modelling-documentation.html">MEP shop drawings &amp; documentation</a></li>
           <li><a href="/engineering.html">All services</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-plat"><h2 id="f-plat">BIM &amp; technology</h2><ul>
@@ -390,6 +387,8 @@
           <li><a href="/industries/hospitality.html">Hospitality</a></li>
           <li><a href="/industries/education.html">Education</a></li>
           <li><a href="/industries/retail.html">Retail</a></li>
+          <li><a href="/industries/public-government.html">Public &amp; government</a></li>
+          <li><a href="/industries/transportation.html">Transportation buildings</a></li>
         </ul></nav>
         <nav class="foot__col" aria-labelledby="f-loc"><h2 id="f-loc">Where we work</h2><ul>
           <li><a href="/locations/usa.html">United States</a></li>

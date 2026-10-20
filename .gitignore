@@ -9,3 +9,12 @@ node_modules/
 _source/dist/
 _source/__pycache__/
 _source/config.js
+
+# Local tooling and Supabase CLI link state - never commit
+.agents/
+.claude/
+.mcp.json
+skills-lock.json
+supabase/.temp/
+package.json
+package-lock.json
