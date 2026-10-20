@@ -1,0 +1,67 @@
+# CI — rebuild the site from _source/ and run the project's audits.
+#
+# Runs on every push and pull request. It fails when:
+#   - build.py errors,
+#   - audit.py --strict finds a broken link, bad metadata, a sitemap mismatch,
+#     or a committed site/ that does not match the generator output
+#     (i.e. someone edited _source/ but forgot `python build.py --install`),
+#   - audit_css.py fails.
+# audit_js.py runs in report mode: its two findings (hero-svg / hero-legend)
+# are guarded dead code left by the homepage redesign, not runtime errors.
+#
+# Deployment is not done here: Amplify deploys site/ when main changes, and
+# supabase-deploy.yml handles the database and Edge Function.
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-audit:
+    name: Build and audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # site/config.js is generated per environment and is not committed. The
+      # audit needs one to exist; the example file contains no credentials.
+      - name: Provide example runtime config
+        run: cp web/config.example.js _source/config.js
+
+      - name: Build site
+        working-directory: _source
+        run: python build.py
+
+      - name: Audit — links, SEO, sitemap, committed site/ is current
+        working-directory: _source
+        run: python audit.py --strict
+
+      - name: Audit — CSS
+        working-directory: _source
+        run: python audit_css.py
+
+      - name: Audit — JavaScript (report only)
+        working-directory: _source
+        run: python audit_js.py
+
+      - name: Check no secrets in committed files
+        run: |
+          if git grep -nE "sb_secret_[A-Za-z0-9]|SUPABASE_SERVICE_ROLE_KEY=[A-Za-z0-9]|gh[opsu]_[A-Za-z0-9]{20,}|BEGIN (RSA|EC|OPENSSH) PRIVATE KEY" -- . ':!.github/workflows/ci.yml'; then
+            echo "::error::Possible secret committed — remove it and rotate the key."
+            exit 1
+          fi

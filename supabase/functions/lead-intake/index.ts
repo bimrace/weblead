@@ -17,15 +17,28 @@ const MAX_PER_IP = 5;
 
 const hits = new Map<string, number[]>();
 
-const cors = {
-  "Access-Control-Allow-Origin": Deno.env.get("ALLOWED_ORIGIN") ?? "*",
-  // lead-capture.js sends Authorization (the publishable key); browsers refuse
-  // the request unless the preflight explicitly allows that header.
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+// ALLOWED_ORIGINS is a comma-separated list (e.g. "https://bimrace.com,https://www.bimrace.com")
+// because the site answers on both hosts. ALLOWED_ORIGIN (single value) is still honoured.
+// Unset means "*", which is how local testing works.
+const allowed = (Deno.env.get("ALLOWED_ORIGINS") ?? Deno.env.get("ALLOWED_ORIGIN") ?? "*")
+  .split(",").map((o) => o.trim()).filter(Boolean);
 
-const json = (body: unknown, status = 200) =>
+function corsFor(req: Request) {
+  const origin = req.headers.get("origin") ?? "";
+  const allowOrigin = allowed.includes("*") ? "*" : allowed.includes(origin) ? origin : allowed[0];
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    // lead-capture.js sends Authorization (the publishable key); browsers refuse
+    // the request unless the preflight explicitly allows that header.
+    "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
+
+// Per-request: headers are built from this request's Origin, never shared state,
+// so concurrent requests cannot see each other's CORS headers.
+const responder = (cors: Record<string, string>) => (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { ...cors, "content-type": "application/json" },
@@ -59,6 +72,8 @@ async function turnstileOk(token: string | undefined, ip: string) {
 }
 
 Deno.serve(async (req) => {
+  const cors = corsFor(req);
+  const json = responder(cors);
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 

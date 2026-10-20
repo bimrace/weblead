@@ -1,0 +1,61 @@
+# CD — apply Supabase migrations and deploy the lead-intake Edge Function.
+#
+# Runs when supabase/** changes on main (or manually). Uses the "production"
+# GitHub environment, so you can require a reviewer to approve before anything
+# touches the live database (Settings → Environments → production).
+#
+# Required repository configuration:
+#   secret   SUPABASE_ACCESS_TOKEN   personal access token from
+#                                    https://supabase.com/dashboard/account/tokens
+#   variable SUPABASE_PROJECT_ID     aknvdryanbtqqadssboc
+#
+# Migrations are additive (0001–0007 use IF NOT EXISTS / ON CONFLICT and no
+# DROP). `db push` applies only migrations the remote has not recorded yet.
+name: Deploy Supabase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-production
+  cancel-in-progress: false   # never interrupt a migration half way
+
+jobs:
+  deploy:
+    name: Migrations and Edge Function
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check configuration
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::Secret SUPABASE_ACCESS_TOKEN is not set"; exit 1; }
+          test -n "$SUPABASE_PROJECT_ID"   || { echo "::error::Variable SUPABASE_PROJECT_ID is not set"; exit 1; }
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
+
+      - name: Show pending migrations
+        run: supabase migration list --linked
+
+      - name: Apply migrations
+        run: supabase db push --linked --yes
+
+      - name: Deploy lead-intake Edge Function
+        run: supabase functions deploy lead-intake --no-verify-jwt --use-api --project-ref "$SUPABASE_PROJECT_ID"

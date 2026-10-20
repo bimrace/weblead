@@ -1,5 +1,7 @@
 # BIMRACE Lead Engine
 
+**Deploying or changing the site? Start with [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** — one-time setup, CI/CD pipeline, everyday workflow and rollback.
+
 Website + lead capture + CRM on Supabase. No framework and no runtime
 dependencies beyond `supabase-js` loaded from a CDN in the console. The public
 site is generated from `_source/` by a single Python script with no third-party
