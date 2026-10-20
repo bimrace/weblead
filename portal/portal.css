@@ -138,3 +138,39 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--mech)}
   .main{padding:20px 16px 48px}
   .task-form{grid-template-columns:1fr}
 }
+
+/* ------------------------------------------------------- portal additions --
+   Delivery: tabs, health, progress, forms, the one-time password box. */
+.section-h{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:26px 0 10px}
+.ok{background:rgba(46,196,182,.12);border:1px solid rgba(46,196,182,.4);color:var(--mech);padding:10px 12px;border-radius:4px;margin:0 0 14px}
+.linkbtn{background:none;border:0;padding:0;color:var(--mech);cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px}
+.login__box .linkbtn{align-self:flex-start;margin-top:6px;font-size:13px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:18px 0 14px;overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--dim);padding:10px 14px;cursor:pointer;font:inherit;text-transform:capitalize;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--mech)}
+.health{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line-2)}
+.health--on_track{color:var(--mech);border-color:rgba(46,196,182,.45)}
+.health--at_risk{color:var(--elec);border-color:rgba(224,163,58,.5)}
+.health--blocked{color:var(--danger);border-color:rgba(255,107,107,.5)}
+.progress{height:6px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;min-width:80px;margin-top:8px}
+.progress i{display:block;height:100%;background:var(--mech)}
+.progress--lg{height:8px;margin:6px 0 4px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.form-grid label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.form-grid label input,.form-grid label select,.form-grid label textarea{text-transform:none;letter-spacing:0;font-family:var(--sans)}
+.form-grid .span2{grid-column:1/-1}
+.form-grid label.check{flex-direction:row;align-items:center;gap:10px;font-family:var(--sans);font-size:14px;letter-spacing:0;text-transform:none;color:var(--text)}
+.inline-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.inline-form input:not([type=date]):not([type=number]){flex:1 1 200px}
+.files{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:6px}
+.files li{display:flex;justify-content:space-between;gap:12px}
+.secret{margin-top:16px;padding:14px;border:1px dashed var(--elec);border-radius:4px;background:rgba(224,163,58,.08)}
+.secret__pw{font-size:18px;color:var(--text);user-select:all;margin:8px 0}
+.rev{width:5em;padding:6px 8px}
+.pill{display:inline-block}
+@media (max-width:900px){
+  #app{grid-template-columns:1fr}
+  .side{position:static;height:auto}
+  .form-grid{grid-template-columns:1fr}
+}

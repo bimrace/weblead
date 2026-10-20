@@ -19,3 +19,6 @@ verify_jwt = false
 
 [functions.lead-upload]
 verify_jwt = false
+
+[functions.staff-admin]
+verify_jwt = true

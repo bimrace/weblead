@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; base-uri 'self'; form-action 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>BIMRACE Portal</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+
+<!-- Sign in ---------------------------------------------------------------->
+<section id="login" class="login" hidden>
+  <form id="login-form" class="login__box">
+    <h1>BIMRACE Portal</h1>
+    <p class="muted">Staff and engineers only. Access is logged.</p>
+    <label for="login-email">Work email</label>
+    <input id="login-email" type="email" autocomplete="username" required>
+    <label for="login-password">Password</label>
+    <input id="login-password" type="password" autocomplete="current-password" required>
+    <p id="login-error" class="alert" role="alert"></p>
+    <button id="login-btn" class="btn btn--primary" type="submit">Sign in</button>
+    <button id="forgot" class="linkbtn" type="button">Forgot password?</button>
+  </form>
+</section>
+
+<!-- Set a new password (first sign-in, reset by admin, or reset link) ------->
+<section id="setpw" class="login" hidden>
+  <form id="setpw-form" class="login__box">
+    <h1>Set your password</h1>
+    <p class="muted">Choose a new password to continue. Use at least 12 characters with
+    letters, numbers and a symbol.</p>
+    <label for="setpw-1">New password</label>
+    <input id="setpw-1" type="password" autocomplete="new-password" minlength="12" required>
+    <label for="setpw-2">Repeat new password</label>
+    <input id="setpw-2" type="password" autocomplete="new-password" minlength="12" required>
+    <p id="setpw-error" class="alert" role="alert"></p>
+    <button class="btn btn--primary" type="submit">Save password</button>
+  </form>
+</section>
+
+<!-- Portal ------------------------------------------------------------------>
+<div id="app" hidden>
+  <aside class="side">
+    <p class="brand">BIMRACE<span>PORTAL</span></p>
+    <nav class="nav" id="nav" aria-label="Portal"></nav>
+    <div class="side__foot">
+      <p id="me" class="muted"></p>
+      <a class="btn btn--sm" href="#/account">Account</a>
+      <button id="signout" class="btn btn--sm">Sign out</button>
+    </div>
+  </aside>
+  <main id="view" class="main" tabindex="-1"></main>
+</div>
+
+<script src="vendor/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

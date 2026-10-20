@@ -59,6 +59,11 @@ jobs:
         working-directory: _source
         run: python audit_js.py
 
+      - name: Portal — JavaScript syntax
+        run: |
+          node --check portal/app.js
+          node --check portal/build-config.js
+
       - name: Check no secrets in committed files
         run: |
           if git grep -nE "sb_secret_[A-Za-z0-9]|SUPABASE_SERVICE_ROLE_KEY=[A-Za-z0-9]|gh[opsu]_[A-Za-z0-9]{20,}|BEGIN (RSA|EC|OPENSSH) PRIVATE KEY" -- . ':!.github/workflows/ci.yml'; then

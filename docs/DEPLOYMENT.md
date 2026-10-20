@@ -84,10 +84,41 @@ must then send `turnstile_token`; ask before enabling, because the front end nee
    insert into crm.app_users (id, email, full_name, role)
    select id, email, 'Somnath Baste', 'admin' from auth.users where email = 'YOUR_EMAIL';
    ```
-3. The CRM console is in `web/crm/`. Deploy it separately and privately (see README, "Deploy the site") —
+3. The staff portal is in `portal/` and deploys as its own Amplify app (Step 9) —
    never on the public bimrace.com domain.
 
 ---
+
+### Step 9 — Staff portal at portal.bimrace.com
+1. Amplify → **Create new app** → GitHub → `bimrace/weblead`, branch `main`. Amplify reads the
+   repository's `amplify.yml`; keep it.
+2. Environment variables for this app:
+   `APP_TARGET` = `portal`, `SUPABASE_URL` = `https://aknvdryanbtqqadssboc.supabase.co`,
+   `SUPABASE_ANON_KEY` = the publishable key. Never the secret key — the build refuses it.
+3. Custom headers for this app (Hosting → Custom headers):
+   ```yaml
+   customHeaders:
+     - pattern: "**"
+       headers:
+         - key: "X-Robots-Tag"
+           value: "noindex, nofollow, noarchive"
+         - key: "X-Frame-Options"
+           value: "DENY"
+         - key: "X-Content-Type-Options"
+           value: "nosniff"
+         - key: "Referrer-Policy"
+           value: "strict-origin-when-cross-origin"
+         - key: "Strict-Transport-Security"
+           value: "max-age=31536000; includeSubDomains"
+         - key: "Cache-Control"
+           value: "no-cache, must-revalidate"
+   ```
+4. Domain management → Add domain `bimrace.com` → subdomain `portal` → this app. Add the CNAME
+   record Amplify shows at your DNS provider.
+5. Supabase → Authentication → URL Configuration: add `https://portal.bimrace.com` to Redirect URLs
+   (password reset links).
+6. Sign in as admin → **Team** → create accounts. Each person gets a temporary password (shown once)
+   and must set their own at first sign-in.
 
 ## Everyday workflow (every change)
 
