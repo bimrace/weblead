@@ -663,73 +663,9 @@
     secs.forEach(function (s) { spy.observe(s); });
   }
 
-  /* ------------------------------------------------------- hero gallery */
-  /* Rotating building-services photographs. Only the first slide ships with
-     src/srcset; the next one is loaded just before it is shown. Autoplay
-     stops on hover, keyboard focus, a hidden tab, the pause button, or a
-     reduced-motion preference (WCAG 2.2.2). */
-  function heroGallery() {
-    var root = document.getElementById('hgal');
-    if (!root) return;
-    var slides = root.querySelectorAll('.hgal__slide');
-    var dots = root.querySelectorAll('.hgal__dot');
-    var pauseBtn = root.querySelector('.hgal__pause');
-    if (slides.length < 2) return;
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var i = 0, timer = null, hold = false, stopped = reduce, DELAY = 6000;
-
-    function load(n) {
-      var img = slides[n].querySelector('img');
-      if (img && img.dataset.srcset) {
-        img.srcset = img.dataset.srcset; img.src = img.dataset.src;
-        delete img.dataset.srcset; delete img.dataset.src;
-      }
-    }
-    function show(n) {
-      n = (n + slides.length) % slides.length;
-      load(n); load((n + 1) % slides.length);
-      slides[i].classList.remove('is-active'); slides[i].setAttribute('aria-hidden', 'true');
-      dots[i] && dots[i].removeAttribute('aria-current');
-      i = n;
-      slides[i].classList.add('is-active'); slides[i].removeAttribute('aria-hidden');
-      dots[i] && dots[i].setAttribute('aria-current', 'true');
-    }
-    function tick() { show(i + 1); }
-    function play() { clearInterval(timer); timer = null; if (!stopped && !hold) timer = setInterval(tick, DELAY); }
-    function setStopped(v) {
-      stopped = v;
-      if (pauseBtn) {
-        pauseBtn.setAttribute('aria-pressed', v ? 'true' : 'false');
-        pauseBtn.setAttribute('aria-label', v ? 'Play slideshow' : 'Pause slideshow');
-      }
-      play();
-    }
-
-    load(1);
-    Array.prototype.forEach.call(dots, function (d) {
-      d.addEventListener('click', function () { show(+d.dataset.go); play(); });
-    });
-    if (pauseBtn) pauseBtn.addEventListener('click', function () { setStopped(!stopped); });
-    root.addEventListener('mouseenter', function () { hold = true; play(); });
-    root.addEventListener('mouseleave', function () { hold = false; play(); });
-    root.addEventListener('focusin', function () { hold = true; play(); });
-    root.addEventListener('focusout', function () { hold = false; play(); });
-    document.addEventListener('visibilitychange', function () { hold = document.hidden; play(); });
-
-    var x0 = null;
-    root.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
-    root.addEventListener('touchend', function (e) {
-      if (x0 === null) return;
-      var dx = e.changedTouches[0].clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) { show(i + (dx < 0 ? 1 : -1)); play(); }
-    }, { passive: true });
-
-    setStopped(reduce);
-  }
-
   function boot() {
     try {
-      heroModel(); heroGallery(); dataDiagram(); platformMap(); workflowPipe(); twinDiagram();
+      heroModel(); dataDiagram(); platformMap(); workflowPipe(); twinDiagram();
       nav(); reveal(); counters(); bars(); stackFocus(); console_();
       portrait(); legalToc(); form();
     } catch (err) {
