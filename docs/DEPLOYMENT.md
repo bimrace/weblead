@@ -139,6 +139,12 @@ gh pr create --fill               # opens a pull request; CI runs
 ```
 When CI is green, merge the pull request. Amplify publishes within a few minutes.
 
+**Homepage photo gallery:** images live in `_source/hero/` as WebP at 960, 1600 and 2400 px wide,
+21:9, with captions, alt text and licence credits in `_source/hero/credits.json`. To use your own
+Revit renders, export them at 2400 x 1029 px or larger, save `<slug>-960.webp`, `<slug>-1600.webp`
+and `<slug>-2400.webp`, and add an entry to `credits.json` (author "BIMRACE", licence "All rights
+reserved"). Keep 4-6 slides; only the first loads with the page.
+
 **Publishing a project (case study):** get the client's written permission, then add an entry to
 `_source/_projects.py` (copy `EXAMPLE`, set `"client_released": True`, optional image in
 `_source/projects/`). Rebuild — the page appears at `/projects/<slug>.html`, on the Projects page

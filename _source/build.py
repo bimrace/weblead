@@ -1032,6 +1032,55 @@ def home_regions_block():
     return '        <div class="regs">\n' + "\n".join(rows) + "\n        </div>"
 
 
+# --------------------------------------------------------- hero gallery --
+# Rotating photographs of building services under the homepage headline.
+# Images live in _source/hero/ (WebP at 960/1600/2400 px, 21:9) with their
+# licence and author in credits.json; they are illustrative and say so. Only
+# the first slide carries src/srcset in the HTML; script.js loads each next
+# slide just before showing it, so the gallery costs one image at page load.
+HERO_SLIDES = json.loads((ROOT / "hero" / "credits.json").read_text(encoding="utf-8"))
+
+
+def hero_gallery():
+    n = len(HERO_SLIDES)
+    slides = []
+    for i, sl in enumerate(HERO_SLIDES):
+        srcset = ", ".join(f"hero/{sl['slug']}-{w}.webp {w}w" for w in sl["widths"])
+        mid = sl["widths"][min(1, len(sl["widths"]) - 1)]
+        size = 'sizes="(max-width: 1360px) 100vw, 1320px" width="2400" height="1029"'
+        if i == 0:
+            img = (f'<img src="hero/{sl["slug"]}-{mid}.webp" srcset="{srcset}" {size} '
+                   f'alt="{esc(sl["alt"])}" fetchpriority="high" decoding="async">')
+        else:
+            img = (f'<img data-src="hero/{sl["slug"]}-{mid}.webp" data-srcset="{srcset}" {size} '
+                   f'alt="{esc(sl["alt"])}" decoding="async">')
+        slides.append(f"""      <figure class="hgal__slide{' is-active' if i == 0 else ''}" aria-roledescription="slide"
+              aria-label="{i + 1} of {n}"{'' if i == 0 else ' aria-hidden="true"'}>
+        {img}
+        <figcaption class="hgal__cap"><span class="hgal__n">{i + 1:02d} / {n:02d}</span>{esc(sl["caption"])}</figcaption>
+      </figure>""")
+    dots = "\n".join(f'        <button type="button" class="hgal__dot" data-go="{i}" aria-label="Show photo {i + 1}"'
+                     f'{" aria-current=\"true\"" if i == 0 else ""}><i></i></button>' for i in range(n))
+    credits = ", ".join(
+        f'<a href="{sl["source"]}" rel="nofollow noopener">{esc(sl["author"])}</a> ({esc(sl["license"])})'
+        for sl in HERO_SLIDES)
+    return f"""  <div class="shell hgal-wrap">
+    <section class="hgal" id="hgal" aria-roledescription="carousel"
+             aria-label="Building services we model and coordinate">
+      <div class="hgal__track" aria-live="off">
+{chr(10).join(slides)}
+      </div>
+      <div class="hgal__ctrl">
+{dots}
+        <button type="button" class="hgal__pause" aria-pressed="false" aria-label="Pause slideshow">
+          <span aria-hidden="true">&#10073;&#10073;</span></button>
+      </div>
+    </section>
+    <p class="hgal__credit">Illustrative photographs of building services, not BIMRACE projects.
+    Photos: {credits}, via Wikimedia Commons.</p>
+  </div>"""
+
+
 # --------------------------------------------------------- AI workflow --
 # Where AI sits in delivery, stage by stage. Every stage ends with an engineer:
 # AI drafts, reads, groups and checks; it does not issue anything.
@@ -1125,14 +1174,17 @@ HOME = f"""
         <a class="btn btn--primary btn--lg" href="contact.html">Discuss your project</a>
         <a class="btn btn--ghost btn--lg" href="engineering.html">Explore our services</a>
       </div>
-      <div class="hero__facts" aria-label="What we do">
-        <div class="hero__fact"><span>Design</span><strong>MEP engineering</strong></div>
-        <div class="hero__fact"><span>Model</span><strong>BIM &amp; Revit</strong></div>
-        <div class="hero__fact"><span>Coordinate</span><strong>Clash detection</strong></div>
-        <div class="hero__fact"><span>Document</span><strong>Drawings &amp; schedules</strong></div>
-      </div>
     </div>
 
+  </div>
+{hero_gallery()}
+  <div class="shell">
+    <div class="hero__facts" aria-label="What we do">
+      <div class="hero__fact"><span>Design</span><strong>MEP engineering</strong></div>
+      <div class="hero__fact"><span>Model</span><strong>BIM &amp; Revit</strong></div>
+      <div class="hero__fact"><span>Coordinate</span><strong>Clash detection</strong></div>
+      <div class="hero__fact"><span>Document</span><strong>Drawings &amp; schedules</strong></div>
+    </div>
   </div>
 </section>
 
@@ -4266,6 +4318,10 @@ for slug, target, label in REDIRECT_PAGES:
     redirect_page(slug, target, label)
 
 # ------------------------------------------------------------- static files --
+(OUT / "hero").mkdir(parents=True, exist_ok=True)
+for _img in (ROOT / "hero").glob("*.webp"):
+    shutil.copy(_img, OUT / "hero" / _img.name)
+
 _proj_src = ROOT / "projects"
 if _proj_src.is_dir():
     (OUT / "projects").mkdir(parents=True, exist_ok=True)
