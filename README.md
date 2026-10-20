@@ -49,7 +49,6 @@ supabase/
   config.toml
 web/
   config.example.js   copy to config.js and fill in
-  lead-capture.js     public form handler
   crm/                internal operations console
 site/                 GENERATED OUTPUT — do not hand-edit, build.py overwrites it
 docs/
@@ -180,13 +179,13 @@ cp web/config.example.js site/config.js
 Fill in `supabaseUrl` and `supabaseAnonKey`. Copy the same file to `web/crm/config.js`
 (the console loads `../config.js`, so place it one level above `crm/`).
 
-`useEdgeFunction: false` posts directly to `crm.enquiry_submissions` — already safe,
-because anon holds INSERT and nothing else. Set it to `true` after deploying the
-Edge Function to add rate limiting, Turnstile and IP hashing.
+All public submissions go through the `lead-intake` Edge Function. Since migration
+0008 the anon key has no table or storage privileges, so there is no direct
+database path to switch on.
 
 ---
 
-## 3. Deploy the Edge Function (optional)
+## 3. Deploy the Edge Function (required)
 
 ```bash
 supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<rotated key>
@@ -194,7 +193,8 @@ supabase secrets set TURNSTILE_SECRET=<cloudflare secret>   # optional
 supabase secrets set IP_SALT=<random string>
 supabase functions deploy lead-intake --no-verify-jwt
 ```
-Then set `useEdgeFunction: true` in `config.js`.
+(`SUPABASE_SERVICE_ROLE_KEY` is injected automatically on hosted projects.) The
+GitHub Action `Deploy Supabase` does this on every merge that touches `supabase/`.
 
 ---
 
