@@ -11,7 +11,7 @@ have actually broken here before.
 import pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent
-FILES = ["script.js", "lead-capture.js"]
+FILES = ["script.js", "lead-capture.js", "founding-business-associates.js"]
 bad = 0
 
 

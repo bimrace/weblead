@@ -20,6 +20,7 @@ ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "dist"
 sys.path.insert(0, str(ROOT))
 from _legal import PRIVACY, TERMS, COOKIES              # noqa: E402
+from _associates import BODY as ASSOCIATES, EMAIL as ASSOCIATES_EMAIL, MAILTO  # noqa: E402
 
 SITE   = "https://bimrace.com"
 EMAIL  = "info@bimrace.com"
@@ -130,8 +131,9 @@ VERIFY_META = "".join(
     (("google-site-verification", GOOGLE_SITE_VERIFICATION), ("msvalidate.01", BING_SITE_VERIFICATION)) if v)
 
 
-def head(title, desc, slug, extra=""):
-    canon = f"{SITE}/" if slug == "index" else f"{SITE}/{slug}.html"
+def head(title, desc, slug, extra="", canonical_path=None):
+    canon = f"{SITE}/{canonical_path}" if canonical_path else (
+        f"{SITE}/" if slug == "index" else f"{SITE}/{slug}.html")
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -251,7 +253,12 @@ CTA = f"""
 """
 
 
-def footer():
+def footer(program=None):
+    entity = "BIM RACE PRIVATE LIMITED" if program else ENTITY
+    email = ASSOCIATES_EMAIL if program else EMAIL
+    contact_role = "Director · Pune" if program else "Founder"
+    mobile_cta = (f'<a class="mcta" href="{MAILTO}">Apply via email</a>' if program
+                  else '<a class="mcta" href="contact.html">Get a quote</a>')
     return f"""
 <footer class="foot">
   <div class="shell">
@@ -260,11 +267,12 @@ def footer():
         <svg class="foot__logo" viewBox="0 0 876 102" role="img" aria-label="BIMRACE"><use href="#wm"/></svg>
         <p class="foot__tagline">MEP engineering and BIM services for complex building projects
         — design, modelling, coordination and documentation.</p>
-        <p class="foot__entity">{ENTITY}</p>
+        <p class="foot__entity">{entity}</p>
+        {f'<p class="foot__program">{program}</p>' if program else ''}
         <p class="foot__contact">
-          Somnath Baste, Founder<br>
+          Somnath Baste, {contact_role}<br>
           <a class="foot__link" href="tel:{TEL}">{PHONE}</a><br>
-          <a class="foot__link" href="mailto:{EMAIL}">{EMAIL}</a>
+          <a class="foot__link" href="mailto:{email}">{email}</a>
         </p>
       </div>
       <div class="foot__cols">
@@ -306,7 +314,7 @@ def footer():
     </div>
   </div>
 </footer>
-<a class="mcta" href="contact.html">Get a quote</a>
+{mobile_cta}
 
 <script src="config.js"></script>
 <script src="script.js" defer></script>
@@ -329,15 +337,16 @@ REL_HREF = re.compile(r'\b(href|src)="(?!/|#|https?:|mailto:|tel:|data:)([^"]*)"
 REGISTRY = []
 
 
-def page(slug, title, desc, body, active, cta=True, extra="", index=True, cta_block=None):
-    html = head(title, desc, slug, extra) + chrome(active) + '\n<main id="main">\n' + body \
-        + '\n</main>\n' + ((cta_block or CTA) if cta else "") + footer()
+def page(slug, title, desc, body, active, cta=True, extra="", index=True, cta_block=None,
+         canonical_path=None, footer_program=None):
+    html = head(title, desc, slug, extra, canonical_path) + chrome(active) + '\n<main id="main">\n' + body \
+        + '\n</main>\n' + ((cta_block or CTA) if cta else "") + footer(footer_program)
     html = REL_HREF.sub(lambda m: f'{m.group(1)}="/{m.group(2)}"', html)
     out = OUT / f"{slug}.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
     if index:
-        REGISTRY.append("" if slug == "index" else f"{slug}.html")
+        REGISTRY.append(canonical_path or ("" if slug == "index" else f"{slug}.html"))
     return slug
 
 
@@ -2511,6 +2520,8 @@ ABOUT = f"""
           <a class="btn btn--primary" href="contact.html">Discuss your project</a>
           <a class="btn btn--ghost" href="tel:{TEL}">{PHONE}</a>
         </div>
+        <p class="tiny" style="margin-top:24px">Interested in contributing to the practice?
+        <a href="founding-business-associates.html" style="color:var(--sig)">Read the Founding Business Associates invitation</a>.</p>
       </div>
       <div>
         <div class="founder__frame">
@@ -4224,6 +4235,18 @@ page("about",
      ABOUT, "about.html",
      extra=breadcrumb_ld([("Home", ""), ("About", "about.html")]))
 
+page("founding-business-associates",
+     "Founding Business Associates | BIM RACE Private Limited",
+     "Join BIM RACE Private Limited as a Founding Business Associate. Explore business "
+     "collaboration, MEP engineering projects, BIM opportunities and shared organizational growth.",
+     ASSOCIATES, "about.html", cta=False,
+     extra=('<link rel="stylesheet" href="/founding-business-associates.css">\n'
+            '<script src="/founding-business-associates.js" defer></script>\n'
+            + breadcrumb_ld([("Home", ""), ("About", "about.html"),
+                             ("Founding Business Associates", "founding-business-associates")])),
+     canonical_path="founding-business-associates",
+     footer_program="Founding Business Associates Programme")
+
 page("contact",
      "Talk to Engineering | Project Enquiry | BIMRACE",
      "Send a scope, a drawing set or a workflow you want automated. You get a technical reply "
@@ -4273,7 +4296,9 @@ if _proj_src.is_dir():
         if _img.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}:
             shutil.copy(_img, OUT / "projects" / _img.name)
 
-for f in ["style.css", "script.js", "lead-capture.js", "config.js", "logo.svg", "logo-mark.svg",
+for f in ["style.css", "script.js", "lead-capture.js", "config.js",
+          "founding-business-associates.css", "founding-business-associates.js",
+          "logo.svg", "logo-mark.svg",
           "favicon.svg", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png",
           "og-image.png"]:
     src = ROOT / f
@@ -4335,6 +4360,7 @@ BUILD_DATE = datetime.date.today().isoformat()
 # host amplify.yml actually deploys from. Paste the JSON into
 # Amplify > App settings > Rewrites and redirects.
 REDIRECT_RULES = [
+    ("/founding-business-associates", "/founding-business-associates.html", 200),
     ("/capabilities", "/engineering.html", 301),
     ("/capabilities.html", "/engineering.html", 301),
     # Directory-style requests for the cluster hubs, so a hand-typed or

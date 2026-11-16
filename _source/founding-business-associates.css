@@ -1,0 +1,213 @@
+/* -------------------------------- Founding Business Associates invitation -- */
+.fba-hero{position:relative;overflow:hidden;background:#0B1420;color:#F8FAFC}
+.fba-hero::before{content:"";position:absolute;inset:0 0 42px 44%;
+  background-image:linear-gradient(to right,rgba(160,194,225,.09) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(160,194,225,.09) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:linear-gradient(90deg,transparent,#000 38%,#000)}
+.fba-hero__in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
+  gap:clamp(44px,8vw,120px);align-items:center;padding-block:64px 76px}
+.fba-crumb{color:#A8B5C4;margin-bottom:52px}
+.fba-crumb a:hover{color:#fff}
+.fba-kicker{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;color:#9CC7F1}
+.fba-kicker span{width:7px;height:7px;background:#55A2E8;flex:none}
+.fba-hero h1{margin-top:22px;font-size:clamp(38px,5.25vw,72px);line-height:1.04;
+  letter-spacing:-.045em;font-weight:600;color:#fff}
+.fba-hero h1 span{color:#9CC7F1}
+.fba-hero__copy > h2{margin-top:24px;font-size:clamp(18px,2vw,24px);font-weight:500;
+  line-height:1.4;letter-spacing:-.018em;color:#E5EDF6}
+.fba-hero__lede{margin-top:14px;max-width:67ch;font-size:16px;line-height:1.75;color:#BEC9D5}
+.fba-issuer{margin-top:18px;font-size:13px;color:#91A0B1}
+.fba-issuer strong{color:#EAF1F8;font-weight:500}
+.fba-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.fba-btn{min-height:48px;display:inline-flex;justify-content:center;align-items:center;gap:12px;
+  padding:13px 18px;border:1px solid transparent;border-radius:3px;font-family:var(--sans);
+  font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;text-align:center;
+  text-decoration:none;cursor:pointer;transition:background .2s var(--ease),border-color .2s var(--ease),
+  color .2s var(--ease),transform .2s var(--ease)}
+.fba-btn:hover{transform:translateY(-2px)}
+.fba-btn svg{width:16px;height:16px;flex:none}
+.fba-btn--light{background:#fff;color:#10243A}
+.fba-btn--light:hover{background:#DCEBFA}
+.fba-btn--outline{border-color:rgba(255,255,255,.35);color:#fff;background:transparent}
+.fba-btn--outline:hover{border-color:#9CC7F1;color:#C7E2FC}
+.fba-hero__aside{position:relative;padding:28px 26px 26px;border:1px solid rgba(195,216,237,.25);
+  background:rgba(255,255,255,.045);backdrop-filter:blur(4px)}
+.fba-hero__aside::before{content:"";position:absolute;left:-1px;top:-1px;width:42px;height:2px;background:#68AEEB}
+.fba-aside__label,.fba-boundary__label{font-family:var(--mono);font-size:9px;letter-spacing:.19em;
+  color:#9CC7F1}
+.fba-hero__aside h2{margin-top:20px;font-size:23px;line-height:1.27;letter-spacing:-.025em;color:#fff}
+.fba-hero__aside > p:not(.fba-aside__label){margin-top:12px;color:#B4C0CD;font-size:13.6px;line-height:1.65}
+.fba-aside__stats{display:grid;grid-template-columns:1fr;gap:0;margin-top:23px;border-top:1px solid rgba(195,216,237,.19)}
+.fba-aside__stats div{padding:14px 0;border-bottom:1px solid rgba(195,216,237,.19)}
+.fba-aside__stats span,.fba-aside__stats strong{display:block}
+.fba-aside__stats span{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#91A0B1}
+.fba-aside__stats strong{margin-top:5px;font-size:16px;font-weight:500;color:#fff}
+.fba-aside__link{display:flex;justify-content:space-between;align-items:center;margin-top:18px;
+  color:#C5DDF4;font-size:12.5px;text-decoration:none}
+.fba-aside__link:hover{color:#fff}
+.fba-hero__rule{position:relative;z-index:1;display:flex;align-items:center;gap:14px;
+  max-width:1320px;margin:0 auto;padding:16px 24px;border-top:1px solid rgba(195,216,237,.17);
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.17em;color:#8291A2}
+.fba-hero__rule i{height:1px;width:24px;background:#597088}
+.fba-intro{display:grid;grid-template-columns:minmax(240px,.78fr) minmax(0,1.22fr);
+  gap:clamp(32px,7vw,100px);padding-block:var(--s6)}
+.fba-intro .sec-title{max-width:17ch;font-size:clamp(27px,3vw,39px)}
+.fba-intro__body .sec-lede{font-size:17px}
+.fba-copy{margin-top:18px;max-width:76ch;color:var(--text-2);font-size:14.5px;line-height:1.75}
+.fba-contrib{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 13px;
+  margin-top:24px;border-top:1px solid var(--line)}
+.fba-contrib span{padding:13px 0;border-bottom:1px solid var(--line);font-family:var(--mono);
+  font-size:9px;letter-spacing:.12em;color:var(--plumb-text)}
+.fba-contrib p{padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--text-2)}
+.fba-head{margin-bottom:30px}
+.fba-investments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.fba-investment{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:var(--r-lg);
+  background:var(--surface-1);padding:28px 30px 30px;box-shadow:var(--shadow-panel)}
+.fba-investment::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:#286BA4}
+.fba-investment--phase-two::before{background:#5D82A7}
+.fba-investment__top{display:flex;align-items:center;justify-content:space-between}
+.fba-step{font-family:var(--mono);font-size:9px;letter-spacing:.17em;color:var(--plumb-text)}
+.fba-mark{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);
+  color:#52718E;font-family:var(--mono);font-size:10px}
+.fba-investment__eyebrow{margin-top:19px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--text-3)}
+.fba-price{margin-top:8px;font-size:clamp(30px,3.8vw,43px);font-weight:600;letter-spacing:-.04em;
+  line-height:1.15;color:var(--text);font-variant-numeric:tabular-nums}
+.fba-price span{font-size:14px;font-weight:400;letter-spacing:0;color:var(--text-3)}
+.fba-investment__intro{margin-top:10px;color:var(--text-2);font-size:13.5px}
+.fba-investment ul{display:grid;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.fba-investment li{position:relative;padding-left:17px;color:var(--text-2);font-size:13.2px}
+.fba-investment li::before{content:"";position:absolute;left:0;top:.7em;width:7px;height:1px;background:#347DB8}
+.fba-total{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:18px;
+  padding:21px 26px;background:#10243A;color:#fff}
+.fba-total span{font-family:var(--mono);font-size:9px;letter-spacing:.17em;color:#B0C7DD}
+.fba-total p{margin-top:5px;font-size:13px;color:#D0DCE8}
+.fba-total strong{font-size:clamp(28px,4vw,40px);font-weight:500;letter-spacing:-.035em;white-space:nowrap}
+.fba-disclaimer{margin-top:14px;max-width:100ch;color:var(--text-3);font-size:12.8px;line-height:1.65}
+.fba-disclaimer strong{color:var(--text-2)}
+.fba-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+  border:1px solid var(--line);background:var(--line)}
+.fba-card{min-height:192px;padding:22px;background:var(--surface-1);transition:background .2s var(--ease)}
+.fba-card:hover{background:#F2F7FC}
+.fba-card > span,.fba-roles article > span{font-family:var(--mono);font-size:9px;
+  letter-spacing:.14em;color:#3976A8}
+.fba-card h3{margin-top:20px;font-size:16px;letter-spacing:-.015em}
+.fba-card p{margin-top:9px;color:var(--text-2);font-size:12.8px;line-height:1.65}
+.fba-note{margin-top:20px;padding:17px 20px;border-left:2px solid #347DB8;background:#F3F7FB;
+  color:var(--text-2);font-size:13.3px;line-height:1.65}
+.fba-note strong{color:var(--text)}
+.fba-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fba-roles article{padding:22px 22px 24px;border:1px solid var(--line);background:var(--surface-1)}
+.fba-roles h3{margin-top:15px;font-size:16px}
+.fba-roles p{margin-top:9px;color:var(--text-2);font-size:13px;line-height:1.65}
+.fba-text-link{display:inline-flex;align-items:center;gap:8px;margin-top:24px;color:#245E91;
+  font-size:13px;font-weight:500;text-decoration:none;border-bottom:1px solid rgba(36,94,145,.3);padding-bottom:4px}
+.fba-text-link:hover{color:#123E67;border-color:#123E67}
+.fba-arrangement{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,.8fr);
+  gap:clamp(34px,7vw,100px);align-items:center}
+.fba-arrangement .sec-title{max-width:18ch;font-size:clamp(27px,3vw,38px)}
+.fba-arrangement .sec-lede{margin-top:18px}
+.fba-factors{border-top:1px solid var(--line)}
+.fba-factors li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--text-2)}
+.fba-factors li span{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:#3976A8}
+.fba-governance{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);
+  gap:24px;align-items:stretch}
+.fba-governance__items{border-top:1px solid var(--line)}
+.fba-governance__items article{display:grid;grid-template-columns:32px minmax(0,1fr);gap:13px;
+  padding:17px 0;border-bottom:1px solid var(--line)}
+.fba-governance__items article > span{font-family:var(--mono);font-size:9px;color:#3976A8}
+.fba-governance__items h3{font-size:15px}
+.fba-governance__items p{margin-top:5px;color:var(--text-2);font-size:13px;line-height:1.6}
+.fba-governance__boundary{padding:27px 28px;background:#10243A;color:#ECF2F8}
+.fba-governance__boundary p:not(.fba-boundary__label){margin-top:17px;padding-top:15px;
+  border-top:1px solid rgba(227,239,250,.18);font-size:13px;line-height:1.65;color:#CFD9E3}
+.fba-governance__boundary strong{color:#fff}
+.fba-expectations{display:grid;grid-template-columns:200px minmax(0,1fr);gap:18px;align-items:start;
+  margin-top:25px;padding:20px 22px;border:1px solid var(--line);background:var(--surface-1)}
+.fba-expectations .eyebrow{margin:0}
+.fba-expectations > p:last-child{font-size:13.5px;color:var(--text-2);line-height:1.7}
+.fba-vision{display:grid;grid-template-columns:minmax(190px,.55fr) minmax(0,1.45fr);
+  gap:clamp(35px,8vw,110px);align-items:center}
+.fba-vision .sec-title{max-width:19ch;font-size:clamp(29px,3.5vw,43px)}
+.fba-vision .sec-lede{margin-top:19px}
+.fba-vision__stamp{min-height:190px;display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:center;padding:30px;border:1px solid var(--line);background:var(--surface-1)}
+.fba-vision__stamp span:first-child{font-size:56px;font-weight:600;letter-spacing:-.08em;color:#193B5A}
+.fba-vision__stamp i{width:44px;height:2px;margin:10px 0;background:#347DB8}
+.fba-vision__stamp span:last-child{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--text-3)}
+.fba-apply{position:relative;overflow:hidden;background:#10243A;color:#fff;padding-block:clamp(54px,8vw,92px)}
+.fba-apply::before{content:"";position:absolute;right:-110px;top:-210px;width:480px;height:480px;
+  border:1px solid rgba(190,218,244,.14);border-radius:50%;box-shadow:0 0 0 42px rgba(190,218,244,.035),0 0 0 86px rgba(190,218,244,.025)}
+.fba-apply__in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(290px,.8fr);
+  gap:clamp(40px,8vw,120px);align-items:center}
+.fba-apply h2{margin-top:18px;max-width:16ch;font-size:clamp(34px,4.4vw,57px);
+  letter-spacing:-.04em;line-height:1.08;text-transform:uppercase;color:#fff}
+.fba-apply__in > div:first-child > p:not(.fba-kicker){margin-top:18px;max-width:70ch;color:#D0DCE8;font-size:15px;line-height:1.75}
+.fba-apply__in > div:first-child > .fba-apply__fine{font-size:12.8px!important;color:#AEBECD!important}
+.fba-apply__contact{display:flex;flex-direction:column;align-items:flex-start;padding:26px;
+  border:1px solid rgba(211,228,245,.25);background:rgba(255,255,255,.045)}
+.fba-btn--apply{width:100%;min-height:56px;font-size:13px}
+.fba-email{margin-top:20px;color:#D8E9F8;font-size:16px;text-decoration:none;
+  border-bottom:1px solid rgba(216,233,248,.4);padding-bottom:3px}
+.fba-email:hover{color:#fff}
+.fba-btn--copy{margin-top:17px;min-height:42px;padding:10px 14px;border-color:rgba(211,228,245,.35);
+  color:#fff;background:transparent;font-size:10px}
+.fba-btn--copy:hover{border-color:#9CC7F1;color:#C7E2FC}
+.fba-copy-status{min-height:20px;margin-top:8px;color:#B8D5EC;font-size:12px}
+.fba-apply__signoff{margin-top:20px;padding-top:18px;border-top:1px solid rgba(211,228,245,.2);
+  color:#B4C1CE;font-size:12px;line-height:1.7}
+.fba-apply__signoff strong{color:#fff;font-weight:500}
+.foot__program{margin-top:8px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-3)}
+
+@media (max-width:980px){
+  .fba-hero__in{grid-template-columns:minmax(0,1fr);gap:36px;padding-block:30px 50px}
+  .fba-crumb{margin-bottom:35px}
+  .fba-hero__aside{max-width:600px}
+  .fba-hero__rule{padding-inline:20px}
+  .fba-intro,.fba-arrangement,.fba-governance,.fba-vision,.fba-apply__in{grid-template-columns:minmax(0,1fr)}
+  .fba-intro{gap:26px}
+  .fba-intro .sec-title{max-width:24ch}
+  .fba-arrangement{gap:28px}
+  .fba-governance{gap:16px}
+  .fba-vision{gap:30px}
+  .fba-vision__stamp{min-height:150px}
+  .fba-apply__in{gap:32px}
+  .fba-apply__contact{max-width:560px}
+  .fba-benefits{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:600px){
+  .fba-hero__in{padding-block:22px 40px}
+  .fba-crumb{margin-bottom:30px}
+  .fba-hero h1{font-size:clamp(34px,10vw,50px)}
+  .fba-hero__lede{font-size:14.5px}
+  .fba-actions{align-items:stretch}
+  .fba-actions .fba-btn{width:100%}
+  .fba-hero__aside{padding:22px 20px}
+  .fba-hero__rule{gap:8px;padding:13px 20px;font-size:7px}
+  .fba-hero__rule i{width:14px}
+  .fba-intro{padding-block:var(--s4)}
+  .fba-investments,.fba-roles{grid-template-columns:minmax(0,1fr)}
+  .fba-investment{padding:23px 21px 24px}
+  .fba-total{align-items:flex-start;padding:18px;gap:12px}
+  .fba-total span{font-size:8px}
+  .fba-total p{max-width:26ch;font-size:11.5px}
+  .fba-total strong{font-size:29px}
+  .fba-benefits{grid-template-columns:minmax(0,1fr)}
+  .fba-card{min-height:0;padding:19px 20px 21px}
+  .fba-card h3{margin-top:12px}
+  .fba-arrangement{grid-template-columns:minmax(0,1fr)}
+  .fba-expectations{grid-template-columns:minmax(0,1fr);gap:10px}
+  .fba-governance__boundary{padding:22px}
+  .fba-vision__stamp{min-height:132px}
+  .fba-apply{padding-block:48px}
+  .fba-apply__in{gap:26px}
+  .fba-apply h2{font-size:clamp(32px,9vw,44px)}
+  .fba-apply__contact{padding:21px}
+  .fba-email{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .fba-btn:hover{transform:none}
+}
