@@ -257,6 +257,7 @@ def footer(program=None):
     entity = "BIM RACE PRIVATE LIMITED" if program else ENTITY
     email = ASSOCIATES_EMAIL if program else EMAIL
     contact_role = "Director · Pune" if program else "Founder"
+    program_line = f'        <p class="foot__program">{program}</p>\n' if program else ""
     mobile_cta = (f'<a class="mcta" href="{MAILTO}">Apply via email</a>' if program
                   else '<a class="mcta" href="contact.html">Get a quote</a>')
     return f"""
@@ -268,8 +269,7 @@ def footer(program=None):
         <p class="foot__tagline">MEP engineering and BIM services for complex building projects
         — design, modelling, coordination and documentation.</p>
         <p class="foot__entity">{entity}</p>
-        {f'<p class="foot__program">{program}</p>' if program else ''}
-        <p class="foot__contact">
+{program_line}        <p class="foot__contact">
           Somnath Baste, {contact_role}<br>
           <a class="foot__link" href="tel:{TEL}">{PHONE}</a><br>
           <a class="foot__link" href="mailto:{email}">{email}</a>
