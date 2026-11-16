@@ -34,6 +34,13 @@ pages = {p.relative_to(DIST).as_posix(): p.read_text(encoding="utf-8")
 # Redirect stubs: noindex, canonical pointing at the target, no OG block.
 REDIRECTS = {k for k, v in pages.items() if 'http-equiv="refresh"' in v}
 assets = {p.relative_to(DIST).as_posix() for p in DIST.rglob("*") if p.is_file()}
+clean_routes = {}
+redirect_file = DIST / "amplify-redirects.json"
+if redirect_file.exists():
+    for rule in json.loads(redirect_file.read_text(encoding="utf-8")):
+        target = rule.get("target", "").lstrip("/")
+        if rule.get("status") == "200" and target in pages:
+            clean_routes[target] = SITE + rule["source"]
 
 print(f"auditing {len(pages)} pages\n" + "=" * 74)
 
@@ -86,7 +93,8 @@ for path, doc in pages.items():
     if not c:
         err(path, "no canonical")
     else:
-        expect = f"{SITE}/" if path == "index.html" else f"{SITE}/{path}"
+        expect = clean_routes.get(
+            path, f"{SITE}/" if path == "index.html" else f"{SITE}/{path}")
         if redirect:
             # A redirect stub must canonicalise to its target, never to itself.
             if c.group(1) == expect:
@@ -205,15 +213,16 @@ if len(sitemap_urls) != len(set(sitemap_urls)):
     err("sitemap.xml", "duplicate <loc>")
 
 sitemap_paths = set()
+canonical_pages = {url: paths[0] for url, paths in canons.items()}
 for u in sitemap_urls:
     if not u.startswith(SITE):
         err("sitemap.xml", f"URL outside the site: {u}")
         continue
     rel = u[len(SITE):].lstrip("/") or "index.html"
     sitemap_paths.add(rel)
-    if rel not in pages:
+    if u not in canonical_pages:
         err("sitemap.xml", f"lists a page that was not built: {u}")
-    elif 'name="robots" content="noindex' in pages[rel]:
+    elif 'name="robots" content="noindex' in pages[canonical_pages[u]]:
         err("sitemap.xml", f"lists a noindex page: {u}")
 
 robots = (DIST / "robots.txt").read_text(encoding="utf-8")
@@ -242,8 +251,10 @@ for path in pages:
 # ---- indexable count -----------------------------------------------------
 indexable = [p for p, d in pages.items() if 'content="noindex' not in d]
 notes.append(f"{len(indexable)} indexable pages, {len(sitemap_paths)} in sitemap")
-if set(indexable) != sitemap_paths:
-    diff = set(indexable) ^ sitemap_paths
+expected_sitemap = {url for url, paths in canons.items()
+                    if any(path in indexable for path in paths)}
+if set(sitemap_urls) != expected_sitemap:
+    diff = set(sitemap_urls) ^ expected_sitemap
     err("GLOBAL", f"indexable pages and sitemap disagree: {sorted(diff)}")
 
 # ---- deployed folder vs generator ---------------------------------------

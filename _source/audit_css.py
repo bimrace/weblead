@@ -13,7 +13,9 @@ import collections, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent
 DIST = ROOT / "dist"
-CSS = (ROOT / "style.css").read_text(encoding="utf-8")
+CSS = "\n".join((ROOT / name).read_text(encoding="utf-8")
+                for name in ("style.css", "founding-business-associates.css")
+                if (ROOT / name).exists())
 
 # Classes the stylesheet defines.
 defined = set(re.findall(r"\.([A-Za-z][\w-]*)", re.sub(r"/\*.*?\*/", "", CSS, flags=re.S)))

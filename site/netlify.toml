@@ -5,6 +5,12 @@
   publish = "."
 
 [[redirects]]
+  from = "/founding-business-associates"
+  to = "/founding-business-associates.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/capabilities"
   to = "/engineering.html"
   status = 301
